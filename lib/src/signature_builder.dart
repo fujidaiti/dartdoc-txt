@@ -1,6 +1,19 @@
 import 'package:dartdoc/src/element_type.dart';
 import 'package:dartdoc/src/model/model.dart';
 
+import 'utilities.dart';
+
+/// Strips HTML tags and unescapes entities to get a clean type name.
+///
+/// dartdoc's `nameWithGenericsPlain` can contain residual HTML for some
+/// parameterized types. This function ensures a completely clean output.
+String plainTypeName(ElementType type) {
+  var name = type.nameWithGenericsPlain;
+  // Remove any residual HTML tags (e.g. <wbr>, <span>)
+  name = name.replaceAll(RegExp(r'<[^>]+>'), '');
+  return unescapeHtml(name);
+}
+
 /// Renders a class/mixin/enum/extension type declaration as plain Dart code.
 String renderDeclaration(Container container) {
   var buffer = StringBuffer();
@@ -15,7 +28,7 @@ String renderDeclaration(Container container) {
   if (container is Enum) {
     buffer.write('enum ${container.name}');
   } else if (container is Mixin) {
-    buffer.write('class ${container.name}');
+    buffer.write('mixin ${container.name}');
   } else if (container is ExtensionType) {
     buffer.write('extension type ${container.name}');
   } else if (container is Extension) {
@@ -32,15 +45,12 @@ String renderDeclaration(Container container) {
       buffer.write(
         typeParams
             .map((t) {
+              var rawName = t.element.name!;
               var bound = t.element.bound;
               if (bound != null && !bound.isDartCoreObject) {
-                var boundType = container.packageGraph.getTypeFor(
-                  bound,
-                  container.library,
-                );
-                return '${t.name} extends ${boundType.nameWithGenericsPlain}';
+                return '$rawName extends ${bound.getDisplayString()}';
               }
-              return t.name;
+              return rawName;
             })
             .join(', '),
       );
@@ -51,7 +61,7 @@ String renderDeclaration(Container container) {
   if (container is InheritingContainer) {
     // Supertype
     if (container.supertype != null) {
-      var supertypeName = container.supertype!.nameWithGenericsPlain;
+      var supertypeName = plainTypeName(container.supertype!);
       if (supertypeName != 'Object' && supertypeName != 'Enum') {
         buffer.write(' extends $supertypeName');
       }
@@ -60,21 +70,28 @@ String renderDeclaration(Container container) {
     // Mixins (only for Class)
     if (container is Class && container.mixedInTypes.isNotEmpty) {
       buffer.write(
-        '\n    with ${container.mixedInTypes.map((t) => t.nameWithGenericsPlain).join(', ')}',
+        '\n    with ${container.mixedInTypes.map(plainTypeName).join(', ')}',
       );
     }
 
     // Interfaces
     if (container.publicInterfaces.isNotEmpty) {
       buffer.write(
-        '\n    implements ${container.publicInterfaces.map((e) => e.nameWithGenericsPlain).join(', ')}',
+        '\n    implements ${container.publicInterfaces.map(plainTypeName).join(', ')}',
       );
     }
   }
 
+  // Mixin: show superclass constraints
+  if (container is Mixin && container.publicSuperclassConstraints.isNotEmpty) {
+    buffer.write(
+      ' on ${container.publicSuperclassConstraints.map(plainTypeName).join(', ')}',
+    );
+  }
+
   // Extension: show extended type
   if (container is Extension) {
-    buffer.write(' on ${container.extendedElement.nameWithGenericsPlain}');
+    buffer.write(' on ${plainTypeName(container.extendedElement)}');
   }
 
   return buffer.toString();
@@ -121,10 +138,10 @@ String renderSignature(ModelElement element) {
 
 String _returnTypeName(ModelElement element) {
   if (element is Method) {
-    return element.modelType.returnType.nameWithGenericsPlain;
+    return plainTypeName(element.modelType.returnType);
   }
   if (element is ModelFunction) {
-    return element.modelType.returnType.nameWithGenericsPlain;
+    return plainTypeName(element.modelType.returnType);
   }
   return 'void';
 }
@@ -165,7 +182,7 @@ String _renderParams(List<Parameter> parameters) {
 }
 
 String _renderParam(Parameter p) {
-  var typeName = p.modelType.nameWithGenericsPlain;
+  var typeName = plainTypeName(p.modelType);
   var result = '$typeName ${p.name}';
   if (p.hasDefaultValue) {
     result += ' = ${p.defaultValue}';

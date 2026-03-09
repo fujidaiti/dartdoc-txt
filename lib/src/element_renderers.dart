@@ -176,7 +176,7 @@ String renderTopLevelProperties(Library library) {
     buffer.writeln('## Constants');
     buffer.writeln();
     for (var c in constants) {
-      buffer.writeln('### ${c.name} → ${c.modelType.nameWithGenericsPlain}');
+      buffer.writeln('### ${c.name} → ${plainTypeName(c.modelType)}');
       buffer.writeln();
       if (c.constantValue != null) {
         buffer.writeln('`${unescapeHtml(c.constantValue!)}`');
@@ -196,9 +196,7 @@ String renderTopLevelProperties(Library library) {
     buffer.writeln('## Properties');
     buffer.writeln();
     for (var prop in properties) {
-      buffer.writeln(
-        '### ${prop.name} → ${prop.modelType.nameWithGenericsPlain}',
-      );
+      buffer.writeln('### ${prop.name} → ${plainTypeName(prop.modelType)}');
       buffer.writeln();
       var doc = _cleanDoc(prop.documentation);
       if (doc.isNotEmpty) {
@@ -363,9 +361,7 @@ String _renderConstructor(
 
 String _renderField(Field field) {
   var buffer = StringBuffer();
-  buffer.writeln(
-    '### ${field.name} → ${field.modelType.nameWithGenericsPlain}',
-  );
+  buffer.writeln('### ${field.name} → ${plainTypeName(field.modelType)}');
   buffer.writeln();
 
   var attributes = renderAttributes(field);
