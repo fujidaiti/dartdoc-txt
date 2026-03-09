@@ -58,7 +58,7 @@ class MarkdownRenderer {
       for (var lib in package.publicLibrariesSorted) {
         var summary = extractSummary(lib.documentation);
         var desc = summary.isNotEmpty ? ' — $summary' : '';
-        buffer.writeln('- [${lib.name}](${lib.dirName}/index.md)$desc');
+        buffer.writeln('- [${lib.name}](${lib.displayName}/index.md)$desc');
       }
       buffer.writeln();
     }
@@ -78,7 +78,7 @@ class MarkdownRenderer {
   }
 
   void _renderLibrary(Library library) {
-    var libDir = library.dirName;
+    var libDir = library.displayName;
     var buffer = StringBuffer();
 
     buffer.writeln('# ${library.name} library');

@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dartdoc/dartdoc.dart';
-import 'package:dartdoc/src/model/model.dart';
-
 import 'package:dartdoc_md/src/markdown_renderer.dart';
 
 const String version = '0.0.1';
