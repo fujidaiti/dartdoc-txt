@@ -1,0 +1,65 @@
+/// Extracts the first paragraph from a documentation string.
+String extractSummary(String? documentation) {
+  if (documentation == null || documentation.isEmpty) return '';
+  var firstParagraph = documentation.split(RegExp(r'\n\s*\n')).first;
+  return firstParagraph.trim();
+}
+
+/// Strips residual HTML artifacts from documentation text.
+///
+/// Removes `<iframe>`, `<video>`, and `<dartdoc-html>` elements that are
+/// injected by `{@youtube}`, `{@animation}`, and `{@inject-html}` directives.
+String stripResidualHtml(String text) {
+  // Strip <iframe ...>...</iframe> (from {@youtube})
+  text = text.replaceAll(
+    RegExp(r'<iframe[^>]*>.*?</iframe>', dotAll: true),
+    '',
+  );
+  // Strip <video ...>...</video> (from {@animation})
+  text = text.replaceAll(RegExp(r'<video[^>]*>.*?</video>', dotAll: true), '');
+  // Strip <dartdoc-html>...</dartdoc-html> (from {@inject-html})
+  text = text.replaceAll(
+    RegExp(r'<dartdoc-html>.*?</dartdoc-html>', dotAll: true),
+    '',
+  );
+  // Clean up extra blank lines left behind
+  text = text.replaceAll(RegExp(r'\n{3,}'), '\n\n');
+  return text.trim();
+}
+
+/// Counts the number of lines in source code text.
+int sourceLineCount(String? sourceCode) {
+  if (sourceCode == null || sourceCode.isEmpty) return 0;
+  return sourceCode.split('\n').length;
+}
+
+/// Makes a file-name-safe string from an element name.
+///
+/// Operators are converted to descriptive names.
+String safeFileName(String name) {
+  const operatorNames = {
+    'operator ==': 'operator_equals',
+    'operator +': 'operator_plus',
+    'operator -': 'operator_minus',
+    'operator *': 'operator_multiply',
+    'operator /': 'operator_divide',
+    'operator ~/': 'operator_truncate_divide',
+    'operator %': 'operator_modulo',
+    'operator <': 'operator_less',
+    'operator >': 'operator_greater',
+    'operator <=': 'operator_less_equal',
+    'operator >=': 'operator_greater_equal',
+    'operator &': 'operator_bitwise_and',
+    'operator |': 'operator_bitwise_or',
+    'operator ^': 'operator_bitwise_xor',
+    'operator ~': 'operator_bitwise_negate',
+    'operator <<': 'operator_shift_left',
+    'operator >>': 'operator_shift_right',
+    'operator >>>': 'operator_unsigned_shift_right',
+    'operator []': 'operator_index',
+    'operator []=': 'operator_index_assign',
+    'operator unary-': 'operator_unary_minus',
+  };
+
+  return operatorNames[name] ?? name;
+}
