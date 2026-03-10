@@ -20,6 +20,7 @@ Future<PackageGraph> buildFixtureGraph(String fixtureName) async {
     '--input',
     fixturePath,
     '--no-validate-links',
+    '--no-show-progress',
   ]);
   if (config == null) {
     throw StateError('Failed to parse options for fixture: $fixtureName');

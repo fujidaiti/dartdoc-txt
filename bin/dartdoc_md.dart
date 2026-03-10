@@ -69,6 +69,7 @@ Future<void> main(List<String> arguments) async {
     inputDir,
     '--output',
     outputDir,
+    '--no-show-progress',
   ]);
   if (config == null) {
     exitCode = 1;
