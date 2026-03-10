@@ -1,0 +1,5 @@
+name: multi_library
+version: 2.0.0
+
+environment:
+  sdk: ^3.10.0
