@@ -19,7 +19,7 @@ String extractSummary(String? documentation) {
   var paragraphs = documentation.split(RegExp(r'\n\s*\n'));
   for (var p in paragraphs) {
     var trimmed = p.trim();
-    if (trimmed.isNotEmpty) return trimmed;
+    if (trimmed.isNotEmpty) return trimmed.replaceAll(RegExp(r'\s*\n\s*'), ' ');
   }
   return '';
 }
