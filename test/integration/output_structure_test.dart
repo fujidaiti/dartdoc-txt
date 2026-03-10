@@ -79,7 +79,26 @@ void main() {
     test('creates detail page for method exceeding threshold', () {
       expect(
         File(
-          p.join(outputDir.path, 'basic_library', 'MyClass', 'processData.md'),
+          p.join(
+            outputDir.path,
+            'basic_library',
+            'MyClass',
+            'MyClass-processData.md',
+          ),
+        ).existsSync(),
+        isTrue,
+      );
+    });
+
+    test('creates detail page for named constructor exceeding threshold', () {
+      expect(
+        File(
+          p.join(
+            outputDir.path,
+            'basic_library',
+            'MyClass',
+            'MyClass-fromMap.md',
+          ),
         ).existsSync(),
         isTrue,
       );
@@ -205,7 +224,17 @@ void main() {
       var content = File(
         p.join(outputDir.path, 'basic_library', 'MyClass', 'MyClass.md'),
       ).readAsStringSync();
-      expect(content, contains('[full implementation](processData.md)'));
+      expect(
+        content,
+        contains('[full implementation](MyClass-processData.md)'),
+      );
+    });
+
+    test('links large named constructor to detail page', () {
+      var content = File(
+        p.join(outputDir.path, 'basic_library', 'MyClass', 'MyClass.md'),
+      ).readAsStringSync();
+      expect(content, contains('[full implementation](MyClass-fromMap.md)'));
     });
 
     test('does not include inherited Object members', () {
@@ -232,24 +261,66 @@ void main() {
   group('detail page content', () {
     test('contains parent.member title', () {
       var content = File(
-        p.join(outputDir.path, 'basic_library', 'MyClass', 'processData.md'),
+        p.join(
+          outputDir.path,
+          'basic_library',
+          'MyClass',
+          'MyClass-processData.md',
+        ),
       ).readAsStringSync();
       expect(content, contains('# MyClass.processData'));
     });
 
     test('contains signature', () {
       var content = File(
-        p.join(outputDir.path, 'basic_library', 'MyClass', 'processData.md'),
+        p.join(
+          outputDir.path,
+          'basic_library',
+          'MyClass',
+          'MyClass-processData.md',
+        ),
       ).readAsStringSync();
       expect(content, contains('processData(String input) → String'));
     });
 
     test('contains full source code', () {
       var content = File(
-        p.join(outputDir.path, 'basic_library', 'MyClass', 'processData.md'),
+        p.join(
+          outputDir.path,
+          'basic_library',
+          'MyClass',
+          'MyClass-processData.md',
+        ),
       ).readAsStringSync();
       expect(content, contains('## Source'));
       expect(content, contains('result = result.toLowerCase()'));
+    });
+  });
+
+  group('constructor detail page content', () {
+    test('contains parent.member title', () {
+      var content = File(
+        p.join(
+          outputDir.path,
+          'basic_library',
+          'MyClass',
+          'MyClass-fromMap.md',
+        ),
+      ).readAsStringSync();
+      expect(content, contains('# MyClass.fromMap'));
+    });
+
+    test('contains full source code', () {
+      var content = File(
+        p.join(
+          outputDir.path,
+          'basic_library',
+          'MyClass',
+          'MyClass-fromMap.md',
+        ),
+      ).readAsStringSync();
+      expect(content, contains('## Source'));
+      expect(content, contains("throw ArgumentError('name is required')"));
     });
   });
 }

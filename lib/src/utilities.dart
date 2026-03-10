@@ -52,6 +52,15 @@ int sourceLineCount(String? sourceCode) {
   return sourceCode.split('\n').length;
 }
 
+/// Returns the short name for a constructor, suitable for file names.
+///
+/// Unnamed constructors (whose name equals the container) return `'new'`.
+/// Named constructors like `MyClass.fromJson` return `'fromJson'`.
+String ctorBaseName(String ctorName, String containerName) {
+  if (ctorName == containerName) return 'new';
+  return ctorName.substring(containerName.length + 1);
+}
+
 /// Makes a file-name-safe string from an element name.
 ///
 /// Operators are converted to descriptive names.

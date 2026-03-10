@@ -92,6 +92,20 @@ void main() {
     });
   });
 
+  group('ctorBaseName', () {
+    test('returns "new" for unnamed constructor', () {
+      expect(ctorBaseName('MyClass', 'MyClass'), equals('new'));
+    });
+
+    test('returns suffix for named constructor', () {
+      expect(ctorBaseName('MyClass.fromJson', 'MyClass'), equals('fromJson'));
+    });
+
+    test('returns suffix for private named constructor', () {
+      expect(ctorBaseName('MyClass._internal', 'MyClass'), equals('_internal'));
+    });
+  });
+
   group('safeFileName', () {
     test('passes through normal names', () {
       expect(safeFileName('myMethod'), equals('myMethod'));

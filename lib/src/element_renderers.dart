@@ -248,7 +248,10 @@ String renderDetailPage(
   RenderOptions options,
 ) {
   var buffer = StringBuffer();
-  buffer.writeln('# $parentName.${element.name}');
+  var title = element is Constructor
+      ? (element.name == parentName ? '$parentName.new' : element.name)
+      : '$parentName.${element.name}';
+  buffer.writeln('# $title');
   buffer.writeln();
   buffer.writeln('```dart');
   buffer.writeln(renderSignature(element));
@@ -346,7 +349,12 @@ String _renderConstructor(
   }
 
   if (options.includeSource) {
-    _writeSource(buffer, ctor, safeFileName(ctor.name), options);
+    _writeSource(
+      buffer,
+      ctor,
+      '$containerName-${ctorBaseName(ctor.name, containerName)}',
+      options,
+    );
   }
 
   buffer.writeln('---');
@@ -408,7 +416,12 @@ String _renderMethod(
   }
 
   if (options.includeSource && !method.element.isAbstract) {
-    _writeSource(buffer, method, safeFileName(method.name), options);
+    _writeSource(
+      buffer,
+      method,
+      '$containerName-${safeFileName(method.name)}',
+      options,
+    );
   }
 
   buffer.writeln('---');
@@ -433,7 +446,7 @@ String _renderOperator(
 
   if (options.includeSource && !op.element.isAbstract) {
     var safeName = safeFileName('operator ${op.element.name}');
-    _writeSource(buffer, op, safeName, options);
+    _writeSource(buffer, op, '$containerName-$safeName', options);
   }
 
   buffer.writeln('---');

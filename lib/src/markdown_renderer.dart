@@ -215,7 +215,10 @@ class MarkdownRenderer {
         if (needsDetailPage(ctor, _options)) {
           var content = renderDetailPage(ctor, container.name, _options);
           _writeFile(
-            p.join(detailDir, '${safeFileName(ctor.name)}.md'),
+            p.join(
+              detailDir,
+              '${container.name}-${ctorBaseName(ctor.name, container.name)}.md',
+            ),
             content,
           );
         }
@@ -229,7 +232,10 @@ class MarkdownRenderer {
       if (needsDetailPage(method, _options)) {
         var content = renderDetailPage(method, container.name, _options);
         _writeFile(
-          p.join(detailDir, '${safeFileName(method.name)}.md'),
+          p.join(
+            detailDir,
+            '${container.name}-${safeFileName(method.name)}.md',
+          ),
           content,
         );
       }
@@ -238,7 +244,10 @@ class MarkdownRenderer {
       if (needsDetailPage(method, _options)) {
         var content = renderDetailPage(method, container.name, _options);
         _writeFile(
-          p.join(detailDir, '${safeFileName(method.name)}.md'),
+          p.join(
+            detailDir,
+            '${container.name}-${safeFileName(method.name)}.md',
+          ),
           content,
         );
       }
@@ -249,7 +258,10 @@ class MarkdownRenderer {
       if (needsDetailPage(op, _options)) {
         var safeName = safeFileName('operator ${op.element.name}');
         var content = renderDetailPage(op, container.name, _options);
-        _writeFile(p.join(detailDir, '$safeName.md'), content);
+        _writeFile(
+          p.join(detailDir, '${container.name}-$safeName.md'),
+          content,
+        );
       }
     }
   }
