@@ -11,14 +11,14 @@ Future<void> main(List<String> arguments) async {
     ..addOption(
       'input',
       abbr: 'i',
-      help: 'Input directory (default: current directory).',
-      defaultsTo: '.',
+      help: 'Input directory.',
+      mandatory: true,
     )
     ..addOption(
       'output',
       abbr: 'o',
-      help: 'Output directory (default: doc/md).',
-      defaultsTo: 'doc/md',
+      help: 'Output directory.',
+      mandatory: true,
     )
     ..addOption(
       'source-threshold',
@@ -58,8 +58,18 @@ Future<void> main(List<String> arguments) async {
     return;
   }
 
-  final inputDir = results.option('input')!;
-  final outputDir = results.option('output')!;
+  final String inputDir;
+  final String outputDir;
+  try {
+    inputDir = results.option('input')!;
+    outputDir = results.option('output')!;
+  } on ArgumentError catch (e) {
+    stderr.writeln(e.message);
+    stderr.writeln('');
+    _printUsage(argParser);
+    exitCode = 64;
+    return;
+  }
   final sourceThreshold = int.parse(results.option('source-threshold')!);
   final includeSource = results.flag('include-source');
 
