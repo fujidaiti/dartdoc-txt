@@ -200,7 +200,7 @@ class MarkdownRenderer {
 
   void _renderContainerFile(Container container, String libDir) {
     var content = renderContainer(container, _options);
-    _writeFile(p.join(libDir, '${container.name}.md'), content);
+    _writeFile(p.join(libDir, container.name, '${container.name}.md'), content);
 
     // Create detail pages for members with large source
     _renderDetailPagesForContainer(container, libDir);
@@ -292,7 +292,9 @@ class MarkdownRenderer {
     for (var element in elements) {
       var summary = extractSummary(element.documentation);
       var desc = summary.isNotEmpty ? ' — $summary' : '';
-      buffer.writeln('- [${element.name}](${element.name}.md)$desc');
+      buffer.writeln(
+        '- [${element.name}](${element.name}/${element.name}.md)$desc',
+      );
     }
     buffer.writeln();
   }

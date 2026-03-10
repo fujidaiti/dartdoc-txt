@@ -70,12 +70,15 @@ void main() {
 
     test('contains Classes section with Greeter', () {
       expect(content, contains('### Classes'));
-      expect(content, contains('[Greeter](categories/Greeter.md)'));
+      expect(content, contains('[Greeter](categories/Greeter/Greeter.md)'));
     });
 
     test('contains Enums section with BasicColor', () {
       expect(content, contains('### Enums'));
-      expect(content, contains('[BasicColor](categories/BasicColor.md)'));
+      expect(
+        content,
+        contains('[BasicColor](categories/BasicColor/BasicColor.md)'),
+      );
     });
 
     test('does not contain elements from other categories', () {
@@ -99,7 +102,10 @@ void main() {
 
     test('contains Classes section with StringHelper', () {
       expect(content, contains('### Classes'));
-      expect(content, contains('[StringHelper](categories/StringHelper.md)'));
+      expect(
+        content,
+        contains('[StringHelper](categories/StringHelper/StringHelper.md)'),
+      );
     });
 
     test('contains Functions section with capitalize as plain text', () {

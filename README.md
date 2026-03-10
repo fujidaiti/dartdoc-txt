@@ -36,8 +36,8 @@ dart run dartdoc_md -i path/to/my_package -o docs
 │   └── Getting-Started.md      # Category pages (from dartdoc_options.yaml)
 └── <library>/
     ├── index.md                # Library overview + element listing
-    ├── ClassName.md            # One file per class/enum/mixin/extension
     ├── ClassName/
+    │   ├── ClassName.md        # One file per class/enum/mixin/extension
     │   └── methodName.md       # Detail pages for large members
     ├── top-level-functions.md  # Grouped top-level functions
     ├── top-level-properties.md # Properties and constants

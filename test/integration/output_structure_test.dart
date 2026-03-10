@@ -34,7 +34,7 @@ void main() {
     test('creates class file', () {
       expect(
         File(
-          p.join(outputDir.path, 'basic_library', 'MyClass.md'),
+          p.join(outputDir.path, 'basic_library', 'MyClass', 'MyClass.md'),
         ).existsSync(),
         isTrue,
       );
@@ -42,7 +42,9 @@ void main() {
 
     test('creates enum file', () {
       expect(
-        File(p.join(outputDir.path, 'basic_library', 'Color.md')).existsSync(),
+        File(
+          p.join(outputDir.path, 'basic_library', 'Color', 'Color.md'),
+        ).existsSync(),
         isTrue,
       );
     });
@@ -98,7 +100,7 @@ void main() {
       // MyClass is defined in lib/src/my_class.dart but exported by lib/basic_library.dart
       expect(
         File(
-          p.join(outputDir.path, 'basic_library', 'MyClass.md'),
+          p.join(outputDir.path, 'basic_library', 'MyClass', 'MyClass.md'),
         ).existsSync(),
         isTrue,
       );
@@ -134,14 +136,14 @@ void main() {
       var content = File(
         p.join(outputDir.path, 'basic_library', 'index.md'),
       ).readAsStringSync();
-      expect(content, contains('[MyClass](MyClass.md)'));
+      expect(content, contains('[MyClass](MyClass/MyClass.md)'));
     });
 
     test('lists enums', () {
       var content = File(
         p.join(outputDir.path, 'basic_library', 'index.md'),
       ).readAsStringSync();
-      expect(content, contains('[Color](Color.md)'));
+      expect(content, contains('[Color](Color/Color.md)'));
     });
 
     test('references top-level functions file', () {
@@ -155,21 +157,21 @@ void main() {
   group('class file content', () {
     test('contains class declaration', () {
       var content = File(
-        p.join(outputDir.path, 'basic_library', 'MyClass.md'),
+        p.join(outputDir.path, 'basic_library', 'MyClass', 'MyClass.md'),
       ).readAsStringSync();
       expect(content, contains('```dart\nclass MyClass\n```'));
     });
 
     test('contains documentation', () {
       var content = File(
-        p.join(outputDir.path, 'basic_library', 'MyClass.md'),
+        p.join(outputDir.path, 'basic_library', 'MyClass', 'MyClass.md'),
       ).readAsStringSync();
       expect(content, contains('A simple class with documentation.'));
     });
 
     test('contains constructors section', () {
       var content = File(
-        p.join(outputDir.path, 'basic_library', 'MyClass.md'),
+        p.join(outputDir.path, 'basic_library', 'MyClass', 'MyClass.md'),
       ).readAsStringSync();
       expect(content, contains('## Constructors'));
       expect(content, contains('### MyClass.new('));
@@ -177,7 +179,7 @@ void main() {
 
     test('contains properties section', () {
       var content = File(
-        p.join(outputDir.path, 'basic_library', 'MyClass.md'),
+        p.join(outputDir.path, 'basic_library', 'MyClass', 'MyClass.md'),
       ).readAsStringSync();
       expect(content, contains('## Properties'));
       expect(content, contains('### name → String'));
@@ -185,7 +187,7 @@ void main() {
 
     test('contains methods section', () {
       var content = File(
-        p.join(outputDir.path, 'basic_library', 'MyClass.md'),
+        p.join(outputDir.path, 'basic_library', 'MyClass', 'MyClass.md'),
       ).readAsStringSync();
       expect(content, contains('## Methods'));
       expect(content, contains('### greet() → String'));
@@ -193,7 +195,7 @@ void main() {
 
     test('embeds small method source inline', () {
       var content = File(
-        p.join(outputDir.path, 'basic_library', 'MyClass.md'),
+        p.join(outputDir.path, 'basic_library', 'MyClass', 'MyClass.md'),
       ).readAsStringSync();
       // greet() is small enough to be inline
       expect(content, contains("return 'Hello, \$name!';"));
@@ -201,17 +203,14 @@ void main() {
 
     test('links large method to detail page', () {
       var content = File(
-        p.join(outputDir.path, 'basic_library', 'MyClass.md'),
+        p.join(outputDir.path, 'basic_library', 'MyClass', 'MyClass.md'),
       ).readAsStringSync();
-      expect(
-        content,
-        contains('[full implementation](MyClass/processData.md)'),
-      );
+      expect(content, contains('[full implementation](processData.md)'));
     });
 
     test('does not include inherited Object members', () {
       var content = File(
-        p.join(outputDir.path, 'basic_library', 'MyClass.md'),
+        p.join(outputDir.path, 'basic_library', 'MyClass', 'MyClass.md'),
       ).readAsStringSync();
       // Should NOT have hashCode, runtimeType, noSuchMethod, operator ==
       expect(content, isNot(contains('### hashCode')));
@@ -221,7 +220,7 @@ void main() {
 
     test('source code has no HTML entities', () {
       var content = File(
-        p.join(outputDir.path, 'basic_library', 'MyClass.md'),
+        p.join(outputDir.path, 'basic_library', 'MyClass', 'MyClass.md'),
       ).readAsStringSync();
       expect(content, isNot(contains('&#39;')));
       expect(content, isNot(contains('&amp;')));

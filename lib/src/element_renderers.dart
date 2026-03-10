@@ -346,12 +346,7 @@ String _renderConstructor(
   }
 
   if (options.includeSource) {
-    _writeSource(
-      buffer,
-      ctor,
-      '$containerName/${safeFileName(ctor.name)}',
-      options,
-    );
+    _writeSource(buffer, ctor, safeFileName(ctor.name), options);
   }
 
   buffer.writeln('---');
@@ -413,12 +408,7 @@ String _renderMethod(
   }
 
   if (options.includeSource && !method.element.isAbstract) {
-    _writeSource(
-      buffer,
-      method,
-      '$containerName/${safeFileName(method.name)}',
-      options,
-    );
+    _writeSource(buffer, method, safeFileName(method.name), options);
   }
 
   buffer.writeln('---');
@@ -443,7 +433,7 @@ String _renderOperator(
 
   if (options.includeSource && !op.element.isAbstract) {
     var safeName = safeFileName('operator ${op.element.name}');
-    _writeSource(buffer, op, '$containerName/$safeName', options);
+    _writeSource(buffer, op, safeName, options);
   }
 
   buffer.writeln('---');
@@ -500,7 +490,7 @@ void _writeCategorySection(
     var lib = element.canonicalLibrary ?? element.library;
     if (element is Container && lib != null) {
       buffer.writeln(
-        '- [${element.name}](${lib.displayName}/${element.name}.md)',
+        '- [${element.name}](${lib.displayName}/${element.name}/${element.name}.md)',
       );
     } else {
       buffer.writeln('- ${element.name}');
