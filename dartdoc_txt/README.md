@@ -1,8 +1,11 @@
 # dartdoc_txt
 
-A CLI tool that generates Markdown documentation from Dart/Flutter packages, optimized for LLM consumption.
+A CLI tool that generates Markdown documentation from Dart/Flutter packages,
+optimized for LLM consumption.
 
-Unlike `dartdoc` (which generates interactive HTML), `dartdoc_txt` reuses dartdoc's analysis engine but produces structured, grep-friendly Markdown files designed for language models to traverse and understand.
+Unlike `dartdoc` (which generates interactive HTML), `dartdoc_txt` reuses
+dartdoc's analysis engine but produces structured, grep-friendly Markdown files
+designed for language models to traverse and understand.
 
 ## Usage
 
@@ -46,9 +49,16 @@ dart run dartdoc_txt -i path/to/my_package -o docs
 
 ## Features
 
-- **LLM-optimized output** — Structured Markdown with full type signatures, modifiers, and doc comments
-- **Smart source embedding** — Short source code is inlined; long source is linked to separate detail pages
-- **Public API only** — Filters out private elements and `lib/src/` internal libraries
-- **Category/topic support** — Reads `dartdoc_options.yaml` for category definitions and generates topic pages
-- **Doc comment directives** — Resolves `{@template}`, `{@macro}`, `{@example}` and strips unsupported directives
-- **Comprehensive coverage** — Classes, enums, mixins, extensions, extension types, constructors, methods, properties, operators, typedefs, and top-level elements
+- **LLM-optimized output** — Structured Markdown with full type signatures,
+  modifiers, and doc comments
+- **Smart source embedding** — Short source code is inlined; long source is
+  linked to separate detail pages
+- **Public API only** — Filters out private elements and `lib/src/` internal
+  libraries
+- **Category/topic support** — Reads `dartdoc_options.yaml` for category
+  definitions and generates topic pages
+- **Doc comment directives** — Resolves `{@template}`, `{@macro}`, `{@example}`
+  and strips unsupported directives
+- **Comprehensive coverage** — Classes, enums, mixins, extensions, extension
+  types, constructors, methods, properties, operators, typedefs, and top-level
+  elements

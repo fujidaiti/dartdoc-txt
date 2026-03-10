@@ -3,12 +3,8 @@
     "dart": {
       "type": "stdio",
       "command": "fvm",
-      "args": [
-        "dart",
-        "mcp-server"
-      ],
+      "args": ["dart", "mcp-server"],
       "env": {}
     }
   }
 }
-
