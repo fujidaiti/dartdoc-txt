@@ -30,7 +30,8 @@ class MarkdownRenderer {
   Future<void> render() async {
     var package = packageGraph.defaultPackage;
 
-    _renderPackageIndex(package);
+    _renderReadme(package);
+    _renderIndex(package);
 
     for (var lib in _documentedLibraries(package)) {
       _renderLibrary(lib);
@@ -39,30 +40,19 @@ class MarkdownRenderer {
     _renderCategories(package);
   }
 
-  void _renderPackageIndex(Package package) {
+  void _renderReadme(Package package) {
+    var doc = package.documentation;
+    if (doc == null || doc.isEmpty) return;
+
+    _writeFile('README.md', stripResidualHtml(doc));
+  }
+
+  void _renderIndex(Package package) {
     var buffer = StringBuffer();
-    buffer.writeln('# ${package.name}');
+    buffer.writeln('# ${package.name} Index');
     buffer.writeln();
     buffer.writeln('Version: ${package.version}');
     buffer.writeln();
-
-    var doc = package.documentation;
-    if (doc != null && doc.isNotEmpty) {
-      buffer.writeln(stripResidualHtml(doc));
-      buffer.writeln();
-    }
-
-    var documentedLibraries = _documentedLibraries(package);
-    if (documentedLibraries.isNotEmpty) {
-      buffer.writeln('## Libraries');
-      buffer.writeln();
-      for (var lib in documentedLibraries) {
-        var summary = extractSummary(lib.documentation);
-        var desc = summary.isNotEmpty ? ' — $summary' : '';
-        buffer.writeln('- [${lib.name}](${lib.displayName}/index.md)$desc');
-      }
-      buffer.writeln();
-    }
 
     if (package.hasDocumentedCategories) {
       buffer.writeln('## Topics');
@@ -77,14 +67,17 @@ class MarkdownRenderer {
       buffer.writeln();
     }
 
-    _writeFile('index.md', buffer.toString());
+    for (var lib in _documentedLibraries(package)) {
+      _writeLibrarySection(buffer, lib);
+    }
+
+    _writeFile('INDEX.md', buffer.toString());
   }
 
-  void _renderLibrary(Library library) {
+  void _writeLibrarySection(StringBuffer buffer, Library library) {
     var libDir = library.displayName;
-    var buffer = StringBuffer();
 
-    buffer.writeln('# ${library.name} library');
+    buffer.writeln('## ${library.name} library');
     buffer.writeln();
 
     var doc = library.documentation;
@@ -99,6 +92,7 @@ class MarkdownRenderer {
       'Classes',
       library.classes.where((c) => c.isPublic).toList(),
       libDir,
+      library.name,
     );
 
     // Enums
@@ -107,6 +101,7 @@ class MarkdownRenderer {
       'Enums',
       library.enums.where((e) => e.isPublic).toList(),
       libDir,
+      library.name,
     );
 
     // Mixins
@@ -115,6 +110,7 @@ class MarkdownRenderer {
       'Mixins',
       library.mixins.where((m) => m.isPublic).toList(),
       libDir,
+      library.name,
     );
 
     // Extensions
@@ -123,6 +119,7 @@ class MarkdownRenderer {
       'Extensions',
       library.extensions.where((e) => e.isPublic).toList(),
       libDir,
+      library.name,
     );
 
     // Extension Types
@@ -131,15 +128,16 @@ class MarkdownRenderer {
       'Extension Types',
       library.extensionTypes.where((e) => e.isPublic).toList(),
       libDir,
+      library.name,
     );
 
     // Functions reference
     var publicFunctions = library.functions.where((f) => f.isPublic).toList();
     if (publicFunctions.isNotEmpty) {
-      buffer.writeln('## Functions');
+      buffer.writeln('### Functions from ${library.name}');
       buffer.writeln();
       buffer.writeln(
-        'See [top-level-functions.md](top-level-functions/top-level-functions.md) for more details.',
+        'See [top-level-functions.md]($libDir/top-level-functions/top-level-functions.md) for more details.',
       );
       buffer.writeln();
       for (var func in publicFunctions) {
@@ -151,14 +149,13 @@ class MarkdownRenderer {
     }
 
     // Properties reference
-    var publicProperties =
-        library.properties.where((p) => p.isPublic).toList();
+    var publicProperties = library.properties.where((p) => p.isPublic).toList();
     var publicConstants = library.constants.where((c) => c.isPublic).toList();
     if (publicProperties.isNotEmpty || publicConstants.isNotEmpty) {
-      buffer.writeln('## Properties');
+      buffer.writeln('### Properties from ${library.name}');
       buffer.writeln();
       buffer.writeln(
-        'See [top-level-properties.md](top-level-properties/top-level-properties.md) for more details.',
+        'See [top-level-properties.md]($libDir/top-level-properties/top-level-properties.md) for more details.',
       );
       buffer.writeln();
       for (var constant in publicConstants) {
@@ -177,10 +174,10 @@ class MarkdownRenderer {
     // Typedefs reference
     var publicTypedefs = library.typedefs.where((t) => t.isPublic).toList();
     if (publicTypedefs.isNotEmpty) {
-      buffer.writeln('## Typedefs');
+      buffer.writeln('### Typedefs from ${library.name}');
       buffer.writeln();
       buffer.writeln(
-        'See [typedefs.md](typedefs/typedefs.md) for more details.',
+        'See [typedefs.md]($libDir/typedefs/typedefs.md) for more details.',
       );
       buffer.writeln();
       for (var typedef in publicTypedefs) {
@@ -190,8 +187,10 @@ class MarkdownRenderer {
       }
       buffer.writeln();
     }
+  }
 
-    _writeFile(p.join(libDir, 'index.md'), buffer.toString());
+  void _renderLibrary(Library library) {
+    var libDir = library.displayName;
 
     // Render container files
     for (var cls in library.classes.where((c) => c.isPublic)) {
@@ -334,16 +333,17 @@ class MarkdownRenderer {
     String heading,
     List<ModelElement> elements,
     String libDir,
+    String libraryName,
   ) {
     if (elements.isEmpty) return;
 
-    buffer.writeln('## $heading');
+    buffer.writeln('### $heading from $libraryName');
     buffer.writeln();
     for (var element in elements) {
       var summary = extractSummary(element.documentation);
       var desc = summary.isNotEmpty ? ' — $summary' : '';
       buffer.writeln(
-        '- [${element.name}](${element.name}/${element.name}.md)$desc',
+        '- [${element.name}]($libDir/${element.name}/${element.name}.md)$desc',
       );
     }
     buffer.writeln();

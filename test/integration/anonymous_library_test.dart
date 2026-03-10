@@ -31,8 +31,8 @@ void main() {
     });
 
     test('package index links use clean path', () {
-      var content = File(p.join(outputDir.path, 'index.md')).readAsStringSync();
-      expect(content, contains('anonymous_library/index.md'));
+      var content = File(p.join(outputDir.path, 'INDEX.md')).readAsStringSync();
+      expect(content, contains('## anonymous_library library'));
       expect(content, isNot(contains('file-')));
     });
   });

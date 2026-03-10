@@ -41,7 +41,9 @@ void main() {
 
     test('collapses intra-paragraph newlines into spaces', () {
       expect(
-        extractSummary('A widget that dismisses\nthe keyboard when\nthe user drags.'),
+        extractSummary(
+          'A widget that dismisses\nthe keyboard when\nthe user drags.',
+        ),
         equals('A widget that dismisses the keyboard when the user drags.'),
       );
     });

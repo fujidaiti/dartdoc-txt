@@ -16,14 +16,8 @@ void main() {
 
   group('multi-library INDEX.md structure', () {
     test('creates separate directories for each library', () {
-      expect(
-        Directory(p.join(outputDir.path, 'alpha')).existsSync(),
-        isTrue,
-      );
-      expect(
-        Directory(p.join(outputDir.path, 'beta')).existsSync(),
-        isTrue,
-      );
+      expect(Directory(p.join(outputDir.path, 'alpha')).existsSync(), isTrue);
+      expect(Directory(p.join(outputDir.path, 'beta')).existsSync(), isTrue);
     });
 
     test('does not create per-library INDEX.md in either directory', () {
@@ -54,10 +48,7 @@ void main() {
   group('alpha library section', () {
     test('contains Classes heading with Greeter link', () {
       expect(indexContent, contains('### Classes from alpha'));
-      expect(
-        indexContent,
-        contains('[Greeter](alpha/Greeter/Greeter.md)'),
-      );
+      expect(indexContent, contains('[Greeter](alpha/Greeter/Greeter.md)'));
     });
 
     test('contains Functions heading with hello', () {
@@ -73,10 +64,7 @@ void main() {
   group('beta library section', () {
     test('contains Enums heading with Shape link', () {
       expect(indexContent, contains('### Enums from beta'));
-      expect(
-        indexContent,
-        contains('[Shape](beta/Shape/Shape.md)'),
-      );
+      expect(indexContent, contains('[Shape](beta/Shape/Shape.md)'));
     });
 
     test('contains library description', () {

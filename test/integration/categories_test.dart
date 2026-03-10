@@ -36,17 +36,17 @@ void main() {
 
   group('package index topics section', () {
     test('contains Topics heading', () {
-      var content = File(p.join(outputDir.path, 'index.md')).readAsStringSync();
+      var content = File(p.join(outputDir.path, 'INDEX.md')).readAsStringSync();
       expect(content, contains('## Topics'));
     });
 
     test('links to Getting Started topic file', () {
-      var content = File(p.join(outputDir.path, 'index.md')).readAsStringSync();
+      var content = File(p.join(outputDir.path, 'INDEX.md')).readAsStringSync();
       expect(content, contains('[Getting Started](topics/getting-started.md)'));
     });
 
     test('links to Utilities topic file', () {
-      var content = File(p.join(outputDir.path, 'index.md')).readAsStringSync();
+      var content = File(p.join(outputDir.path, 'INDEX.md')).readAsStringSync();
       expect(content, contains('[Utilities](topics/utilities.md)'));
     });
   });

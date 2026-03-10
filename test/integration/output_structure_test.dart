@@ -13,8 +13,8 @@ void main() {
   });
 
   group('output structure', () {
-    test('creates index.md at root', () {
-      expect(File(p.join(outputDir.path, 'index.md')).existsSync(), isTrue);
+    test('creates INDEX.md at root', () {
+      expect(File(p.join(outputDir.path, 'INDEX.md')).existsSync(), isTrue);
     });
 
     test('creates library directory', () {
@@ -24,11 +24,15 @@ void main() {
       );
     });
 
-    test('creates library index.md', () {
+    test('does not create library INDEX.md', () {
       expect(
-        File(p.join(outputDir.path, 'basic_library', 'index.md')).existsSync(),
-        isTrue,
+        File(p.join(outputDir.path, 'basic_library', 'INDEX.md')).existsSync(),
+        isFalse,
       );
+    });
+
+    test('creates README.md at root', () {
+      expect(File(p.join(outputDir.path, 'README.md')).existsSync(), isTrue);
     });
 
     test('creates class file', () {
@@ -120,8 +124,8 @@ void main() {
       expect(Directory(p.join(outputDir.path, 'src')).existsSync(), isFalse);
     });
 
-    test('index.md does not reference src libraries', () {
-      var content = File(p.join(outputDir.path, 'index.md')).readAsStringSync();
+    test('INDEX.md does not reference src libraries', () {
+      var content = File(p.join(outputDir.path, 'INDEX.md')).readAsStringSync();
       expect(content, isNot(contains('src/')));
     });
 
@@ -138,79 +142,68 @@ void main() {
 
   group('package index content', () {
     test('contains package name', () {
-      var content = File(p.join(outputDir.path, 'index.md')).readAsStringSync();
-      expect(content, contains('# basic_library'));
+      var content = File(p.join(outputDir.path, 'INDEX.md')).readAsStringSync();
+      expect(content, contains('# basic_library Index'));
     });
 
     test('contains version', () {
-      var content = File(p.join(outputDir.path, 'index.md')).readAsStringSync();
+      var content = File(p.join(outputDir.path, 'INDEX.md')).readAsStringSync();
       expect(content, contains('Version: 1.0.0'));
     });
 
-    test('contains library link', () {
-      var content = File(p.join(outputDir.path, 'index.md')).readAsStringSync();
-      expect(content, contains('[basic_library](basic_library/index.md)'));
+    test('contains library heading', () {
+      var content = File(p.join(outputDir.path, 'INDEX.md')).readAsStringSync();
+      expect(content, contains('## basic_library library'));
     });
   });
 
   group('library index content', () {
     test('contains library name', () {
-      var content = File(
-        p.join(outputDir.path, 'basic_library', 'index.md'),
-      ).readAsStringSync();
-      expect(content, contains('# basic_library library'));
+      var content = File(p.join(outputDir.path, 'INDEX.md')).readAsStringSync();
+      expect(content, contains('## basic_library library'));
     });
 
     test('lists classes', () {
-      var content = File(
-        p.join(outputDir.path, 'basic_library', 'index.md'),
-      ).readAsStringSync();
-      expect(content, contains('[MyClass](MyClass/MyClass.md)'));
+      var content = File(p.join(outputDir.path, 'INDEX.md')).readAsStringSync();
+      expect(content, contains('[MyClass](basic_library/MyClass/MyClass.md)'));
     });
 
     test('lists enums', () {
-      var content = File(
-        p.join(outputDir.path, 'basic_library', 'index.md'),
-      ).readAsStringSync();
-      expect(content, contains('[Color](Color/Color.md)'));
+      var content = File(p.join(outputDir.path, 'INDEX.md')).readAsStringSync();
+      expect(content, contains('[Color](basic_library/Color/Color.md)'));
     });
 
     test('references top-level functions file', () {
-      var content = File(
-        p.join(outputDir.path, 'basic_library', 'index.md'),
-      ).readAsStringSync();
-      expect(content, contains('top-level-functions/top-level-functions.md'));
+      var content = File(p.join(outputDir.path, 'INDEX.md')).readAsStringSync();
+      expect(
+        content,
+        contains('basic_library/top-level-functions/top-level-functions.md'),
+      );
     });
 
     test('"See" references include "for more details."', () {
-      var content = File(
-        p.join(outputDir.path, 'basic_library', 'index.md'),
-      ).readAsStringSync();
+      var content = File(p.join(outputDir.path, 'INDEX.md')).readAsStringSync();
       expect(
         content,
         contains(
-          'See [top-level-functions.md](top-level-functions/top-level-functions.md) for more details.',
+          'See [top-level-functions.md](basic_library/top-level-functions/top-level-functions.md) for more details.',
         ),
       );
       expect(
         content,
         contains(
-          'See [top-level-properties.md](top-level-properties/top-level-properties.md) for more details.',
+          'See [top-level-properties.md](basic_library/top-level-properties/top-level-properties.md) for more details.',
         ),
       );
     });
 
     test('lists functions inline', () {
-      var content = File(
-        p.join(outputDir.path, 'basic_library', 'index.md'),
-      ).readAsStringSync();
+      var content = File(p.join(outputDir.path, 'INDEX.md')).readAsStringSync();
       expect(content, contains('- add — A simple top-level function.'));
     });
 
     test('lists properties inline', () {
-      var content = File(
-        p.join(outputDir.path, 'basic_library', 'index.md'),
-      ).readAsStringSync();
+      var content = File(p.join(outputDir.path, 'INDEX.md')).readAsStringSync();
       expect(content, contains('- defaultName — A top-level constant.'));
       expect(content, contains('- globalCounter — A top-level variable.'));
     });
@@ -376,7 +369,7 @@ void main() {
 
     test('lists typedefs inline', () {
       var content = File(
-        p.join(edgeCasesOutputDir.path, 'edge_cases', 'index.md'),
+        p.join(edgeCasesOutputDir.path, 'INDEX.md'),
       ).readAsStringSync();
       expect(
         content,
@@ -388,11 +381,13 @@ void main() {
 
     test('"See" reference for typedefs includes "for more details."', () {
       var content = File(
-        p.join(edgeCasesOutputDir.path, 'edge_cases', 'index.md'),
+        p.join(edgeCasesOutputDir.path, 'INDEX.md'),
       ).readAsStringSync();
       expect(
         content,
-        contains('See [typedefs.md](typedefs/typedefs.md) for more details.'),
+        contains(
+          'See [typedefs.md](edge_cases/typedefs/typedefs.md) for more details.',
+        ),
       );
     });
   });
