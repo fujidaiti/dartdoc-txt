@@ -1,6 +1,7 @@
 import 'package:dartdoc/src/model/model.dart';
 
 import 'signature_builder.dart';
+import 'template_loader.dart';
 import 'utilities.dart';
 
 /// Options controlling rendering behavior.
@@ -15,233 +16,108 @@ class RenderOptions {
 }
 
 /// Renders a container (Class, Enum, Mixin, ExtensionType) to Markdown.
-String renderContainer(Container container, RenderOptions options) {
-  var buffer = StringBuffer();
-
-  // Title
-  buffer.writeln('# ${container.name}');
-  buffer.writeln();
-
-  // Declaration
-  buffer.writeln('```dart');
-  buffer.writeln(renderDeclaration(container));
-  buffer.writeln('```');
-  buffer.writeln();
-
-  // Deprecation
-  if (container.isDeprecated) {
-    buffer.writeln(renderDeprecation(container));
-    buffer.writeln();
-  }
-
-  // Documentation
-  var doc = _cleanDoc(container.documentation);
-  if (doc.isNotEmpty) {
-    buffer.writeln(doc);
-    buffer.writeln();
-  }
-
-  // Enum values
-  if (container is Enum && container.publicEnumValues.isNotEmpty) {
-    buffer.writeln('## Enum Values');
-    buffer.writeln();
-    for (var value in container.publicEnumValues) {
-      buffer.writeln('### ${value.name}');
-      buffer.writeln();
-      var valueDoc = _cleanDoc(value.documentation);
-      if (valueDoc.isNotEmpty) {
-        buffer.writeln(valueDoc);
-        buffer.writeln();
-      }
-      buffer.writeln('---');
-      buffer.writeln();
-    }
-  }
-
-  // Constructors
-  if (container is Constructable && container.hasPublicConstructors) {
-    buffer.writeln('## Constructors');
-    buffer.writeln();
-    for (var ctor in container.publicConstructorsSorted) {
-      buffer.write(_renderConstructor(ctor, container.name, options));
-    }
-  }
-
-  // Properties (declared only, not inherited, excluding enum values)
-  var publicFields = container.declaredFields
-      .where((f) => f.isPublic && !f.isEnumValue)
-      .where((f) => f.name != 'hashCode')
-      .toList();
-  if (publicFields.isNotEmpty) {
-    buffer.writeln('## Properties');
-    buffer.writeln();
-    for (var field in publicFields) {
-      buffer.write(_renderField(field));
-    }
-  }
-
-  // Methods (declared only, not inherited)
-  var publicMethods = container.declaredMethods
-      .whereType<Method>()
-      .where((m) => !m.isOperator)
-      .where((m) => m.isPublic)
-      .where((m) => m.name != 'toString')
-      .toList();
-  var publicStaticMethods = container.staticMethods
-      .where((m) => m.isPublic)
-      .toList();
-  var allPublicMethods = [...publicMethods, ...publicStaticMethods];
-  if (allPublicMethods.isNotEmpty) {
-    buffer.writeln('## Methods');
-    buffer.writeln();
-    for (var method in allPublicMethods) {
-      buffer.write(_renderMethod(method, container.name, options));
-    }
-  }
-
-  // Operators (declared only, not inherited)
-  var publicOperators = container.declaredOperators
-      .where((o) => o.isPublic)
-      .where((o) => o.name != 'operator ==')
-      .toList();
-  if (publicOperators.isNotEmpty) {
-    buffer.writeln('## Operators');
-    buffer.writeln();
-    for (var op in publicOperators) {
-      buffer.write(_renderOperator(op, container.name, options));
-    }
-  }
-
-  return buffer.toString();
+String renderContainer(
+  Container container,
+  RenderOptions options,
+  Templates templates,
+) {
+  var data = _containerData(container, options);
+  return templates['container'].renderString(data);
 }
 
 /// Renders an Extension to Markdown.
-String renderExtension(Extension extension, RenderOptions options) {
-  return renderContainer(extension, options);
+String renderExtension(
+  Extension extension,
+  RenderOptions options,
+  Templates templates,
+) {
+  return renderContainer(extension, options, templates);
 }
 
 /// Renders all top-level functions for a library.
-String renderTopLevelFunctions(Library library, RenderOptions options) {
+String renderTopLevelFunctions(
+  Library library,
+  RenderOptions options,
+  Templates templates,
+) {
   var functions = library.functions.where((f) => f.isPublic).toList();
   if (functions.isEmpty) return '';
 
-  var buffer = StringBuffer();
-  buffer.writeln('# Top-level Functions — ${library.name}');
-  buffer.writeln();
+  var data = {
+    'libraryName': library.name,
+    'functions': functions.map((func) {
+      var sourceData = _sourceData(func, func.name, options);
+      return {
+        'name': func.name,
+        'signature': renderSignature(func),
+        'isDeprecated': func.isDeprecated,
+        'deprecation': renderDeprecation(func),
+        'hasAnnotations': renderAnnotations(func).isNotEmpty,
+        'annotations': renderAnnotations(func),
+        'hasDocumentation': _cleanDoc(func.documentation).isNotEmpty,
+        'documentation': _cleanDoc(func.documentation),
+        ...sourceData,
+      };
+    }).toList(),
+  };
 
-  for (var func in functions) {
-    buffer.writeln('## ${func.name}');
-    buffer.writeln();
-    buffer.writeln('```dart');
-    buffer.writeln(renderSignature(func));
-    buffer.writeln('```');
-    buffer.writeln();
-
-    if (func.isDeprecated) {
-      buffer.writeln(renderDeprecation(func));
-      buffer.writeln();
-    }
-
-    var annotations = renderAnnotations(func);
-    if (annotations.isNotEmpty) {
-      buffer.writeln(annotations);
-      buffer.writeln();
-    }
-
-    var doc = _cleanDoc(func.documentation);
-    if (doc.isNotEmpty) {
-      buffer.writeln(doc);
-      buffer.writeln();
-    }
-
-    if (options.includeSource) {
-      _writeSource(buffer, func, func.name, options);
-    }
-
-    buffer.writeln('---');
-    buffer.writeln();
-  }
-
-  return buffer.toString();
+  return templates['top_level_functions'].renderString(data);
 }
 
 /// Renders all top-level properties and constants for a library.
-String renderTopLevelProperties(Library library) {
+String renderTopLevelProperties(Library library, Templates templates) {
   var properties = library.properties.where((p) => p.isPublic).toList();
   var constants = library.constants.where((c) => c.isPublic).toList();
   if (properties.isEmpty && constants.isEmpty) return '';
 
-  var buffer = StringBuffer();
-  buffer.writeln('# Top-level Properties — ${library.name}');
-  buffer.writeln();
-
-  if (constants.isNotEmpty) {
-    buffer.writeln('## Constants');
-    buffer.writeln();
-    for (var c in constants) {
-      buffer.writeln('### ${c.name} → ${plainTypeName(c.modelType)}');
-      buffer.writeln();
-      if (c.constantValue != null) {
-        buffer.writeln('`${unescapeHtml(c.constantValue!)}`');
-        buffer.writeln();
-      }
+  var data = {
+    'libraryName': library.name,
+    'hasConstants': constants.isNotEmpty,
+    'constants': constants.map((c) {
       var doc = _cleanDoc(c.documentation);
-      if (doc.isNotEmpty) {
-        buffer.writeln(doc);
-        buffer.writeln();
-      }
-      buffer.writeln('---');
-      buffer.writeln();
-    }
-  }
-
-  if (properties.isNotEmpty) {
-    buffer.writeln('## Properties');
-    buffer.writeln();
-    for (var prop in properties) {
-      buffer.writeln('### ${prop.name} → ${plainTypeName(prop.modelType)}');
-      buffer.writeln();
+      return {
+        'name': c.name,
+        'typeName': plainTypeName(c.modelType),
+        'hasConstantValue': c.constantValue.isNotEmpty,
+        'constantValue': unescapeHtml(c.constantValue),
+        'hasDocumentation': doc.isNotEmpty,
+        'documentation': doc,
+      };
+    }).toList(),
+    'hasProperties': properties.isNotEmpty,
+    'properties': properties.map((prop) {
       var doc = _cleanDoc(prop.documentation);
-      if (doc.isNotEmpty) {
-        buffer.writeln(doc);
-        buffer.writeln();
-      }
-      buffer.writeln('---');
-      buffer.writeln();
-    }
-  }
+      return {
+        'name': prop.name,
+        'typeName': plainTypeName(prop.modelType),
+        'hasDocumentation': doc.isNotEmpty,
+        'documentation': doc,
+      };
+    }).toList(),
+  };
 
-  return buffer.toString();
+  return templates['top_level_properties'].renderString(data);
 }
 
 /// Renders all typedefs for a library.
-String renderTypedefs(Library library) {
+String renderTypedefs(Library library, Templates templates) {
   var typedefs = library.typedefs.where((t) => t.isPublic).toList();
   if (typedefs.isEmpty) return '';
 
-  var buffer = StringBuffer();
-  buffer.writeln('# Typedefs — ${library.name}');
-  buffer.writeln();
+  var data = {
+    'libraryName': library.name,
+    'typedefs': typedefs.map((td) {
+      var doc = _cleanDoc(td.documentation);
+      return {
+        'name': td.name,
+        'sourceCode': unescapeHtml(td.sourceCode),
+        'hasDocumentation': doc.isNotEmpty,
+        'documentation': doc,
+      };
+    }).toList(),
+  };
 
-  for (var td in typedefs) {
-    buffer.writeln('## ${td.name}');
-    buffer.writeln();
-    buffer.writeln('```dart');
-    buffer.writeln(unescapeHtml(td.sourceCode));
-    buffer.writeln('```');
-    buffer.writeln();
-
-    var doc = _cleanDoc(td.documentation);
-    if (doc.isNotEmpty) {
-      buffer.writeln(doc);
-      buffer.writeln();
-    }
-
-    buffer.writeln('---');
-    buffer.writeln();
-  }
-
-  return buffer.toString();
+  return templates['typedefs'].renderString(data);
 }
 
 /// Renders a detail page for an element whose source exceeds the threshold.
@@ -249,73 +125,57 @@ String renderDetailPage(
   ModelElement element,
   String parentName,
   RenderOptions options,
+  Templates templates,
 ) {
-  var buffer = StringBuffer();
   var title = element is Constructor
       ? (element.name == parentName ? '$parentName.new' : element.name)
       : '$parentName.${element.name}';
-  buffer.writeln('# $title');
-  buffer.writeln();
-  buffer.writeln('```dart');
-  buffer.writeln(renderSignature(element));
-  buffer.writeln('```');
-  buffer.writeln();
 
   var annotations = renderAnnotations(element);
-  if (annotations.isNotEmpty) {
-    buffer.writeln(annotations);
-    buffer.writeln();
-  }
-
-  if (element.isDeprecated) {
-    buffer.writeln(renderDeprecation(element));
-    buffer.writeln();
-  }
-
   var doc = _cleanDoc(element.documentation);
-  if (doc.isNotEmpty) {
-    buffer.writeln(doc);
-    buffer.writeln();
-  }
 
-  buffer.writeln('## Source');
-  buffer.writeln();
-  buffer.writeln('```dart');
-  buffer.writeln(unescapeHtml(element.sourceCode));
-  buffer.writeln('```');
+  var data = {
+    'title': title,
+    'signature': renderSignature(element),
+    'hasAnnotations': annotations.isNotEmpty,
+    'annotations': annotations,
+    'isDeprecated': element.isDeprecated,
+    'deprecation': renderDeprecation(element),
+    'hasDocumentation': doc.isNotEmpty,
+    'documentation': doc,
+    'sourceCode': unescapeHtml(element.sourceCode),
+  };
 
-  return buffer.toString();
+  return templates['detail_page'].renderString(data);
 }
 
 /// Renders a category page.
-String renderCategory(Category category) {
-  var buffer = StringBuffer();
-
-  // Raw documentation content
+String renderCategory(Category category, Templates templates) {
   var doc = category.documentation;
-  if (doc != null && doc.isNotEmpty) {
-    buffer.writeln(stripResidualHtml(doc));
-    buffer.writeln();
-  }
+  var cleanDoc = (doc != null && doc.isNotEmpty) ? stripResidualHtml(doc) : '';
 
-  buffer.writeln('## Elements in this category');
-  buffer.writeln();
-
-  _writeCategorySection(buffer, 'Classes', category.classes, category);
-  _writeCategorySection(buffer, 'Enums', category.enums, category);
-  _writeCategorySection(buffer, 'Mixins', category.mixins, category);
-  _writeCategorySection(buffer, 'Extensions', category.extensions, category);
-  _writeCategorySection(
-    buffer,
+  var sections = <Map<String, dynamic>>[];
+  _addCategorySection(sections, 'Classes', category.classes, category);
+  _addCategorySection(sections, 'Enums', category.enums, category);
+  _addCategorySection(sections, 'Mixins', category.mixins, category);
+  _addCategorySection(sections, 'Extensions', category.extensions, category);
+  _addCategorySection(
+    sections,
     'Extension Types',
     category.extensionTypes,
     category,
   );
-  _writeCategorySection(buffer, 'Functions', category.functions, category);
-  _writeCategorySection(buffer, 'Properties', category.properties, category);
-  _writeCategorySection(buffer, 'Typedefs', category.typedefs, category);
+  _addCategorySection(sections, 'Functions', category.functions, category);
+  _addCategorySection(sections, 'Properties', category.properties, category);
+  _addCategorySection(sections, 'Typedefs', category.typedefs, category);
 
-  return buffer.toString();
+  var data = {
+    'hasDocumentation': cleanDoc.isNotEmpty,
+    'documentation': cleanDoc,
+    'sections': sections,
+  };
+
+  return templates['category'].renderString(data);
 }
 
 // --- Private helpers ---
@@ -325,160 +185,208 @@ String _cleanDoc(String? documentation) {
   return stripResidualHtml(documentation);
 }
 
-String _renderConstructor(
+Map<String, dynamic> _containerData(
+  Container container,
+  RenderOptions options,
+) {
+  var doc = _cleanDoc(container.documentation);
+
+  // Enum values
+  var hasEnumValues =
+      container is Enum && container.publicEnumValues.isNotEmpty;
+  var enumValues = <Map<String, dynamic>>[];
+  if (container is Enum) {
+    for (var value in container.publicEnumValues) {
+      var valueDoc = _cleanDoc(value.documentation);
+      enumValues.add({
+        'name': value.name,
+        'hasDocumentation': valueDoc.isNotEmpty,
+        'documentation': valueDoc,
+      });
+    }
+  }
+
+  // Constructors
+  var hasConstructors =
+      container is Constructable && container.hasPublicConstructors;
+  var constructors = <Map<String, dynamic>>[];
+  if (container is Constructable) {
+    for (var ctor in container.publicConstructorsSorted) {
+      constructors.add(_constructorData(ctor, container.name, options));
+    }
+  }
+
+  // Properties (declared only, not inherited, excluding enum values)
+  var publicFields = container.declaredFields
+      .where((f) => f.isPublic && !f.isEnumValue)
+      .where((f) => f.name != 'hashCode')
+      .toList();
+  var properties = publicFields.map(_fieldData).toList();
+
+  // Methods (declared only, not inherited)
+  var publicMethods = container.declaredMethods
+      .whereType<Method>()
+      .where((m) => !m.isOperator)
+      .where((m) => m.isPublic)
+      .where((m) => m.name != 'toString')
+      .toList();
+  var publicStaticMethods =
+      container.staticMethods.where((m) => m.isPublic).toList();
+  var allPublicMethods = [...publicMethods, ...publicStaticMethods];
+  var methods = allPublicMethods
+      .map((m) => _methodData(m, container.name, options))
+      .toList();
+
+  // Operators (declared only, not inherited)
+  var publicOperators = container.declaredOperators
+      .where((o) => o.isPublic)
+      .where((o) => o.name != 'operator ==')
+      .toList();
+  var operators = publicOperators
+      .map((o) => _operatorData(o, container.name, options))
+      .toList();
+
+  return {
+    'name': container.name,
+    'declaration': renderDeclaration(container),
+    'isDeprecated': container.isDeprecated,
+    'deprecation': renderDeprecation(container),
+    'hasDocumentation': doc.isNotEmpty,
+    'documentation': doc,
+    'hasEnumValues': hasEnumValues,
+    'enumValues': enumValues,
+    'hasConstructors': hasConstructors,
+    'constructors': constructors,
+    'hasProperties': publicFields.isNotEmpty,
+    'properties': properties,
+    'hasMethods': allPublicMethods.isNotEmpty,
+    'methods': methods,
+    'hasOperators': publicOperators.isNotEmpty,
+    'operators': operators,
+  };
+}
+
+Map<String, dynamic> _constructorData(
   Constructor ctor,
   String containerName,
   RenderOptions options,
 ) {
-  var buffer = StringBuffer();
-  buffer.writeln('### ${renderSignature(ctor)}');
-  buffer.writeln();
-
   var annotations = renderAnnotations(ctor);
-  if (annotations.isNotEmpty) {
-    buffer.writeln(annotations);
-    buffer.writeln();
-  }
-
-  if (ctor.isDeprecated) {
-    buffer.writeln(renderDeprecation(ctor));
-    buffer.writeln();
-  }
-
   var doc = _cleanDoc(ctor.documentation);
-  if (doc.isNotEmpty) {
-    buffer.writeln(doc);
-    buffer.writeln();
-  }
+  var sourceData = options.includeSource
+      ? _sourceData(
+          ctor,
+          '$containerName-${ctorBaseName(ctor.name, containerName)}',
+          options,
+        )
+      : _noSourceData();
 
-  if (options.includeSource) {
-    _writeSource(
-      buffer,
-      ctor,
-      '$containerName-${ctorBaseName(ctor.name, containerName)}',
-      options,
-    );
-  }
-
-  buffer.writeln('---');
-  buffer.writeln();
-  return buffer.toString();
+  return {
+    'signature': renderSignature(ctor),
+    'hasAnnotations': annotations.isNotEmpty,
+    'annotations': annotations,
+    'isDeprecated': ctor.isDeprecated,
+    'deprecation': renderDeprecation(ctor),
+    'hasDocumentation': doc.isNotEmpty,
+    'documentation': doc,
+    ...sourceData,
+  };
 }
 
-String _renderField(Field field) {
-  var buffer = StringBuffer();
-  buffer.writeln('### ${field.name} → ${plainTypeName(field.modelType)}');
-  buffer.writeln();
-
+Map<String, dynamic> _fieldData(Field field) {
   var attributes = renderAttributes(field);
-  if (attributes.isNotEmpty) {
-    buffer.writeln(attributes);
-    buffer.writeln();
-  }
-
-  if (field.isDeprecated) {
-    buffer.writeln(renderDeprecation(field));
-    buffer.writeln();
-  }
-
   var doc = _cleanDoc(field.documentation);
-  if (doc.isNotEmpty) {
-    buffer.writeln(doc);
-    buffer.writeln();
-  }
 
-  buffer.writeln('---');
-  buffer.writeln();
-  return buffer.toString();
+  return {
+    'name': field.name,
+    'typeName': plainTypeName(field.modelType),
+    'hasAttributes': attributes.isNotEmpty,
+    'attributes': attributes,
+    'isDeprecated': field.isDeprecated,
+    'deprecation': renderDeprecation(field),
+    'hasDocumentation': doc.isNotEmpty,
+    'documentation': doc,
+  };
 }
 
-String _renderMethod(
+Map<String, dynamic> _methodData(
   Method method,
   String containerName,
   RenderOptions options,
 ) {
-  var buffer = StringBuffer();
-  buffer.writeln('### ${renderSignature(method)}');
-  buffer.writeln();
-
   var annotations = renderAnnotations(method);
-  if (annotations.isNotEmpty) {
-    buffer.writeln(annotations);
-    buffer.writeln();
-  }
-
-  if (method.isDeprecated) {
-    buffer.writeln(renderDeprecation(method));
-    buffer.writeln();
-  }
-
   var doc = _cleanDoc(method.documentation);
-  if (doc.isNotEmpty) {
-    buffer.writeln(doc);
-    buffer.writeln();
-  }
+  var sourceData =
+      (options.includeSource && !method.element.isAbstract)
+          ? _sourceData(
+              method,
+              '$containerName-${safeFileName(method.name)}',
+              options,
+            )
+          : _noSourceData();
 
-  if (options.includeSource && !method.element.isAbstract) {
-    _writeSource(
-      buffer,
-      method,
-      '$containerName-${safeFileName(method.name)}',
-      options,
-    );
-  }
-
-  buffer.writeln('---');
-  buffer.writeln();
-  return buffer.toString();
+  return {
+    'signature': renderSignature(method),
+    'hasAnnotations': annotations.isNotEmpty,
+    'annotations': annotations,
+    'isDeprecated': method.isDeprecated,
+    'deprecation': renderDeprecation(method),
+    'hasDocumentation': doc.isNotEmpty,
+    'documentation': doc,
+    ...sourceData,
+  };
 }
 
-String _renderOperator(
+Map<String, dynamic> _operatorData(
   Operator op,
   String containerName,
   RenderOptions options,
 ) {
-  var buffer = StringBuffer();
-  buffer.writeln('### ${renderSignature(op)}');
-  buffer.writeln();
-
   var doc = _cleanDoc(op.documentation);
-  if (doc.isNotEmpty) {
-    buffer.writeln(doc);
-    buffer.writeln();
-  }
+  var safeName = safeFileName('operator ${op.element.name}');
+  var sourceData =
+      (options.includeSource && !op.element.isAbstract)
+          ? _sourceData(op, '$containerName-$safeName', options)
+          : _noSourceData();
 
-  if (options.includeSource && !op.element.isAbstract) {
-    var safeName = safeFileName('operator ${op.element.name}');
-    _writeSource(buffer, op, '$containerName-$safeName', options);
-  }
-
-  buffer.writeln('---');
-  buffer.writeln();
-  return buffer.toString();
+  return {
+    'signature': renderSignature(op),
+    'hasDocumentation': doc.isNotEmpty,
+    'documentation': doc,
+    ...sourceData,
+  };
 }
 
-/// Writes inline source or a link to a detail page depending on threshold.
-///
-/// Returns true if a detail page should be created.
-void _writeSource(
-  StringBuffer buffer,
+/// Computes source display data for an element.
+Map<String, dynamic> _sourceData(
   ModelElement element,
   String detailPath,
   RenderOptions options,
 ) {
   var source = unescapeHtml(element.sourceCode);
-  if (source.isEmpty) return;
+  if (source.isEmpty) return _noSourceData();
 
   var lineCount = sourceLineCount(source);
   if (lineCount <= options.sourceLineThreshold) {
-    buffer.writeln('```dart');
-    buffer.writeln(source);
-    buffer.writeln('```');
-    buffer.writeln();
+    return {
+      'hasInlineSource': true,
+      'inlineSource': source,
+      'hasDetailLink': false,
+    };
   } else {
-    buffer.writeln('See [full implementation]($detailPath.md)');
-    buffer.writeln();
+    return {
+      'hasInlineSource': false,
+      'hasDetailLink': true,
+      'detailLink': '$detailPath.md',
+    };
   }
+}
+
+Map<String, dynamic> _noSourceData() {
+  return {
+    'hasInlineSource': false,
+    'hasDetailLink': false,
+  };
 }
 
 /// Returns true if a detail page is needed for this element.
@@ -491,8 +399,8 @@ bool needsDetailPage(ModelElement element, RenderOptions options) {
   return sourceLineCount(source) > options.sourceLineThreshold;
 }
 
-void _writeCategorySection(
-  StringBuffer buffer,
+void _addCategorySection(
+  List<Map<String, dynamic>> sections,
   String heading,
   Iterable<ModelElement> elements,
   Category category,
@@ -500,17 +408,18 @@ void _writeCategorySection(
   var publicElements = elements.where((e) => e.isPublic).toList();
   if (publicElements.isEmpty) return;
 
-  buffer.writeln('### $heading');
-  buffer.writeln();
-  for (var element in publicElements) {
-    var lib = element.canonicalLibrary ?? element.library;
-    if (element is Container && lib != null) {
-      buffer.writeln(
-        '- [${element.name}](${lib.displayName}/${element.name}/${element.name}.md)',
-      );
-    } else {
-      buffer.writeln('- ${element.name}');
-    }
-  }
-  buffer.writeln();
+  sections.add({
+    'heading': heading,
+    'elements': publicElements.map((element) {
+      var lib = element.canonicalLibrary ?? element.library;
+      if (element is Container && lib != null) {
+        return {
+          'line':
+              '- [${element.name}](${lib.displayName}/${element.name}/${element.name}.md)',
+        };
+      } else {
+        return {'line': '- ${element.name}'};
+      }
+    }).toList(),
+  });
 }

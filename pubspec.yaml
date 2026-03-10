@@ -9,6 +9,7 @@ dependencies:
   args: ^2.7.0
   dartdoc:
     path: dartdoc
+  mustache_template: ^2.0.0
   path: ^1.8.3
 
 dev_dependencies:
