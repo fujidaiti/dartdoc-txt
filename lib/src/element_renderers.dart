@@ -70,6 +70,7 @@ String renderContainer(Container container, RenderOptions options) {
   // Properties (declared only, not inherited, excluding enum values)
   var publicFields = container.declaredFields
       .where((f) => f.isPublic && !f.isEnumValue)
+      .where((f) => f.name != 'hashCode')
       .toList();
   if (publicFields.isNotEmpty) {
     buffer.writeln('## Properties');
@@ -84,6 +85,7 @@ String renderContainer(Container container, RenderOptions options) {
       .whereType<Method>()
       .where((m) => !m.isOperator)
       .where((m) => m.isPublic)
+      .where((m) => m.name != 'toString')
       .toList();
   var publicStaticMethods = container.staticMethods
       .where((m) => m.isPublic)
@@ -100,6 +102,7 @@ String renderContainer(Container container, RenderOptions options) {
   // Operators (declared only, not inherited)
   var publicOperators = container.declaredOperators
       .where((o) => o.isPublic)
+      .where((o) => o.name != 'operator ==')
       .toList();
   if (publicOperators.isNotEmpty) {
     buffer.writeln('## Operators');

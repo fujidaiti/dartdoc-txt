@@ -379,6 +379,22 @@ void main() {
       );
     });
 
+    test('excludes hashCode, operator ==, and toString even when explicitly declared', () {
+      var content = File(
+        p.join(
+          edgeCasesOutputDir.path,
+          'edge_cases',
+          'Comparable2',
+          'Comparable2.md',
+        ),
+      ).readAsStringSync();
+      expect(content, isNot(contains('hashCode')));
+      expect(content, isNot(contains('operator ==')));
+      expect(content, isNot(contains('toString')));
+      // But other operators should still be present
+      expect(content, contains('operator +'));
+    });
+
     test('"See" reference for typedefs includes "for more details."', () {
       var content = File(
         p.join(edgeCasesOutputDir.path, 'INDEX.md'),

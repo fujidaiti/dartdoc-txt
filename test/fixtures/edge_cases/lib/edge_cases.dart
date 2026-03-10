@@ -9,6 +9,9 @@ class Comparable2 {
   @override
   int get hashCode => identityHashCode(this);
 
+  @override
+  String toString() => 'Comparable2';
+
   /// Adds two [Comparable2] instances.
   Comparable2 operator +(Comparable2 other) => this;
 }
