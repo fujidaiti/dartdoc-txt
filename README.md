@@ -1,13 +1,13 @@
-# dartdoc_md
+# dartdoc_txt
 
 A CLI tool that generates Markdown documentation from Dart/Flutter packages, optimized for LLM consumption.
 
-Unlike `dartdoc` (which generates interactive HTML), `dartdoc_md` reuses dartdoc's analysis engine but produces structured, grep-friendly Markdown files designed for language models to traverse and understand.
+Unlike `dartdoc` (which generates interactive HTML), `dartdoc_txt` reuses dartdoc's analysis engine but produces structured, grep-friendly Markdown files designed for language models to traverse and understand.
 
 ## Usage
 
 ```
-dart run dartdoc_md [options]
+dart run dartdoc_txt [options]
 ```
 
 ### Options
@@ -24,7 +24,7 @@ dart run dartdoc_md [options]
 ### Example
 
 ```bash
-dart run dartdoc_md -i path/to/my_package -o docs
+dart run dartdoc_txt -i path/to/my_package -o docs
 ```
 
 ## Output Structure

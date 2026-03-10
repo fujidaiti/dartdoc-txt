@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dartdoc/dartdoc.dart';
-import 'package:dartdoc_md/src/markdown_renderer.dart';
+import 'package:dartdoc_txt/src/markdown_renderer.dart';
 
 const String version = '0.0.1';
 
@@ -54,7 +54,7 @@ Future<void> main(List<String> arguments) async {
     return;
   }
   if (results.flag('version')) {
-    print('dartdoc_md version: $version');
+    print('dartdoc_txt version: $version');
     return;
   }
 
@@ -93,7 +93,7 @@ Future<void> main(List<String> arguments) async {
 }
 
 void _printUsage(ArgParser argParser) {
-  print('Usage: dart run dartdoc_md [options]');
+  print('Usage: dart run dartdoc_txt [options]');
   print('');
   print(argParser.usage);
 }

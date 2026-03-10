@@ -1,8 +1,8 @@
-# dartdoc-md: Specification & Implementation Plan
+# dartdoc-txt: Specification & Implementation Plan
 
 ## Overview
 
-`dartdoc-md` is a Dart CLI package that generates **Markdown documentation** from a Dart/Flutter package's source code. It wraps the `dartdoc` package, reusing its analysis engine and model layer, but replaces the HTML rendering pipeline with a Markdown output tailored for **LLM consumption**.
+`dartdoc-txt` is a Dart CLI package that generates **Markdown documentation** from a Dart/Flutter package's source code. It wraps the `dartdoc` package, reusing its analysis engine and model layer, but replaces the HTML rendering pipeline with a Markdown output tailored for **LLM consumption**.
 
 ### Goals
 
@@ -40,10 +40,10 @@
 │  └──────────┬───────────┘                            │
 │             │                                        │
 └─────────────┼────────────────────────────────────────┘
-              │  ← dartdoc-md uses this boundary
+              │  ← dartdoc-txt uses this boundary
               ▼
 ┌─────────────────────────────────────────────────────┐
-│ dartdoc-md (this package)                           │
+│ dartdoc-txt (this package)                           │
 │                                                     │
 │  ┌──────────────────────┐  ┌──────────────────────┐ │
 │  │ CLI / Config          │  │ Markdown Renderer     │ │
@@ -334,7 +334,7 @@ ModelElement.documentationComment     ← raw, with /// delimiters
 ModelElement.documentation            ← directives resolved, macros expanded,
                                         still Markdown (NOT HTML)
         ↓
-dartdoc-md strips residual HTML       ← remove {@youtube}, {@animation},
+dartdoc-txt strips residual HTML       ← remove {@youtube}, {@animation},
                                         {@inject-html} artifacts
         ↓
 Write to .md file                     ← final output
@@ -453,7 +453,7 @@ Render `final`, `late`, `const`, `static` as inline code badges alongside annota
 ## CLI Interface
 
 ```
-dart run dartdoc_md [options]
+dart run dartdoc_txt [options]
 
 Options:
   --input         Input directory (default: current directory)
@@ -478,13 +478,13 @@ These are handled by dartdoc's `parseOptions()` which we reuse.
 ## Package Layout
 
 ```
-dartdoc_md/
+dartdoc_txt/
 ├── pubspec.yaml
 ├── bin/
-│   └── dartdoc_md.dart                    # CLI entry point: parse args, build
+│   └── dartdoc_txt.dart                    # CLI entry point: parse args, build
 │                                          #   PackageGraph, invoke renderer
 ├── lib/
-│   ├── dartdoc_md.dart                    # Public API barrel file (if used as a library)
+│   ├── dartdoc_txt.dart                    # Public API barrel file (if used as a library)
 │   └── src/
 │       ├── markdown_renderer.dart         # Top-level orchestrator: walks PackageGraph,
 │       │                                  #   creates output directories, delegates to
@@ -552,7 +552,7 @@ dartdoc_md/
 
 | File | Responsibility |
 |------|----------------|
-| `bin/dartdoc_md.dart` | CLI arg parsing, calls `parseOptions()` + `PubPackageBuilder`, invokes `MarkdownRenderer.render()` |
+| `bin/dartdoc_txt.dart` | CLI arg parsing, calls `parseOptions()` + `PubPackageBuilder`, invokes `MarkdownRenderer.render()` |
 | `markdown_renderer.dart` | Owns the output directory. Iterates packages → libraries → elements. Calls element renderers, writes results to disk. Decides when to create detail subdirectories. |
 | `element_renderers.dart` | Pure functions that take a model element + options and return a Markdown string. No file I/O — just string building. |
 | `signature_builder.dart` | Pure functions for formatting declarations, signatures, annotations, and attributes as Markdown fragments. |
@@ -565,9 +565,9 @@ dartdoc_md/
 
 ### Phase 1: Project Setup
 
-1. Create a new Dart package `dartdoc_md`
+1. Create a new Dart package `dartdoc_txt`
 2. Add dependency on `package:dartdoc` (version `^9.0.0`)
-3. Create `bin/dartdoc_md.dart` entry point
+3. Create `bin/dartdoc_txt.dart` entry point
 4. Set up basic CLI argument parsing (reuse `parseOptions()` from dartdoc + custom args)
 
 ### Phase 2: Core Pipeline
@@ -1065,7 +1065,7 @@ Future<Directory> renderFixture(String fixtureName, {int sourceThreshold = 10}) 
   var packageBuilder = PubPackageBuilder(config!, pubPackageMetaProvider);
   var packageGraph = await packageBuilder.buildPackageGraph();
 
-  var outputDir = Directory.systemTemp.createTempSync('dartdoc_md_test_');
+  var outputDir = Directory.systemTemp.createTempSync('dartdoc_txt_test_');
   var renderer = MarkdownRenderer(
     packageGraph: packageGraph,
     outputDir: outputDir.path,

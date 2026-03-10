@@ -4,7 +4,7 @@ import 'package:dartdoc/dartdoc.dart';
 import 'package:dartdoc/src/model/model.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:dartdoc_md/src/markdown_renderer.dart';
+import 'package:dartdoc_txt/src/markdown_renderer.dart';
 
 /// Builds a [PackageGraph] from a test fixture.
 ///

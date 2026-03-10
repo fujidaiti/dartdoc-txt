@@ -1,6 +1,6 @@
 name: basic_library
 version: 1.0.0
-description: A test fixture for dartdoc_md.
+description: A test fixture for dartdoc_txt.
 
 environment:
   sdk: ^3.10.0

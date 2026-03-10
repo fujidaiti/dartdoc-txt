@@ -1,4 +1,4 @@
-name: dartdoc_md
+name: dartdoc_txt
 description: A CLI tool that generates Markdown documentation from Dart/Flutter packages for LLM consumption.
 version: 0.0.1
 
