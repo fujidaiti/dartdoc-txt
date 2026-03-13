@@ -1,0 +1,18 @@
+# Top-level Functions — basic_library
+
+## add
+
+```dart
+add(int a, int b) → int
+```
+
+A simple top-level function.
+
+Returns the sum of [a] and [b].
+
+```dart
+int add(int a, int b) => a + b;
+```
+
+---
+

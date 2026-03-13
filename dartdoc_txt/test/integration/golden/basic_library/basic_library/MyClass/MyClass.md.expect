@@ -1,0 +1,79 @@
+# MyClass
+
+```dart
+class MyClass
+```
+
+A simple class with documentation.
+
+This class demonstrates basic features like
+constructors, methods, and properties.
+
+## Constructors
+
+### MyClass.new(String name, {int count = 0})
+
+Creates a new [MyClass] with the given [name].
+
+```dart
+MyClass(this.name, {this.count = 0});
+```
+
+---
+### MyClass.defaults()
+
+Creates a [MyClass] with default values.
+
+```dart
+MyClass.defaults() : name = 'default', count = 0;
+```
+
+---
+### MyClass.fromMap(Map map)
+
+Creates a [MyClass] from a map of values.
+
+This constructor validates and processes the input map.
+
+See [full implementation](MyClass-fromMap.md)
+
+---
+## Properties
+
+### name → String
+
+`final`
+
+The name of this instance.
+
+---
+### count → int
+
+The count value.
+
+---
+## Methods
+
+### greet() → String
+
+Returns a greeting message.
+
+```dart
+String greet() {
+  return 'Hello, $name!';
+}
+```
+
+---
+### processData(String input) → String
+
+A method with a longer body that exceeds the threshold.
+
+This method does multiple things:
+- Validates input
+- Processes data
+- Returns result
+
+See [full implementation](MyClass-processData.md)
+
+---

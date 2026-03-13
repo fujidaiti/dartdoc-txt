@@ -1,0 +1,39 @@
+# Greeter
+
+```dart
+class Greeter
+```
+
+A greeting class.
+
+## Constructors
+
+### Greeter.new(String name)
+
+Creates a [Greeter].
+
+```dart
+Greeter(this.name);
+```
+
+---
+## Properties
+
+### name → String
+
+`final`
+
+The name.
+
+---
+## Methods
+
+### greet() → String
+
+Returns a greeting.
+
+```dart
+String greet() => 'Hello, $name!';
+```
+
+---

@@ -1,0 +1,19 @@
+# StringExtras
+
+```dart
+extension StringExtras on String
+```
+
+An extension on [String] that adds utility methods.
+
+## Methods
+
+### exclaim() → String
+
+Returns this string with an exclamation mark appended.
+
+```dart
+String exclaim() => '$this!';
+```
+
+---

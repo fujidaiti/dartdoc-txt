@@ -1,0 +1,12 @@
+# Typedefs — edge_cases
+
+## StringCallback
+
+```dart
+typedef StringCallback = void Function(String);
+```
+
+A typedef for a callback that takes a [String].
+
+---
+

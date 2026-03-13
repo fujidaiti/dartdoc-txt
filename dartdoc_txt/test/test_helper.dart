@@ -1,19 +1,16 @@
 import 'dart:io';
 
 import 'package:dartdoc/dartdoc.dart';
-import 'package:dartdoc/src/model/model.dart';
+import 'package:dartdoc_txt/dartdoc_txt.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:dartdoc_txt/dartdoc_txt.dart';
-
 /// Builds a [PackageGraph] from a test fixture.
-///
-/// Fixtures live under `test/fixtures/<fixtureName>/`.
 Future<PackageGraph> buildFixtureGraph(String fixtureName) async {
   var fixturePath = p.join(
     Directory.current.path,
     'test',
-    'fixtures',
+    'integration',
+    'fixture',
     fixtureName,
   );
   var config = parseOptions(pubPackageMetaProvider, [

@@ -1,0 +1,23 @@
+# edge_cases Index
+
+Version: 1.0.0
+
+## edge_cases library
+
+A library demonstrating edge cases in Dart.
+
+### Classes from edge_cases
+
+- [Comparable2](edge_cases/Comparable2/Comparable2.md) — A class that overloads operators.
+### Extensions from edge_cases
+
+- [StringExtras](edge_cases/StringExtras/StringExtras.md) — An extension on [String] that adds utility methods.
+### Extension Types from edge_cases
+
+- [Wrapper](edge_cases/Wrapper/Wrapper.md) — An extension type wrapping an [int].
+### Typedefs from edge_cases
+
+See [typedefs.md](edge_cases/typedefs/typedefs.md) for more details.
+
+- StringCallback — A typedef for a callback that takes a [String].
+

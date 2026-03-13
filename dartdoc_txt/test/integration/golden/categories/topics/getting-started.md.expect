@@ -1,0 +1,10 @@
+Welcome to the categories package.
+
+## Elements in this category
+
+### Classes
+
+- [Greeter](categories/Greeter/Greeter.md)
+### Enums
+
+- [BasicColor](categories/BasicColor/BasicColor.md)

@@ -1,0 +1,9 @@
+# anonymous_library Index
+
+Version: 1.0.0
+
+## anonymous_library library
+
+### Classes from anonymous_library
+
+- [Greeting](anonymous_library/Greeting/Greeting.md) — A simple class in an anonymous library (no library directive).

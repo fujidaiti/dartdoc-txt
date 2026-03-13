@@ -1,0 +1,30 @@
+# MyClass.fromMap
+
+```dart
+MyClass.fromMap(Map map)
+```
+
+Creates a [MyClass] from a map of values.
+
+This constructor validates and processes the input map.
+
+## Source
+
+```dart
+MyClass.fromMap(Map<String, dynamic> map) : name = '', count = 0 {
+  var rawName = map['name'];
+  if (rawName == null) {
+    throw ArgumentError('name is required');
+  }
+  if (rawName is! String) {
+    throw ArgumentError('name must be a String');
+  }
+  if (rawName.isEmpty) {
+    throw ArgumentError('name must not be empty');
+  }
+  var rawCount = map['count'] ?? 0;
+  if (rawCount is! int) {
+    throw ArgumentError('count must be an int');
+  }
+}
+```

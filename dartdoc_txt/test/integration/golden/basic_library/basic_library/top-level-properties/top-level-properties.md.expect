@@ -1,0 +1,20 @@
+# Top-level Properties — basic_library
+
+## Constants
+
+### defaultName → String
+
+`'World'`
+
+A top-level constant.
+
+---
+
+## Properties
+
+### globalCounter → int
+
+A top-level variable.
+
+---
+

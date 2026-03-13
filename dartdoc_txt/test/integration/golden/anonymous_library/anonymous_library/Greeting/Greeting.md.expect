@@ -1,0 +1,28 @@
+# Greeting
+
+```dart
+class Greeting
+```
+
+A simple class in an anonymous library (no library directive).
+
+## Constructors
+
+### Greeting.new(String message)
+
+Creates a [Greeting] with the given [message].
+
+```dart
+Greeting(this.message);
+```
+
+---
+## Properties
+
+### message → String
+
+`final`
+
+The greeting message.
+
+---

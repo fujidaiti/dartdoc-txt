@@ -1,0 +1,31 @@
+# BasicColor
+
+```dart
+enum BasicColor
+```
+
+Basic colors.
+
+## Enum Values
+
+### red
+
+---
+
+### green
+
+---
+
+### blue
+
+---
+
+## Properties
+
+### values → List
+
+`static` · `const`
+
+A constant List of the values in this enum, in order of their declaration.
+
+---

@@ -1,0 +1,16 @@
+# Top-level Functions — alpha
+
+## hello
+
+```dart
+hello() → String
+```
+
+Says hello.
+
+```dart
+String hello() => 'hello';
+```
+
+---
+

@@ -1,0 +1,24 @@
+# categories Index
+
+Version: 1.0.0
+
+## Topics
+
+- [Getting Started](topics/getting-started.md) — Welcome to the categories package.
+- [Utilities](topics/utilities.md) — Utility classes and functions.
+
+## categories library
+
+### Classes from categories
+
+- [Greeter](categories/Greeter/Greeter.md) — A greeting class.
+- [StringHelper](categories/StringHelper/StringHelper.md) — A string helper.
+### Enums from categories
+
+- [BasicColor](categories/BasicColor/BasicColor.md) — Basic colors.
+### Functions from categories
+
+See [top-level-functions.md](categories/top-level-functions/top-level-functions.md) for more details.
+
+- capitalize — Capitalizes [input].
+

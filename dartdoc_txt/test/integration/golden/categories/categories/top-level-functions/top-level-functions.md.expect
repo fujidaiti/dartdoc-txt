@@ -1,0 +1,19 @@
+# Top-level Functions — categories
+
+## capitalize
+
+```dart
+capitalize(String input) → String
+```
+
+Capitalizes [input].
+
+```dart
+String capitalize(String input) {
+  if (input.isEmpty) return input;
+  return input[0].toUpperCase() + input.substring(1);
+}
+```
+
+---
+

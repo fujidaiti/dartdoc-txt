@@ -1,0 +1,24 @@
+# multi_library Index
+
+Version: 2.0.0
+
+## alpha library
+
+The alpha library.
+
+### Classes from alpha
+
+- [Greeter](alpha/Greeter/Greeter.md) — A greeting class.
+### Functions from alpha
+
+See [top-level-functions.md](alpha/top-level-functions/top-level-functions.md) for more details.
+
+- hello — Says hello.
+
+## beta library
+
+The beta library.
+
+### Enums from beta
+
+- [Shape](beta/Shape/Shape.md) — Supported shapes.

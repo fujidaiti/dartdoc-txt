@@ -1,0 +1,29 @@
+# MyClass.processData
+
+```dart
+processData(String input) → String
+```
+
+A method with a longer body that exceeds the threshold.
+
+This method does multiple things:
+- Validates input
+- Processes data
+- Returns result
+
+## Source
+
+```dart
+String processData(String input) {
+  if (input.isEmpty) {
+    return '';
+  }
+  var result = input.trim();
+  result = result.toLowerCase();
+  result = result.replaceAll(' ', '_');
+  if (result.length > 100) {
+    result = result.substring(0, 100);
+  }
+  return result;
+}
+```

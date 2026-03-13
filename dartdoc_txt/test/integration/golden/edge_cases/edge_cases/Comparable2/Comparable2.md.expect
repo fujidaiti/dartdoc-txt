@@ -1,0 +1,24 @@
+# Comparable2
+
+```dart
+class Comparable2
+```
+
+A class that overloads operators.
+
+## Constructors
+
+### Comparable2.new()
+
+---
+## Operators
+
+### operator +(Comparable2 other) → Comparable2
+
+Adds two [Comparable2] instances.
+
+```dart
+Comparable2 operator +(Comparable2 other) => this;
+```
+
+---

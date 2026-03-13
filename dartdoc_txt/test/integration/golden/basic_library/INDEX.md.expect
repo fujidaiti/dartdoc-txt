@@ -1,0 +1,30 @@
+# basic_library Index
+
+Version: 1.0.0
+
+## basic_library library
+
+A basic test library for dartdoc_txt.
+
+This library contains various Dart elements for testing
+the Markdown documentation generator.
+
+### Classes from basic_library
+
+- [MyClass](basic_library/MyClass/MyClass.md) — A simple class with documentation.
+### Enums from basic_library
+
+- [Color](basic_library/Color/Color.md) — A simple enumeration.
+### Functions from basic_library
+
+See [top-level-functions.md](basic_library/top-level-functions/top-level-functions.md) for more details.
+
+- add — A simple top-level function.
+
+### Properties from basic_library
+
+See [top-level-properties.md](basic_library/top-level-properties/top-level-properties.md) for more details.
+
+- defaultName — A top-level constant.
+- globalCounter — A top-level variable.
+

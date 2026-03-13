@@ -1,0 +1,10 @@
+Utility classes and functions.
+
+## Elements in this category
+
+### Classes
+
+- [StringHelper](categories/StringHelper/StringHelper.md)
+### Functions
+
+- capitalize

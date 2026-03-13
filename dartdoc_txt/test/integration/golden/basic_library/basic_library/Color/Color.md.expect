@@ -1,0 +1,39 @@
+# Color
+
+```dart
+enum Color
+```
+
+A simple enumeration.
+
+Represents different colors.
+
+## Enum Values
+
+### red
+
+The color red.
+
+---
+
+### green
+
+The color green.
+
+---
+
+### blue
+
+The color blue.
+
+---
+
+## Properties
+
+### values → List
+
+`static` · `const`
+
+A constant List of the values in this enum, in order of their declaration.
+
+---
