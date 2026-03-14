@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:dartdoc/dartdoc.dart';
 import 'package:dartdoc_txt/dartdoc_txt.dart';
 
 const String version = '0.0.1';
@@ -63,32 +62,13 @@ Future<void> main(List<String> arguments) async {
   final sourceThreshold = int.parse(results.option('source-threshold')!);
   final includeSource = results.flag('include-source');
 
-  // Build PackageGraph using dartdoc's analysis engine.
-  final config = parseOptions(pubPackageMetaProvider, [
-    '--input',
-    inputDir,
-    '--output',
-    outputDir,
-    '--no-show-progress',
-  ]);
-  if (config == null) {
-    exitCode = 1;
-    return;
-  }
-
   print('Analyzing package...');
-  final packageBuilder = PubPackageBuilder(config, pubPackageMetaProvider);
-  final packageGraph = await packageBuilder.buildPackageGraph();
-
-  print('Generating Markdown documentation...');
-  final renderer = MarkdownRenderer(
-    packageGraph: packageGraph,
+  await generateDocs(
+    inputDir: inputDir,
+    outputDir: outputDir,
     sourceLineThreshold: sourceThreshold,
     includeSource: includeSource,
   );
-  final docTree = renderer.render();
-  writeDocTree(docTree, outputDir);
-
   print('Documentation written to $outputDir');
 }
 
