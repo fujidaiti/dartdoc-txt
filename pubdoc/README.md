@@ -28,7 +28,7 @@ under the `.pubdoc/` directory in your project root.
 <project-root>/
 `-- .pubdoc/
     |-- firebase_core -> ~/.pubdoc/cache/firebase_core/firebase_core-4.5.4/
-    |-- dio -> ~/.pubdoc/cache/dio/dio-5.2.x/
+    |-- app_links -> ~/.pubdoc/cache/app_links/app_links-6.4.x/
     `-- ...
 ```
 
@@ -41,8 +41,8 @@ Implement the deep linking feature using @.pubdoc/app_links
 
 Note that pubdoc utilizes the package management mechanism of the `pub` command
 to build the appropriate version of documentation for the packages. So ensure
-that the project's dependency tree is up-to-date by running `dart pub get`
-first.
+that the packages are included in the project's dependency and the dependency
+tree is up-to-date by running `dart pub get` first.
 
 ## Learn more
 

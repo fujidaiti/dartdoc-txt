@@ -4,6 +4,17 @@ This document explains how `pubdoc get` provides appropriate version of
 documentation for the given package, and how it manages different versions of
 documentation for different packages.
 
+## Pre-requirements
+
+pubdoc utilizes the package management mechanism of `dart pub` command to build
+the appropriate version of documentation for the packages. So ensure that the
+packages are included in the project's dependency and the dependency tree is
+up-to-date by running `dart pub get` first.
+
+Note that the packages don't have to be declared in the `pubspec.yaml` directly.
+Since pubdoc looks up the package versions in `pubspec.lock`, it is also aware
+of indirect dependencies of your project.
+
 ## Detect package version
 
 When pubdoc is asked for documentation given a package name, it first resolves
