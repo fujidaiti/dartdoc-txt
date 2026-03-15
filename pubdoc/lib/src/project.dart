@@ -5,20 +5,21 @@ import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart';
 
+import 'environment.dart';
 import 'exceptions.dart';
 
 class ProjectContext {
   final String projectRoot;
-  final FileSystem fs;
+  final Environment env;
 
-  ProjectContext(this.projectRoot, {required this.fs});
+  ProjectContext(this.projectRoot, {required this.env});
 
-  File get pubspecLockFile => fs.file(p.join(projectRoot, 'pubspec.lock'));
+  File get pubspecLockFile => env.fs.file(p.join(projectRoot, 'pubspec.lock'));
 
   File get packageConfigFile =>
-      fs.file(p.join(projectRoot, '.dart_tool', 'package_config.json'));
+      env.fs.file(p.join(projectRoot, '.dart_tool', 'package_config.json'));
 
-  Directory get pubdocDir => fs.directory(p.join(projectRoot, '.pubdoc'));
+  Directory get pubdocDir => env.fs.directory(p.join(projectRoot, '.pubdoc'));
 
   /// Validates that required files exist.
   void validate() {
@@ -64,7 +65,7 @@ class ProjectContext {
         final resolved = Uri.file(
           '${packageConfigFile.parent.path}/',
         ).resolveUri(rootUri);
-        return fs.directory(resolved.toFilePath());
+        return env.fs.directory(resolved.toFilePath());
       }
     }
     throw PubdocException(
