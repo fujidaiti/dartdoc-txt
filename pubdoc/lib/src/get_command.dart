@@ -11,19 +11,21 @@ import 'version_resolution.dart';
 class GetCommand {
   final ProjectContext project;
   final PubdocConfig config;
-  final Logger logger;
+  final Logger? logger;
   final FileSystem fs;
   final ResolutionStrategy strategy;
   final bool useCache;
+  final DocGenerator? _generator;
 
   GetCommand({
     required this.project,
     required this.config,
-    required this.logger,
+    this.logger,
     required this.fs,
     this.strategy = ResolutionStrategy.loosePatch,
     this.useCache = true,
-  });
+    DocGenerator? generator,
+  }) : _generator = generator;
 
   Future<void> run(List<String> packageNames) async {
     if (packageNames.isEmpty) {
@@ -35,7 +37,7 @@ class GetCommand {
     project.validate();
 
     final cacheManager = CacheManager(config, fs: fs);
-    final generator = DocGenerator(logger: logger, fs: fs);
+    final generator = _generator ?? DocGenerator(logger: logger, fs: fs);
 
     for (final packageName in packageNames) {
       await _processPackage(packageName, cacheManager, generator);
@@ -47,19 +49,19 @@ class GetCommand {
     CacheManager cacheManager,
     DocGenerator generator,
   ) async {
-    logger.info('Processing $packageName...');
+    logger?.info('Processing $packageName...');
 
     // 1. Detect version from pubspec.lock.
     final version = project.getPackageVersion(packageName);
-    logger.detail('  Version in pubspec.lock: $version');
+    logger?.detail('  Version in pubspec.lock: $version');
 
     // 2. Find source path from package_config.json.
     final sourceDir = project.getPackageSourceDir(packageName);
-    logger.detail('  Source: ${sourceDir.path}');
+    logger?.detail('  Source: ${sourceDir.path}');
 
     // 3. Resolve doc version.
     final docVersion = version.docVersion(strategy);
-    logger.detail('  Doc version ($strategy): $docVersion');
+    logger?.detail('  Doc version ($strategy): $docVersion');
 
     // 4. Check cache.
     final cacheResult = cacheManager.checkCache(
@@ -68,11 +70,11 @@ class GetCommand {
       strategy: strategy,
       useCache: useCache,
     );
-    logger.detail('  Cache action: ${cacheResult.action}');
+    logger?.detail('  Cache action: ${cacheResult.action}');
 
     // 5. Generate if needed.
     if (cacheResult.action != CacheAction.reuse) {
-      logger.info('  Generating documentation for $packageName $docVersion...');
+      logger?.info('  Generating documentation for $packageName $docVersion...');
       await generator.generate(
         sourcePath: sourceDir.path,
         outputDir: cacheResult.cacheDir,
@@ -85,9 +87,9 @@ class GetCommand {
         source: Uri.file(sourceDir.path).toString(),
       ).write(cacheResult.cacheDir, fs: fs);
 
-      logger.info('  Documentation generated.');
+      logger?.info('  Documentation generated.');
     } else {
-      logger.info('  Using cached documentation.');
+      logger?.info('  Using cached documentation.');
     }
 
     // 7. Create/update symlink.
@@ -107,6 +109,6 @@ class GetCommand {
     }
 
     link.createSync(cacheDir);
-    logger.detail('  Symlink: $linkPath -> $cacheDir');
+    logger?.detail('  Symlink: $linkPath -> $cacheDir');
   }
 }

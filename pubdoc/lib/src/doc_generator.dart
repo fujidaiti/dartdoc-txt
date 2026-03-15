@@ -4,10 +4,10 @@ import 'package:file/file.dart';
 import 'logger.dart';
 
 class DocGenerator {
-  final Logger logger;
+  final Logger? logger;
   final FileSystem fs;
 
-  DocGenerator({required this.logger, required this.fs});
+  DocGenerator({this.logger, required this.fs});
 
   /// Generates documentation for the package at [sourcePath] and writes it
   /// to [outputDir].
@@ -21,7 +21,7 @@ class DocGenerator {
       outDir.deleteSync(recursive: true);
     }
 
-    logger.detail('Analyzing package at $sourcePath...');
+    logger?.detail('Analyzing package at $sourcePath...');
     await generateDocs(inputDir: sourcePath, outputDir: outputDir);
   }
 }
