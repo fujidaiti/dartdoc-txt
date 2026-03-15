@@ -9,7 +9,7 @@ resolution: workspace
 
 dependencies:
   args: ^2.7.0
-  dartdoc: ^9.0.4
+  dartdoc: ^9.0.1
   mustache_template: ^2.0.0
   path: ^1.8.3
 
