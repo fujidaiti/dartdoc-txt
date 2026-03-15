@@ -1,31 +1,29 @@
-import 'package:file/file.dart';
-
 import 'cache.dart';
 import 'config.dart';
 import 'doc_generator.dart';
+import 'environment.dart';
 import 'exceptions.dart';
-import 'logger.dart';
 import 'project.dart';
 import 'version_resolution.dart';
 
 class GetCommand {
   final ProjectContext project;
   final PubdocConfig config;
-  final Logger logger;
-  final FileSystem fs;
+  final Environment env;
   final ResolutionStrategy strategy;
   final bool useCache;
+  final DocGenerator? _generator;
 
   GetCommand({
     required this.project,
     required this.config,
-    required this.logger,
-    required this.fs,
+    required this.env,
     this.strategy = ResolutionStrategy.loosePatch,
     this.useCache = true,
-  });
+    DocGenerator? generator,
+  }) : _generator = generator;
 
-  Future<void> run(List<String> packageNames) async {
+  Future<void> run({required List<String> packageNames}) async {
     if (packageNames.isEmpty) {
       throw PubdocException(
         'No packages specified. Usage: pubdoc get <package1> [package2 ...]',
@@ -34,8 +32,8 @@ class GetCommand {
 
     project.validate();
 
-    final cacheManager = CacheManager(config, fs: fs);
-    final generator = DocGenerator(logger: logger, fs: fs);
+    final cacheManager = CacheManager(config, env: env);
+    final generator = _generator ?? DocGenerator(env: env);
 
     for (final packageName in packageNames) {
       await _processPackage(packageName, cacheManager, generator);
@@ -47,19 +45,19 @@ class GetCommand {
     CacheManager cacheManager,
     DocGenerator generator,
   ) async {
-    logger.info('Processing $packageName...');
+    env.logger?.info('Processing $packageName...');
 
     // 1. Detect version from pubspec.lock.
     final version = project.getPackageVersion(packageName);
-    logger.detail('  Version in pubspec.lock: $version');
+    env.logger?.detail('  Version in pubspec.lock: $version');
 
     // 2. Find source path from package_config.json.
     final sourceDir = project.getPackageSourceDir(packageName);
-    logger.detail('  Source: ${sourceDir.path}');
+    env.logger?.detail('  Source: ${sourceDir.path}');
 
     // 3. Resolve doc version.
     final docVersion = version.docVersion(strategy);
-    logger.detail('  Doc version ($strategy): $docVersion');
+    env.logger?.detail('  Doc version ($strategy): $docVersion');
 
     // 4. Check cache.
     final cacheResult = cacheManager.checkCache(
@@ -68,26 +66,34 @@ class GetCommand {
       strategy: strategy,
       useCache: useCache,
     );
-    logger.detail('  Cache action: ${cacheResult.action}');
+    env.logger?.detail('  Cache action: ${cacheResult.action}');
 
     // 5. Generate if needed.
     if (cacheResult.action != CacheAction.reuse) {
-      logger.info('  Generating documentation for $packageName $docVersion...');
-      await generator.generate(
-        sourcePath: sourceDir.path,
-        outputDir: cacheResult.cacheDir,
+      env.logger?.info(
+        '  Generating documentation for $packageName $docVersion...',
       );
+      try {
+        await generator.generate(
+          sourcePath: sourceDir.path,
+          outputDir: cacheResult.cacheDir,
+        );
+      } on Exception catch (e) {
+        throw PubdocException(
+          'Failed to generate documentation for $packageName: $e',
+        );
+      }
 
       // 6. Write metadata.json.
       CacheMetadata(
         version: docVersion,
         packageVersion: version.toString(),
         source: Uri.file(sourceDir.path).toString(),
-      ).write(cacheResult.cacheDir, fs: fs);
+      ).write(cacheResult.cacheDir, fs: env.fs);
 
-      logger.info('  Documentation generated.');
+      env.logger?.info('  Documentation generated.');
     } else {
-      logger.info('  Using cached documentation.');
+      env.logger?.info('  Using cached documentation.');
     }
 
     // 7. Create/update symlink.
@@ -100,13 +106,13 @@ class GetCommand {
     }
 
     final linkPath = '${project.pubdocDir.path}/$packageName';
-    final link = fs.link(linkPath);
+    final link = env.fs.link(linkPath);
 
     if (link.existsSync()) {
       link.deleteSync();
     }
 
     link.createSync(cacheDir);
-    logger.detail('  Symlink: $linkPath -> $cacheDir');
+    env.logger?.detail('  Symlink: $linkPath -> $cacheDir');
   }
 }

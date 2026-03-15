@@ -1,6 +1,6 @@
-import 'dart:io';
-
 import 'package:path/path.dart' as p;
+
+import 'environment.dart';
 
 class PubdocConfig {
   final String homeDir;
@@ -8,11 +8,11 @@ class PubdocConfig {
 
   PubdocConfig({required this.homeDir, required this.cacheDir});
 
-  /// Resolves the default configuration.
+  /// Resolves the default configuration using the given [env].
   ///
   /// For now, hardcodes to `$HOME/.pubdoc/` and `$HOME/.pubdoc/cache/`.
-  factory PubdocConfig.resolve() {
-    final home = Platform.environment['HOME'] ?? '.';
+  factory PubdocConfig.resolve(Environment env) {
+    final home = env.getVariable('HOME') ?? '.';
     final homeDir = p.join(home, '.pubdoc');
     return PubdocConfig(homeDir: homeDir, cacheDir: p.join(homeDir, 'cache'));
   }

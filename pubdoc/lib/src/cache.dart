@@ -5,6 +5,7 @@ import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
 
 import 'config.dart';
+import 'environment.dart';
 import 'version_resolution.dart';
 
 enum CacheAction {
@@ -72,9 +73,9 @@ class CacheMetadata {
 
 class CacheManager {
   final PubdocConfig config;
-  final FileSystem fs;
+  final Environment env;
 
-  CacheManager(this.config, {required this.fs});
+  CacheManager(this.config, {required this.env});
 
   /// Checks whether the cache can be reused for the given package.
   CacheResult checkCache({
@@ -94,7 +95,7 @@ class CacheManager {
       );
     }
 
-    if (!fs.directory(cacheDir).existsSync()) {
+    if (!env.fs.directory(cacheDir).existsSync()) {
       return CacheResult(
         action: CacheAction.generate,
         cacheDir: cacheDir,
@@ -112,7 +113,7 @@ class CacheManager {
     }
 
     // For loose-* strategies, check if cached version is fresh enough.
-    final metadata = CacheMetadata.read(cacheDir, fs: fs);
+    final metadata = CacheMetadata.read(cacheDir, fs: env.fs);
     if (metadata != null) {
       final cachedVersion = Version.parse(metadata.packageVersion);
       if (cachedVersion >= packageVersion) {

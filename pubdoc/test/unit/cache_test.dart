@@ -6,21 +6,35 @@ import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubdoc/src/cache.dart';
 import 'package:pubdoc/src/config.dart';
+import 'package:pubdoc/src/environment.dart';
+import 'package:pubdoc/src/logger.dart';
 import 'package:pubdoc/src/version_resolution.dart';
 import 'package:test/test.dart';
 
+class _TestEnvironment implements Environment {
+  @override
+  final MemoryFileSystem fs;
+  @override
+  final Logger? logger = null;
+
+  _TestEnvironment() : fs = MemoryFileSystem.test();
+
+  @override
+  String? getVariable(String name) => null;
+}
+
 void main() {
-  late MemoryFileSystem fs;
+  late _TestEnvironment env;
   late PubdocConfig config;
 
   setUp(() {
-    fs = MemoryFileSystem.test();
+    env = _TestEnvironment();
     config = PubdocConfig(homeDir: '/home/test', cacheDir: '/home/test/cache');
   });
 
   group('CacheManager.checkCache', () {
     test('returns generate when cache dir does not exist', () {
-      final manager = CacheManager(config, fs: fs);
+      final manager = CacheManager(config, env: env);
       final result = manager.checkCache(
         packageName: 'dio',
         packageVersion: Version.parse('5.3.2'),
@@ -32,9 +46,9 @@ void main() {
     });
 
     test('returns generate when useCache is false', () {
-      final manager = CacheManager(config, fs: fs);
+      final manager = CacheManager(config, env: env);
       // Create the cache dir to prove it's ignored.
-      fs
+      env.fs
           .directory(config.packageCacheDir('dio', '5.3.x'))
           .createSync(recursive: true);
 
@@ -48,9 +62,9 @@ void main() {
     });
 
     test('returns reuse for exact strategy when cache exists', () {
-      final manager = CacheManager(config, fs: fs);
+      final manager = CacheManager(config, env: env);
       final cacheDir = config.packageCacheDir('dio', '5.3.2');
-      fs.directory(cacheDir).createSync(recursive: true);
+      env.fs.directory(cacheDir).createSync(recursive: true);
 
       final result = manager.checkCache(
         packageName: 'dio',
@@ -62,11 +76,11 @@ void main() {
     });
 
     test('returns reuse for loosePatch when cached version >= requested', () {
-      final manager = CacheManager(config, fs: fs);
+      final manager = CacheManager(config, env: env);
       final cacheDir = config.packageCacheDir('dio', '5.3.x');
-      fs.directory(cacheDir).createSync(recursive: true);
+      env.fs.directory(cacheDir).createSync(recursive: true);
       // Metadata says cached from 5.3.4
-      _writeMetadata(fs, cacheDir, '5.3.x', '5.3.4');
+      _writeMetadata(env.fs, cacheDir, '5.3.x', '5.3.4');
 
       final result = manager.checkCache(
         packageName: 'dio',
@@ -80,11 +94,11 @@ void main() {
     test(
       'returns regenerate for loosePatch when cached version < requested',
       () {
-        final manager = CacheManager(config, fs: fs);
+        final manager = CacheManager(config, env: env);
         final cacheDir = config.packageCacheDir('dio', '5.3.x');
-        fs.directory(cacheDir).createSync(recursive: true);
+        env.fs.directory(cacheDir).createSync(recursive: true);
         // Metadata says cached from 5.3.1
-        _writeMetadata(fs, cacheDir, '5.3.x', '5.3.1');
+        _writeMetadata(env.fs, cacheDir, '5.3.x', '5.3.1');
 
         final result = manager.checkCache(
           packageName: 'dio',
@@ -97,10 +111,10 @@ void main() {
     );
 
     test('returns reuse for looseMinor when cached version >= requested', () {
-      final manager = CacheManager(config, fs: fs);
+      final manager = CacheManager(config, env: env);
       final cacheDir = config.packageCacheDir('dio', '5.x');
-      fs.directory(cacheDir).createSync(recursive: true);
-      _writeMetadata(fs, cacheDir, '5.x', '5.7.0');
+      env.fs.directory(cacheDir).createSync(recursive: true);
+      _writeMetadata(env.fs, cacheDir, '5.x', '5.7.0');
 
       final result = manager.checkCache(
         packageName: 'dio',
@@ -112,10 +126,10 @@ void main() {
     });
 
     test('returns regenerate when metadata is missing in loose mode', () {
-      final manager = CacheManager(config, fs: fs);
+      final manager = CacheManager(config, env: env);
       final cacheDir = config.packageCacheDir('dio', '5.3.x');
       // Dir exists but no metadata.json
-      fs.directory(cacheDir).createSync(recursive: true);
+      env.fs.directory(cacheDir).createSync(recursive: true);
 
       final result = manager.checkCache(
         packageName: 'dio',
@@ -134,10 +148,10 @@ void main() {
         packageVersion: '5.3.4',
         source: 'file:///path/to/dio-5.3.4',
       );
-      fs.directory('/tmp/test').createSync(recursive: true);
-      metadata.write('/tmp/test', fs: fs);
+      env.fs.directory('/tmp/test').createSync(recursive: true);
+      metadata.write('/tmp/test', fs: env.fs);
 
-      final loaded = CacheMetadata.read('/tmp/test', fs: fs);
+      final loaded = CacheMetadata.read('/tmp/test', fs: env.fs);
       expect(loaded, isNotNull);
       expect(loaded!.version, '5.3.x');
       expect(loaded.packageVersion, '5.3.4');
@@ -145,7 +159,7 @@ void main() {
     });
 
     test('read returns null when file does not exist', () {
-      final result = CacheMetadata.read('/tmp/nonexistent', fs: fs);
+      final result = CacheMetadata.read('/tmp/nonexistent', fs: env.fs);
       expect(result, isNull);
     });
   });

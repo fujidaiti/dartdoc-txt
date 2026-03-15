@@ -1,11 +1,10 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:file/local.dart';
 import 'package:pubdoc/src/config.dart';
+import 'package:pubdoc/src/environment.dart';
 import 'package:pubdoc/src/exceptions.dart';
 import 'package:pubdoc/src/get_command.dart';
-import 'package:pubdoc/src/logger.dart';
 import 'package:pubdoc/src/project.dart';
 
 const String version = '0.0.1';
@@ -62,7 +61,7 @@ Future<void> main(List<String> arguments) async {
   }
 
   final verbose = results.flag('verbose');
-  final logger = Logger(verbose: verbose);
+  final env = PlatformEnvironment(verbose: verbose);
   final command = results.command;
 
   if (command == null) {
@@ -74,23 +73,21 @@ Future<void> main(List<String> arguments) async {
   try {
     switch (command.name) {
       case 'get':
-        const fs = LocalFileSystem();
-        final config = PubdocConfig.resolve();
-        final project = ProjectContext(Directory.current.path, fs: fs);
+        final config = PubdocConfig.resolve(env);
+        final project = ProjectContext(Directory.current.path, env: env);
         final getCommand = GetCommand(
           project: project,
           config: config,
-          logger: logger,
-          fs: fs,
+          env: env,
         );
-        await getCommand.run(command.rest);
+        await getCommand.run(packageNames: command.rest);
       default:
         stderr.writeln("Unknown command '${command.name}'.");
         printUsage(argParser);
         exitCode = 64;
     }
   } on PubdocException catch (e) {
-    logger.error(e.message);
+    env.logger?.error(e.message);
     exitCode = 1;
   }
 }
