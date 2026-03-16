@@ -35,14 +35,16 @@ Documentation lives at `.pubdoc/<package>/` in the project root:
 
 ```
 .pubdoc/<package>/
-├── INDEX.md               ← package overview; start here
+├── OVERVIEW.md            ← start here: README summary + documentation guide
+├── INDEX.md               ← full package overview from dartdoc
 ├── <library-name>/        ← one directory per public library
 │   ├── <ClassName>/
 │   │   ├── <ClassName>.md
 │   │   └── <ClassName>-methodName.md
 │   └── top-level-functions/
+├── topics/                ← topic pages, e.g. migration guides (if available)
 ├── EXAMPLES.md            ← examples overview with snippets (if available)
 └── example/               ← raw example .dart files (if available)
 ```
 
-Recommended order: `INDEX.md` → `EXAMPLES.md` → specific class/function pages.
+Recommended order: `OVERVIEW.md` → specific class/function pages as needed.

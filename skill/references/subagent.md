@@ -99,7 +99,126 @@ Write `package_version` (just the version string) to
 `.pubdoc/<package>/.examples_package_version` so future runs can skip
 regeneration when nothing has changed.
 
-## 4. Report back
+## 4. Generate OVERVIEW.md
+
+OVERVIEW.md is the single entry point to the documentation. It should give an
+agent everything it needs to orient quickly: what the package does, how to use
+it, and where to find specific details.
+
+Do this for each package:
+
+### a. Check whether OVERVIEW.md is up-to-date
+
+Read `.pubdoc/<package>/.overview_package_version` if it exists. If its content
+matches `package_version` in `metadata.json`, OVERVIEW.md is current — skip to
+the next package.
+
+### b. Gather source material
+
+From `metadata.json`, take the local `source` path (strip the `file://` prefix).
+
+- **README:** read `<source-path>/README.md`. If absent, skip the summary
+  section and proceed to the documentation guide below.
+- **Topics:** list `.pubdoc/<package>/topics/` if it exists — note each `.md`
+  filename and read the first heading or first sentence to get a one-line
+  description.
+- **Libraries:** list the subdirectories in `.pubdoc/<package>/` that contain an
+  `index.md` file — these are the public library directories.
+
+### c. Write OVERVIEW.md
+
+Write `.pubdoc/<package>/OVERVIEW.md` with two sections:
+
+---
+
+**Section 1 — Package summary** (from README)
+
+Goal: a 3-minute read that tells the reader what the package does and how to use
+it. Omit everything that doesn't help an agent write code.
+
+- If the README is ≤ 80 lines of substantive content, include it with minimal
+  editing (just strip the noise listed below).
+- If longer, distill it: keep the purpose, core API concepts, key configuration,
+  and any important caveats. Cut aggressively.
+
+Strip unconditionally:
+
+- Badges/shields (`![badge]`, `[![...](...)`)
+- Cosmetic HTML (`<p align="center">`, `<img>`, `<br>`, `<div>`)
+- Contribution guides, "how to file issues", "star us on GitHub" sections
+- Changelog entries
+- Non-technical background commentary ("The story behind this package…")
+
+Convert markdown tables to bullet lists. For example, an options table:
+
+```
+| Option    | Default | Description      |
+| --------- | ------- | ---------------- |
+| --timeout | 30      | Request timeout  |
+```
+
+becomes:
+
+```
+- `--timeout` (default: 30) — request timeout
+```
+
+---
+
+**Section 2 — Documentation guide**
+
+Goal: help the reader find what they need without exploring every file.
+
+Include:
+
+1. A short paragraph explaining the directory layout — mention that
+   `EXAMPLES.md` has curated snippets and that each `<library>/index.md` lists
+   the available API.
+
+2. A flat bullet list of the key files and directories:
+   - One line per public library directory:
+     `<library>/index.md — <brief description if inferrable from the library name, otherwise omit>`
+   - `EXAMPLES.md — code examples with explanations` (only if it exists)
+
+3. **Topics** (only if `.pubdoc/<package>/topics/` contains `.md` files): Add a
+   "Topics" sub-section with one bullet per file:
+   `- [topics/<FileName>.md](topics/<FileName>.md) — <one-line description>`
+   These often contain migration guides, advanced usage, or conceptual
+   explanations worth consulting for deeper understanding.
+
+---
+
+The finished file should look like:
+
+```markdown
+# <PackageName>
+
+<package summary — prose, no tables, no badges>
+
+---
+
+## Documentation
+
+<one-paragraph explanation of layout>
+
+Key files:
+
+- `EXAMPLES.md` — code examples with explanations
+- `<library>/index.md` — API reference for <library>
+- ...
+
+### Topics
+
+- [`topics/MigrationGuide.md`](topics/MigrationGuide.md) — migrating from v1 to
+  v2
+```
+
+### d. Record the package version
+
+Write `package_version` to `.pubdoc/<package>/.overview_package_version` so
+future runs skip regeneration when nothing has changed.
+
+## 5. Report back
 
 Return the absolute paths to each package's documentation:
 
