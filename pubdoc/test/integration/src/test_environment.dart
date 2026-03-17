@@ -10,6 +10,12 @@ import 'package:pubdoc/src/logger.dart';
 
 const _indent = '\u0020\u0020';
 
+const _pubspecYamlTemplate = r'''
+{{#resolution}}resolution: {{resolution}}
+{{/resolution}}{{#hasWorkspace}}workspace:
+{{#workspace}}  - {{member}}
+{{/workspace}}{{/hasWorkspace}}''';
+
 const _pubspecLockTemplate = r'''
 packages:
 {{#packages}}
@@ -46,15 +52,12 @@ class PubspecYaml {
   /// fields (if set), creating parent directories as needed.
   void write() {
     _file.parent.createSync(recursive: true);
-    final buf = StringBuffer();
-    if (resolution != null) buf.writeln('resolution: $resolution');
-    if (workspace.isNotEmpty) {
-      buf.writeln('workspace:');
-      for (final m in workspace) {
-        buf.writeln('  - $m');
-      }
-    }
-    _file.writeAsStringSync(buf.toString());
+    final content = Template(_pubspecYamlTemplate).renderString({
+      'resolution': resolution,
+      'hasWorkspace': workspace.isNotEmpty,
+      'workspace': [for (final m in workspace) {'member': m}],
+    });
+    _file.writeAsStringSync(content);
   }
 }
 
