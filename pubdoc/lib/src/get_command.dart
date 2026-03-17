@@ -48,11 +48,11 @@ class GetCommand {
     env.logger?.info('Processing $packageName...');
 
     // 1. Detect version from pubspec.lock.
-    final version = project.getPackageVersion(packageName);
+    final version = await project.getPackageVersion(packageName);
     env.logger?.detail('  Version in pubspec.lock: $version');
 
     // 2. Find source path from package_config.json.
-    final sourceDir = project.getPackageSourceDir(packageName);
+    final sourceDir = await project.getPackageSourceDir(packageName);
     env.logger?.detail('  Source: ${sourceDir.path}');
 
     // 3. Resolve doc version.

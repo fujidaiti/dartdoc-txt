@@ -2,8 +2,19 @@ import 'dart:convert';
 
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
+import 'package:mustache_template/mustache_template.dart';
 import 'package:pubdoc/src/environment.dart';
 import 'package:pubdoc/src/logger.dart';
+
+const _indent = '\u0020\u0020';
+
+const _pubspecLockTemplate = r'''
+packages:
+{{#packages}}
+  {{name}}:
+    version: "{{version}}"
+{{/packages}}
+''';
 
 class PubspecYaml {
   final Map<String, String> _dependencies = {};
@@ -35,7 +46,13 @@ class PubspecLock {
 
   void write() {
     _file.parent.createSync(recursive: true);
-    _file.writeAsStringSync(jsonEncode({'packages': _packages}));
+    final content = Template(_pubspecLockTemplate).renderString({
+      'packages': [
+        for (final entry in _packages.entries)
+          {'name': entry.key, 'version': entry.value['version']},
+      ],
+    });
+    _file.writeAsStringSync(content);
   }
 
   void deleteSync() => _file.deleteSync();
@@ -62,7 +79,7 @@ class PackageConfigJson {
   void write() {
     _file.parent.createSync(recursive: true);
     _file.writeAsStringSync(
-      jsonEncode({
+      const JsonEncoder.withIndent(_indent).convert({
         'configVersion': 2,
         'packages': [
           for (final pkg in _packages)

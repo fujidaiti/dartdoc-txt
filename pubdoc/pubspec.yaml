@@ -22,4 +22,5 @@ dev_dependencies:
   build_runner: ^2.12.2
   lints: ^6.0.0
   mockito: ^5.6.3
+  mustache_template: ^2.0.0
   test: ^1.25.6
