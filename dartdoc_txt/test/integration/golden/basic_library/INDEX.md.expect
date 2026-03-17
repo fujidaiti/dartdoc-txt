@@ -11,6 +11,7 @@ the Markdown documentation generator.
 
 ### Classes from basic_library
 
+- [Point](basic_library/Point/Point.md) — An immutable 2D point.
 - [MyClass](basic_library/MyClass/MyClass.md) — A simple class with documentation.
 ### Enums from basic_library
 
@@ -26,5 +27,6 @@ See [top-level-functions.md](basic_library/top-level-functions/top-level-functio
 See [top-level-properties.md](basic_library/top-level-properties/top-level-properties.md) for more details.
 
 - defaultName — A top-level constant.
+- origin — The origin point.
 - globalCounter — A top-level variable.
 

@@ -10,6 +10,14 @@ A top-level constant.
 
 ---
 
+### origin → Point
+
+`Point(0, 0)`
+
+The origin point.
+
+---
+
 ## Properties
 
 ### globalCounter → int

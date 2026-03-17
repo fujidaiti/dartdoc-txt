@@ -80,8 +80,8 @@ String renderTopLevelProperties(Library library, Templates templates) {
       return {
         'name': c.name,
         'typeName': plainTypeName(c.modelType),
-        'hasConstantValue': c.constantValue.isNotEmpty,
-        'constantValue': unescapeHtml(c.constantValue),
+        'hasConstantValue': c.constantValueBase.isNotEmpty,
+        'constantValue': unescapeHtml(c.constantValueBase),
         'hasDocumentation': doc.isNotEmpty,
         'documentation': doc,
       };

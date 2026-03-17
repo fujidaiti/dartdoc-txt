@@ -1,0 +1,31 @@
+# Point
+
+```dart
+class Point
+```
+
+An immutable 2D point.
+
+## Constructors
+
+### Point.new(int x, int y) const
+
+Creates a point with the given coordinates.
+
+```dart
+const Point(this.x, this.y);
+```
+
+---
+## Properties
+
+### x → int
+
+`final`
+
+---
+### y → int
+
+`final`
+
+---
