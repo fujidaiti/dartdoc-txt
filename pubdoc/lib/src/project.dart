@@ -12,20 +12,84 @@ class ProjectContext {
   final String projectRoot;
   final Environment env;
 
-  ProjectContext(this.projectRoot, {required this.env});
+  /// The workspace root if [projectRoot] is a workspace member, or null if it
+  /// is not a workspace member (including the workspace root itself).
+  final String? _workspaceRoot;
 
-  File get pubspecLockFile => env.fs.file(p.join(projectRoot, 'pubspec.lock'));
+  ProjectContext._(
+    this.projectRoot, {
+    required this.env,
+    required String? workspaceRoot,
+  }) : _workspaceRoot = workspaceRoot;
+
+  /// Detects whether [projectRoot] is a pub workspace member and, if so, walks
+  /// up the directory tree to find the workspace root.
+  ///
+  /// Throws [PubdocException] if the project declares `resolution: workspace`
+  /// but no workspace root can be found within 10 parent directories.
+  factory ProjectContext.from(String projectRoot, {required Environment env}) {
+    final pubspecFile = env.fs.file(p.join(projectRoot, 'pubspec.yaml'));
+    String? workspaceRoot;
+    if (pubspecFile.existsSync()) {
+      final YamlMap? pubspec;
+      try {
+        pubspec = loadYaml(pubspecFile.readAsStringSync()) as YamlMap?;
+      } catch (_) {
+        return ProjectContext._(projectRoot, env: env, workspaceRoot: null);
+      }
+      if (pubspec != null && pubspec['resolution'] == 'workspace') {
+        // Walk up to find the workspace root (max 10 levels).
+        var current = p.dirname(projectRoot);
+        for (var depth = 0; depth < 10; depth++) {
+          final candidate = env.fs.file(p.join(current, 'pubspec.yaml'));
+          if (candidate.existsSync()) {
+            try {
+              final yaml = loadYaml(candidate.readAsStringSync()) as YamlMap?;
+              if (yaml != null && yaml.containsKey('workspace')) {
+                workspaceRoot = current;
+                break;
+              }
+            } catch (_) {}
+          }
+          final parent = p.dirname(current);
+          if (parent == current) break;
+          current = parent;
+        }
+        if (workspaceRoot == null) {
+          // Found `resolution: workspace` but no workspace root — invalid repository structure.
+          throw PubdocException(
+            'pubspec.yaml in $projectRoot declares `resolution: workspace`, '
+            'but no workspace root (pubspec.yaml with `workspace:` key) was found '
+            'in the parent directories.',
+          );
+        }
+      }
+    }
+    return ProjectContext._(
+      projectRoot,
+      env: env,
+      workspaceRoot: workspaceRoot,
+    );
+  }
+
+  /// Resolves to the workspace root when [projectRoot] is a workspace member,
+  /// or [projectRoot] itself otherwise.
+  String get _effectiveRoot => _workspaceRoot ?? projectRoot;
+
+  File get pubspecLockFile =>
+      env.fs.file(p.join(_effectiveRoot, 'pubspec.lock'));
 
   File get packageConfigFile =>
-      env.fs.file(p.join(projectRoot, '.dart_tool', 'package_config.json'));
+      env.fs.file(p.join(_effectiveRoot, '.dart_tool', 'package_config.json'));
 
-  Directory get pubdocDir => env.fs.directory(p.join(projectRoot, '.pubdoc'));
+  Directory get pubdocDir =>
+      env.fs.directory(p.join(_effectiveRoot, '.pubdoc'));
 
   /// Validates that required files exist.
   void validate() {
     if (!pubspecLockFile.existsSync()) {
       throw PubdocException(
-        'pubspec.lock not found in $projectRoot. '
+        'pubspec.lock not found in $_effectiveRoot. '
         'Run `dart pub get` first.',
       );
     }

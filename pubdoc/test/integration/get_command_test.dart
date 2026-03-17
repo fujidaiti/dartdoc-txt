@@ -23,7 +23,7 @@ void main() {
     env = TestEnvironment(
       projectRoot: _projectRoot,
       pubCacheBase: _pubCacheBase,
-    );
+    )..setUp();
 
     generator = MockDocGenerator();
     when(
@@ -41,7 +41,7 @@ void main() {
 
   GetCommand makeCommand({required ResolutionStrategy strategy}) {
     return GetCommand(
-      project: ProjectContext(_projectRoot, env: env),
+      project: ProjectContext.from(_projectRoot, env: env),
       config: PubdocConfig(homeDir: _homeDir, cacheDir: _cacheDir),
       env: env,
       generator: generator,
@@ -512,6 +512,103 @@ void main() {
             (e) => e.message,
             'message',
             "Package 'missing_pkg' not found in package_config.json.",
+          ),
+        ),
+      );
+    });
+  });
+
+  group('Workspace support', () {
+    const workspaceRoot = '/Users/testuser/projects/my_workspace';
+    const memberRelativePath = 'packages/my_app';
+    const memberRoot = '$workspaceRoot/$memberRelativePath';
+
+    late WorkspaceTestEnvironment env;
+
+    GetCommand commandFor(String projectRoot) {
+      return GetCommand(
+        project: ProjectContext.from(projectRoot, env: env),
+        config: PubdocConfig(homeDir: _homeDir, cacheDir: _cacheDir),
+        env: env,
+        generator: generator,
+        strategy: .exact,
+      );
+    }
+
+    setUp(() {
+      env = WorkspaceTestEnvironment(
+        workspaceRoot: workspaceRoot,
+        memberRelativePath: memberRelativePath,
+        pubCacheBase: _pubCacheBase,
+      )..setUp();
+      when(
+        generator.generate(
+          sourcePath: anyNamed('sourcePath'),
+          outputDir: anyNamed('outputDir'),
+        ),
+      ).thenAnswer((invocation) async {
+        final outputDir = invocation.namedArguments[#outputDir] as String;
+        env.fs.directory(outputDir).createSync(recursive: true);
+      });
+    });
+
+    test('running from workspace root uses workspace root', () async {
+      env.pubspec.addDependency('dio', '5.3.2');
+      env.pubGet();
+      await commandFor(workspaceRoot).run(packageNames: ['dio']);
+
+      expect(env.fs.link('$workspaceRoot/.pubdoc/dio').existsSync(), isTrue);
+    });
+
+    test('running from workspace member uses workspace root', () async {
+      env.pubspec.addDependency('dio', '5.3.2');
+      env.pubGet();
+      await commandFor(memberRoot).run(packageNames: ['dio']);
+
+      expect(env.fs.link('$workspaceRoot/.pubdoc/dio').existsSync(), isTrue);
+      expect(
+        env.fs.link('$memberRoot/.pubdoc/dio').existsSync(),
+        isFalse,
+        reason:
+            'Cache link should be created in workspace root, not member root.',
+      );
+    });
+
+    test(
+      'missing pubspec.lock from workspace root names workspace root',
+      () async {
+        env.pubspec.addDependency('dio', '5.3.2');
+        env.pubGet();
+        env.pubspecLock.deleteSync();
+
+        expect(
+          () => commandFor(memberRoot).run(packageNames: ['dio']),
+          throwsA(
+            isA<PubdocException>().having(
+              (e) => e.message,
+              'message',
+              'pubspec.lock not found in $workspaceRoot. Run `dart pub get` first.',
+            ),
+          ),
+        );
+      },
+    );
+
+    test('no workspace root found throws PubdocException', () async {
+      env.pubspec.addDependency('dio', '5.3.2');
+      env.pubGet();
+      // Delete the workspace root pubspec.yaml so the walk finds nothing.
+      env.fs.file('$workspaceRoot/pubspec.yaml').deleteSync();
+
+      expect(
+        () => commandFor(memberRoot).run(packageNames: ['dio']),
+        throwsA(
+          isA<PubdocException>().having(
+            (e) => e.message,
+            'message',
+            'pubspec.yaml in $memberRoot declares `resolution: workspace`, '
+                'but no workspace root (pubspec.yaml with `workspace:` key) was found '
+                'in the parent directories.',
           ),
         ),
       );

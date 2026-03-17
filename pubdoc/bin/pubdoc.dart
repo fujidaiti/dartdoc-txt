@@ -74,7 +74,7 @@ Future<void> main(List<String> arguments) async {
     switch (command.name) {
       case 'get':
         final config = PubdocConfig.resolve(env);
-        final project = ProjectContext(Directory.current.path, env: env);
+        final project = ProjectContext.from(Directory.current.path, env: env);
         final getCommand = GetCommand(
           project: project,
           config: config,
