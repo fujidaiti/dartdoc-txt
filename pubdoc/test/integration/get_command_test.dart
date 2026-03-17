@@ -59,7 +59,21 @@ void main() {
     test('correct cache dir and full metadata', () async {
       env.pubspec.addDependency('dio', '5.3.2');
       env.pubGet();
-      await command.run(packageNames: ['dio']);
+      final result = await command.run(packageNames: ['dio']);
+
+      expect(
+        result,
+        _isGetResult(
+          packages: {
+            'dio': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/dio',
+              version: '5.3.2',
+              source: '$_pubCacheBase/dio-5.3.2/',
+              cacheStatus: CacheStatus.miss,
+            ),
+          },
+        ),
+      );
 
       final cacheDir = '$_cacheDir/dio/dio-5.3.2';
       verify(
@@ -82,7 +96,27 @@ void main() {
       env.pubspec.addDependency('dio', '5.3.2');
       env.pubspec.addDependency('http', '1.2.0');
       env.pubGet();
-      await command.run(packageNames: ['dio', 'http']);
+      final result = await command.run(packageNames: ['dio', 'http']);
+
+      expect(
+        result,
+        _isGetResult(
+          packages: {
+            'dio': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/dio',
+              source: '$_pubCacheBase/dio-5.3.2/',
+              version: '5.3.2',
+              cacheStatus: CacheStatus.miss,
+            ),
+            'http': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/http',
+              source: '$_pubCacheBase/http-1.2.0/',
+              version: '1.2.0',
+              cacheStatus: CacheStatus.miss,
+            ),
+          },
+        ),
+      );
 
       verify(
         generator.generate(
@@ -126,8 +160,21 @@ void main() {
       );
 
       reset(generator);
-      await command.run(packageNames: ['dio']);
+      final result = await command.run(packageNames: ['dio']);
       verifyNoMoreInteractions(generator);
+      expect(
+        result,
+        _isGetResult(
+          packages: {
+            'dio': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/dio',
+              source: '$_pubCacheBase/dio-5.3.2/',
+              version: '5.3.2',
+              cacheStatus: CacheStatus.hit,
+            ),
+          },
+        ),
+      );
     });
   });
 
@@ -145,7 +192,21 @@ void main() {
       // Update to a new patch version.
       env.pubspec.addDependency('dio', '5.3.6');
       env.pubGet();
-      await command.run(packageNames: ['dio']);
+      final result = await command.run(packageNames: ['dio']);
+
+      expect(
+        result,
+        _isGetResult(
+          packages: {
+            'dio': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/dio',
+              version: '5.3.6',
+              source: '$_pubCacheBase/dio-5.3.6/',
+              cacheStatus: CacheStatus.miss,
+            ),
+          },
+        ),
+      );
 
       verify(
         generator.generate(
@@ -192,7 +253,21 @@ void main() {
     test('correct cache dir and full metadata', () async {
       env.pubspec.addDependency('dio', '5.3.2');
       env.pubGet();
-      await command.run(packageNames: ['dio']);
+      final result = await command.run(packageNames: ['dio']);
+
+      expect(
+        result,
+        _isGetResult(
+          packages: {
+            'dio': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/dio',
+              source: '$_pubCacheBase/dio-5.3.2/',
+              version: '5.3.x',
+              cacheStatus: CacheStatus.miss,
+            ),
+          },
+        ),
+      );
 
       final cacheDir = '$_cacheDir/dio/dio-5.3.x';
       verify(
@@ -217,7 +292,21 @@ void main() {
       await command.run(packageNames: ['dio']);
       env.pubspec.addDependency('dio', '5.3.6');
       env.pubGet();
-      await command.run(packageNames: ['dio']);
+      final result = await command.run(packageNames: ['dio']);
+
+      expect(
+        result,
+        _isGetResult(
+          packages: {
+            'dio': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/dio',
+              source: '$_pubCacheBase/dio-5.3.6/',
+              version: '5.3.x',
+              cacheStatus: CacheStatus.refreshed,
+            ),
+          },
+        ),
+      );
 
       verify(
         generator.generate(
@@ -248,8 +337,22 @@ void main() {
       reset(generator);
       env.pubspec.addDependency('dio', '5.3.3');
       env.pubGet();
-      await command.run(packageNames: ['dio']);
+      final result = await command.run(packageNames: ['dio']);
+
       verifyNoMoreInteractions(generator);
+      expect(
+        result,
+        _isGetResult(
+          packages: {
+            'dio': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/dio',
+              source: '$_pubCacheBase/dio-5.3.6/',
+              version: '5.3.x',
+              cacheStatus: CacheStatus.hit,
+            ),
+          },
+        ),
+      );
       expect(
         CacheMetadata.read('$_cacheDir/dio/dio-5.3.x', fs: env.fs),
         _isCacheMetadata(pkgName: 'dio', version: '5.3.x', pkgVersion: '5.3.6'),
@@ -263,7 +366,21 @@ void main() {
       // Update to a new minor version.
       env.pubspec.addDependency('dio', '5.4.0');
       env.pubGet();
-      await command.run(packageNames: ['dio']);
+      final result = await command.run(packageNames: ['dio']);
+
+      expect(
+        result,
+        _isGetResult(
+          packages: {
+            'dio': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/dio',
+              source: '$_pubCacheBase/dio-5.4.0/',
+              version: '5.4.x',
+              cacheStatus: CacheStatus.miss,
+            ),
+          },
+        ),
+      );
 
       verify(
         generator.generate(
@@ -301,7 +418,21 @@ void main() {
     test('correct cache dir and full metadata', () async {
       env.pubspec.addDependency('dio', '5.3.2');
       env.pubGet();
-      await command.run(packageNames: ['dio']);
+      final result = await command.run(packageNames: ['dio']);
+
+      expect(
+        result,
+        _isGetResult(
+          packages: {
+            'dio': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/dio',
+              source: '$_pubCacheBase/dio-5.3.2/',
+              version: '5.x',
+              cacheStatus: CacheStatus.miss,
+            ),
+          },
+        ),
+      );
 
       final cacheDir = '$_cacheDir/dio/dio-5.x';
       verify(
@@ -327,7 +458,21 @@ void main() {
       // Update to a new minor version.
       env.pubspec.addDependency('dio', '5.4.0');
       env.pubGet();
-      await command.run(packageNames: ['dio']);
+      final result = await command.run(packageNames: ['dio']);
+
+      expect(
+        result,
+        _isGetResult(
+          packages: {
+            'dio': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/dio',
+              source: '$_pubCacheBase/dio-5.4.0/',
+              version: '5.x',
+              cacheStatus: CacheStatus.refreshed,
+            ),
+          },
+        ),
+      );
 
       verify(
         generator.generate(
@@ -358,8 +503,21 @@ void main() {
       reset(generator);
       env.pubspec.addDependency('dio', '5.3.2');
       env.pubGet();
-      await command.run(packageNames: ['dio']);
+      final result = await command.run(packageNames: ['dio']);
       verifyNoMoreInteractions(generator);
+      expect(
+        result,
+        _isGetResult(
+          packages: {
+            'dio': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/dio',
+              source: '$_pubCacheBase/dio-5.4.0/',
+              version: '5.x',
+              cacheStatus: CacheStatus.hit,
+            ),
+          },
+        ),
+      );
       expect(
         CacheMetadata.read('$_cacheDir/dio/dio-5.x', fs: env.fs),
         _isCacheMetadata(pkgName: 'dio', version: '5.x', pkgVersion: '5.4.0'),
@@ -373,7 +531,21 @@ void main() {
       // Update to a new major version.
       env.pubspec.addDependency('dio', '6.0.0');
       env.pubGet();
-      await command.run(packageNames: ['dio']);
+      final result = await command.run(packageNames: ['dio']);
+
+      expect(
+        result,
+        _isGetResult(
+          packages: {
+            'dio': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/dio',
+              source: '$_pubCacheBase/dio-6.0.0/',
+              version: '6.x',
+              cacheStatus: CacheStatus.miss,
+            ),
+          },
+        ),
+      );
 
       verify(
         generator.generate(
@@ -629,4 +801,28 @@ Matcher _isCacheMetadata({
         'source',
         'file://$_pubCacheBase/$pkgName-$pkgVersion/',
       );
+}
+
+Matcher _isGetResult({required Map<String, Matcher> packages}) {
+  return isA<GetResult>().having(
+    (r) => r.packages,
+    'packages',
+    allOf([
+      for (final entry in packages.entries)
+        containsPair(entry.key, entry.value),
+    ]),
+  );
+}
+
+Matcher _isPackageGetResult({
+  required String documentation,
+  required String source,
+  required String version,
+  required CacheStatus cacheStatus,
+}) {
+  return isA<PackageGetResult>()
+      .having((r) => r.documentation, 'documentation', documentation)
+      .having((r) => r.source, 'source', source)
+      .having((r) => r.version, 'version', version)
+      .having((r) => r.cacheStatus, 'cacheStatus', cacheStatus);
 }

@@ -23,11 +23,13 @@ class CacheResult {
   final CacheAction action;
   final String cacheDir;
   final String docVersion;
+  final CacheMetadata? metadata;
 
   CacheResult({
     required this.action,
     required this.cacheDir,
     required this.docVersion,
+    this.metadata,
   });
 }
 
@@ -103,32 +105,41 @@ class CacheManager {
       );
     }
 
+    final metadata = CacheMetadata.read(cacheDir, fs: env.fs);
+    if (metadata == null) {
+      return CacheResult(
+        action: CacheAction.regenerate,
+        cacheDir: cacheDir,
+        docVersion: docVer,
+      );
+    }
+
     // For exact strategy, if the cache dir exists, just reuse.
     if (strategy == ResolutionStrategy.exact) {
       return CacheResult(
         action: CacheAction.reuse,
         cacheDir: cacheDir,
         docVersion: docVer,
+        metadata: metadata,
       );
     }
 
     // For loose-* strategies, check if cached version is fresh enough.
-    final metadata = CacheMetadata.read(cacheDir, fs: env.fs);
-    if (metadata != null) {
-      final cachedVersion = Version.parse(metadata.packageVersion);
-      if (cachedVersion >= packageVersion) {
-        return CacheResult(
-          action: CacheAction.reuse,
-          cacheDir: cacheDir,
-          docVersion: docVer,
-        );
-      }
+    final cachedVersion = Version.parse(metadata.packageVersion);
+    if (cachedVersion >= packageVersion) {
+      return CacheResult(
+        action: CacheAction.reuse,
+        cacheDir: cacheDir,
+        docVersion: docVer,
+        metadata: metadata,
+      );
+    } else {
+      return CacheResult(
+        action: CacheAction.regenerate,
+        cacheDir: cacheDir,
+        docVersion: docVer,
+        metadata: metadata,
+      );
     }
-
-    return CacheResult(
-      action: CacheAction.regenerate,
-      cacheDir: cacheDir,
-      docVersion: docVer,
-    );
   }
 }

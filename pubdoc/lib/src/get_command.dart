@@ -6,6 +6,76 @@ import 'exceptions.dart';
 import 'project.dart';
 import 'version_resolution.dart';
 
+/// Cache status for a single package after `pubdoc get`.
+enum CacheStatus {
+  /// The cached documentation was valid and reused as-is.
+  hit,
+
+  /// No cache existed; documentation was generated fresh.
+  miss,
+
+  /// Cache existed but was not compatible with the given package version,
+  /// so documentation was regenerated.
+  refreshed,
+}
+
+/// Per-package result from [GetCommand.run].
+class PackageGetResult {
+  /// Absolute path to the symlink in the project's `.pubdoc/` directory.
+  final String documentation;
+
+  /// Absolute path to the package source directory that the documentation was
+  /// generated from.
+  final String source;
+
+  /// The resolved documentation version string (e.g. `5.3.x`).
+  final String version;
+
+  /// Whether documentation was served from cache, generated fresh, or refreshed.
+  final CacheStatus cacheStatus;
+
+  const PackageGetResult({
+    required this.documentation,
+    required this.source,
+    required this.version,
+    required this.cacheStatus,
+  });
+}
+
+/// Aggregated result from [GetCommand.run], keyed by package name.
+class GetResult {
+  /// Results indexed by package name.
+  final Map<String, PackageGetResult> packages;
+
+  const GetResult({required this.packages});
+
+  /// Returns a human-readable summary suitable for printing to stdout.
+  ///
+  /// Each package is rendered as:
+  /// ```
+  /// <packageName>
+  ///   documentation: <path>
+  ///   source:        <path>
+  ///   cache:         <hit|miss|refreshed>
+  /// ```
+  /// Packages are separated by a blank line.
+  String format() {
+    final buffer = StringBuffer();
+    var first = true;
+    for (final entry in packages.entries) {
+      if (!first) buffer.write('\n');
+      first = false;
+      final r = entry.value;
+      buffer.write('${entry.key}\n');
+      buffer.write('  documentation: ${r.documentation}\n');
+      buffer.write('  version:       ${r.version}\n');
+      buffer.write('  source:        ${r.source}\n');
+      buffer.write('  cache:         ${r.cacheStatus.name}\n');
+    }
+    return buffer.toString();
+  }
+}
+
 class GetCommand {
   final ProjectContext project;
   final PubdocConfig config;
@@ -23,7 +93,9 @@ class GetCommand {
     DocGenerator? generator,
   }) : _generator = generator;
 
-  Future<void> run({required List<String> packageNames}) async {
+  /// Runs the get command for the given [packageNames] and returns a
+  /// [GetResult] containing per-package metadata.
+  Future<GetResult> run({required List<String> packageNames}) async {
     if (packageNames.isEmpty) {
       throw PubdocException(
         'No packages specified. Usage: pubdoc get <package1> [package2 ...]',
@@ -35,12 +107,18 @@ class GetCommand {
     final cacheManager = CacheManager(config, env: env);
     final generator = _generator ?? DocGenerator(env: env);
 
+    final results = <String, PackageGetResult>{};
     for (final packageName in packageNames) {
-      await _processPackage(packageName, cacheManager, generator);
+      results[packageName] = await _processPackage(
+        packageName,
+        cacheManager,
+        generator,
+      );
     }
+    return GetResult(packages: results);
   }
 
-  Future<void> _processPackage(
+  Future<PackageGetResult> _processPackage(
     String packageName,
     CacheManager cacheManager,
     DocGenerator generator,
@@ -98,6 +176,22 @@ class GetCommand {
 
     // 7. Create/update symlink.
     _createSymlink(packageName, cacheResult.cacheDir);
+
+    final sourcePath = cacheResult.action == CacheAction.reuse
+        ? Uri.parse(cacheResult.metadata!.source).toFilePath()
+        : sourceDir.path;
+
+    final linkPath = '${project.pubdocDir.path}/$packageName';
+    return PackageGetResult(
+      documentation: linkPath,
+      source: sourcePath,
+      version: docVersion,
+      cacheStatus: switch (cacheResult.action) {
+        CacheAction.reuse => CacheStatus.hit,
+        CacheAction.generate => CacheStatus.miss,
+        CacheAction.regenerate => CacheStatus.refreshed,
+      },
+    );
   }
 
   void _createSymlink(String packageName, String cacheDir) {

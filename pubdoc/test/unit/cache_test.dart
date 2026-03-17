@@ -1,8 +1,4 @@
-import 'dart:convert';
-
-import 'package:file/file.dart';
 import 'package:file/memory.dart';
-import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubdoc/src/cache.dart';
 import 'package:pubdoc/src/config.dart';
@@ -65,6 +61,11 @@ void main() {
       final manager = CacheManager(config, env: env);
       final cacheDir = config.packageCacheDir('dio', '5.3.2');
       env.fs.directory(cacheDir).createSync(recursive: true);
+      CacheMetadata(
+        version: '5.3.2',
+        packageVersion: '5.3.2',
+        source: 'file:///test/source',
+      ).write(cacheDir, fs: env.fs);
 
       final result = manager.checkCache(
         packageName: 'dio',
@@ -80,7 +81,11 @@ void main() {
       final cacheDir = config.packageCacheDir('dio', '5.3.x');
       env.fs.directory(cacheDir).createSync(recursive: true);
       // Metadata says cached from 5.3.4
-      _writeMetadata(env.fs, cacheDir, '5.3.x', '5.3.4');
+      CacheMetadata(
+        version: '5.3.x',
+        packageVersion: '5.3.4',
+        source: 'file:///test/source',
+      ).write(cacheDir, fs: env.fs);
 
       final result = manager.checkCache(
         packageName: 'dio',
@@ -98,7 +103,11 @@ void main() {
         final cacheDir = config.packageCacheDir('dio', '5.3.x');
         env.fs.directory(cacheDir).createSync(recursive: true);
         // Metadata says cached from 5.3.1
-        _writeMetadata(env.fs, cacheDir, '5.3.x', '5.3.1');
+        CacheMetadata(
+          version: '5.3.x',
+          packageVersion: '5.3.1',
+          source: 'file:///test/source',
+        ).write(cacheDir, fs: env.fs);
 
         final result = manager.checkCache(
           packageName: 'dio',
@@ -114,7 +123,11 @@ void main() {
       final manager = CacheManager(config, env: env);
       final cacheDir = config.packageCacheDir('dio', '5.x');
       env.fs.directory(cacheDir).createSync(recursive: true);
-      _writeMetadata(env.fs, cacheDir, '5.x', '5.7.0');
+      CacheMetadata(
+        version: '5.x',
+        packageVersion: '5.7.0',
+        source: 'file:///test/source',
+      ).write(cacheDir, fs: env.fs);
 
       final result = manager.checkCache(
         packageName: 'dio',
@@ -163,20 +176,4 @@ void main() {
       expect(result, isNull);
     });
   });
-}
-
-void _writeMetadata(
-  FileSystem fs,
-  String cacheDir,
-  String version,
-  String packageVersion,
-) {
-  final file = fs.file(p.join(cacheDir, 'metadata.json'));
-  file.writeAsStringSync(
-    jsonEncode({
-      'version': version,
-      'package_version': packageVersion,
-      'source': 'file:///test/source',
-    }),
-  );
 }

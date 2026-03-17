@@ -40,6 +40,25 @@ without knowing the actual version and the cache location.
     `-- ...
 ```
 
+After running, the command prints a summary for each package:
+
+- `documentation`: the symlink in `.pubdoc/` that points to the generated docs.
+- `version`: the documentation version (see `--resolution`).
+- `source`: the package source directory the documentation was generated from.
+- `cache`: the cache status, which can be one of the following:
+  - `hit`: the existing cache was reused as-is.
+  - `miss`: the documentation was generated fresh.
+  - `refreshed`: the cache existed but was not compatible with the package
+    version your project depends on, so it was regenerated.
+
+```
+dio
+  documentation: /path/to/project/.pubdoc/dio
+  version:       5.3.x
+  source:        /Users/you/.pub-cache/hosted/pub.dev/dio-5.3.6/
+  cache:         hit
+```
+
 Refer to [PRINCIPLE.md][1] to learn more about the inner workings of
 `pubdoc get`.
 

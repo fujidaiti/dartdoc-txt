@@ -80,7 +80,8 @@ Future<void> main(List<String> arguments) async {
           config: config,
           env: env,
         );
-        await getCommand.run(packageNames: command.rest);
+        final result = await getCommand.run(packageNames: command.rest);
+        print(result.format());
       default:
         stderr.writeln("Unknown command '${command.name}'.");
         printUsage(argParser);
