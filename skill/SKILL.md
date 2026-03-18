@@ -72,26 +72,8 @@ multiple interceptors, and common patterns.
 
 Wait for the findings, then use them to proceed with your task.
 
-## Troubleshooting
+## Note on documentation access
 
-If `pubdoc get` fails or produces unexpected results, read
-`references/troubleshooting.md` for common issues and fixes.
-
-## Documentation structure
-
-For reference, generated docs live at `.pubdoc/<package>/` in the project root:
-
-```
-.pubdoc/<package>/
-├── OVERVIEW.md            ← start here: README summary + documentation guide
-├── INDEX.md               ← full package overview from dartdoc
-├── <library-name>/        ← one directory per public library
-│   ├── <ClassName>/
-│   │   ├── <ClassName>.md
-│   │   └── <ClassName>-methodName.md
-│   └── top-level-functions/
-├── topics/                ← topic pages, e.g. migration guides (if available)
-├── README.md              ← original README for reference (if available)
-├── EXAMPLES.md            ← examples overview with snippets (if available)
-└── example/               ← raw example .dart files (if available)
-```
+Generated docs live at `.pubdoc/<package>/` in the project root. Rely on the
+subagent's findings — do not read the documentation yourself unless the
+subagent's report is insufficient and further reading is clearly needed.
