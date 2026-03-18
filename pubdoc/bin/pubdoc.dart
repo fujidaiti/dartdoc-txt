@@ -8,6 +8,7 @@ import 'package:pubdoc/src/exceptions.dart';
 import 'package:pubdoc/src/get_command.dart';
 import 'package:pubdoc/src/logger.dart';
 import 'package:pubdoc/src/project.dart';
+import 'package:pubdoc/src/version_resolution.dart';
 
 const String version = '0.0.1';
 
@@ -51,6 +52,21 @@ ArgParser buildParser() {
           help:
               'Use cache whenever possible. '
               'Use --no-cache to always regenerate documentation.',
+        )
+        ..addOption(
+          'resolution',
+          abbr: 'r',
+          valueHelp: 'strategy',
+          defaultsTo: 'loose-patch',
+          allowed: ['exact', 'loose-patch', 'loose-minor'],
+          allowedHelp: {
+            'exact': 'Use the exact package version (e.g. 5.3.2).',
+            'loose-patch':
+                'Share docs across patch versions (e.g. 5.3.x). Default.',
+            'loose-minor': 'Share docs across minor versions (e.g. 5.x).',
+          },
+          help:
+              'Strategy to resolve the documentation version from the package version.',
         ),
     );
 }
@@ -125,10 +141,17 @@ Future<void> main(List<String> arguments) async {
         final projectPath = command.option('project') ?? Directory.current.path;
         final project = ProjectContext.from(projectPath, env: env);
         final useCache = command.flag('cache');
+        final strategy = switch (command.option('resolution')) {
+          'exact' => ResolutionStrategy.exact,
+          'loose-minor' => ResolutionStrategy.looseMinor,
+          'loose-patch' => ResolutionStrategy.loosePatch,
+          _ => throw StateError('Should not reach here.'),
+        };
         final getCommand = GetCommand(
           project: project,
           config: config,
           env: env,
+          strategy: strategy,
           useCache: useCache,
         );
         final result = await getCommand.run(packageNames: command.rest);
