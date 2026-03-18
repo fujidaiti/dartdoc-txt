@@ -22,8 +22,8 @@ class PlatformEnvironment implements Environment {
   @override
   final Logger? logger;
 
-  PlatformEnvironment({bool verbose = false})
-    : logger = Logger(verbose: verbose);
+  PlatformEnvironment({bool verbose = false, Logger? logger})
+    : logger = logger ?? Logger(verbose: verbose);
 
   @override
   String? getVariable(String name) => Platform.environment[name];

@@ -40,6 +40,13 @@ class PackageGetResult {
     required this.version,
     required this.cacheStatus,
   });
+
+  Map<String, dynamic> toJson() => {
+    'documentation': documentation,
+    'version': version,
+    'source': source,
+    'cache': cacheStatus.name,
+  };
 }
 
 /// Aggregated result from [GetCommand.run], keyed by package name.
@@ -48,6 +55,10 @@ class GetResult {
   final Map<String, PackageGetResult> packages;
 
   const GetResult({required this.packages});
+
+  Map<String, dynamic> toJson() => {
+    'packages': {for (final e in packages.entries) e.key: e.value.toJson()},
+  };
 
   /// Returns a human-readable summary suitable for printing to stdout.
   ///

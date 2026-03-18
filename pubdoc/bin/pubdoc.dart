@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
@@ -5,6 +6,7 @@ import 'package:pubdoc/src/config.dart';
 import 'package:pubdoc/src/environment.dart';
 import 'package:pubdoc/src/exceptions.dart';
 import 'package:pubdoc/src/get_command.dart';
+import 'package:pubdoc/src/logger.dart';
 import 'package:pubdoc/src/project.dart';
 
 const String version = '0.0.1';
@@ -24,8 +26,19 @@ ArgParser buildParser() {
       help: 'Show additional command output.',
     )
     ..addFlag('version', negatable: false, help: 'Print the tool version.')
+    ..addOption(
+      'json',
+      valueHelp: 'indent',
+      help:
+          'Output results in JSON format. '
+          'Value is the indent level (e.g. --json=0 for minified, --json=2 for 2-space indent).',
+    )
     ..addCommand('get');
 }
+
+String _toJson(Object? obj, int indent) => indent == 0
+    ? jsonEncode(obj)
+    : JsonEncoder.withIndent(' ' * indent).convert(obj);
 
 void printUsage(ArgParser argParser) {
   print('Usage: pubdoc <command> [options] [arguments]');
@@ -40,9 +53,13 @@ void printUsage(ArgParser argParser) {
 Future<void> main(List<String> arguments) async {
   final argParser = buildParser();
 
+  final normalizedArgs = arguments
+      .map((a) => a == '--json' ? '--json=2' : a)
+      .toList();
+
   ArgResults results;
   try {
-    results = argParser.parse(arguments);
+    results = argParser.parse(normalizedArgs);
   } on FormatException catch (e) {
     stderr.writeln(e.message);
     stderr.writeln('');
@@ -61,7 +78,19 @@ Future<void> main(List<String> arguments) async {
   }
 
   final verbose = results.flag('verbose');
-  final env = PlatformEnvironment(verbose: verbose);
+  final rawJson = results['json'] as String?;
+  final jsonIndent = rawJson == null ? null : int.tryParse(rawJson);
+  if (rawJson != null && (jsonIndent == null || jsonIndent < 0)) {
+    stderr.writeln(
+      '--json requires a non-negative integer (e.g. --json=0 or --json=2).',
+    );
+    exitCode = 64;
+    return;
+  }
+  final useJson = jsonIndent != null;
+  final env = useJson
+      ? PlatformEnvironment(logger: CollectingLogger(verbose: verbose))
+      : PlatformEnvironment(verbose: verbose);
   final command = results.command;
 
   if (command == null) {
@@ -81,14 +110,36 @@ Future<void> main(List<String> arguments) async {
           env: env,
         );
         final result = await getCommand.run(packageNames: command.rest);
-        print(result.format());
+        if (useJson) {
+          final cl = env.logger as CollectingLogger;
+          print(
+            _toJson({
+              'output': result.toJson(),
+              'errors': cl.errors,
+              'logs': cl.logs,
+            }, jsonIndent!),
+          );
+        } else {
+          print(result.format());
+        }
       default:
         stderr.writeln("Unknown command '${command.name}'.");
         printUsage(argParser);
         exitCode = 64;
     }
   } on PubdocException catch (e) {
-    env.logger?.error(e.message);
+    if (useJson) {
+      final cl = env.logger as CollectingLogger;
+      print(
+        _toJson({
+          'output': null,
+          'errors': [...cl.errors, e.message],
+          'logs': cl.logs,
+        }, jsonIndent!),
+      );
+    } else {
+      env.logger?.error(e.message);
+    }
     exitCode = 1;
   }
 }
