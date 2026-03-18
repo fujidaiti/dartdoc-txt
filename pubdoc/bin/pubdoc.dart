@@ -33,7 +33,18 @@ ArgParser buildParser() {
           'Output results in JSON format. '
           'Value is the indent level (e.g. --json=0 for minified, --json=2 for 2-space indent).',
     )
-    ..addCommand('get');
+    ..addCommand(
+      'get',
+      ArgParser()..addOption(
+        'project',
+        abbr: 'p',
+        valueHelp: 'path',
+        help:
+            'The path to the Dart/Flutter project root—a directory that '
+            'has pubspec.yaml, including pub workspaces. '
+            'Defaults to the current directory.',
+      ),
+    );
 }
 
 String _toJson(Object? obj, int indent) => indent == 0
@@ -103,7 +114,8 @@ Future<void> main(List<String> arguments) async {
     switch (command.name) {
       case 'get':
         final config = PubdocConfig.resolve(env);
-        final project = ProjectContext.from(Directory.current.path, env: env);
+        final projectPath = command.option('project') ?? Directory.current.path;
+        final project = ProjectContext.from(projectPath, env: env);
         final getCommand = GetCommand(
           project: project,
           config: config,

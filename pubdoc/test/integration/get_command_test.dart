@@ -629,6 +629,22 @@ void main() {
       );
     });
 
+    test('missing pubspec.yaml throws an exception', () {
+      env.fs.file('$_projectRoot/pubspec.yaml').deleteSync();
+      expect(
+        () => ProjectContext.from(_projectRoot, env: env),
+        throwsA(
+          isA<PubdocException>().having(
+            (e) => e.message,
+            'message',
+            'pubspec.yaml not found in $_projectRoot.\n'
+                'Make sure the working directory is the root of a Dart/Flutter project, '
+                'or specify the project path via --project option.',
+          ),
+        ),
+      );
+    });
+
     test('package not in pubspec.lock throws an exception', () async {
       env.pubspec.addDependency('dio', '5.3.2');
       env.pubGet();

@@ -29,6 +29,13 @@ class ProjectContext {
   /// but no workspace root can be found within 10 parent directories.
   factory ProjectContext.from(String projectRoot, {required Environment env}) {
     final pubspecFile = env.fs.file(p.join(projectRoot, 'pubspec.yaml'));
+    if (!pubspecFile.existsSync()) {
+      throw PubdocException(
+        'pubspec.yaml not found in $projectRoot.\n'
+        'Make sure the working directory is the root of a Dart/Flutter project, '
+        'or specify the project path via --project option.',
+      );
+    }
     String? workspaceRoot;
     if (pubspecFile.existsSync()) {
       final YamlMap? pubspec;
