@@ -30,7 +30,7 @@ void main() {
 
   group('CacheManager.checkCache', () {
     test('returns generate when cache dir does not exist', () {
-      final manager = CacheManager(config, env: env);
+      final manager = CacheManager(config, env: env, pubdocVersion: '1.0.0');
       final result = manager.checkCache(
         packageName: 'dio',
         packageVersion: Version.parse('5.3.2'),
@@ -42,7 +42,7 @@ void main() {
     });
 
     test('returns generate when useCache is false', () {
-      final manager = CacheManager(config, env: env);
+      final manager = CacheManager(config, env: env, pubdocVersion: '1.0.0');
       // Create the cache dir to prove it's ignored.
       env.fs
           .directory(config.packageCacheDir('dio', '5.3.x'))
@@ -58,13 +58,14 @@ void main() {
     });
 
     test('returns reuse for exact strategy when cache exists', () {
-      final manager = CacheManager(config, env: env);
+      final manager = CacheManager(config, env: env, pubdocVersion: '1.0.0');
       final cacheDir = config.packageCacheDir('dio', '5.3.2');
       env.fs.directory(cacheDir).createSync(recursive: true);
       CacheMetadata(
         version: '5.3.2',
         packageVersion: '5.3.2',
         source: 'file:///test/source',
+        pubdocVersion: '1.0.0',
       ).write(cacheDir, fs: env.fs);
 
       final result = manager.checkCache(
@@ -77,7 +78,7 @@ void main() {
     });
 
     test('returns reuse for loosePatch when cached version >= requested', () {
-      final manager = CacheManager(config, env: env);
+      final manager = CacheManager(config, env: env, pubdocVersion: '1.0.0');
       final cacheDir = config.packageCacheDir('dio', '5.3.x');
       env.fs.directory(cacheDir).createSync(recursive: true);
       // Metadata says cached from 5.3.4
@@ -85,6 +86,7 @@ void main() {
         version: '5.3.x',
         packageVersion: '5.3.4',
         source: 'file:///test/source',
+        pubdocVersion: '1.0.0',
       ).write(cacheDir, fs: env.fs);
 
       final result = manager.checkCache(
@@ -99,7 +101,7 @@ void main() {
     test(
       'returns regenerate for loosePatch when cached version < requested',
       () {
-        final manager = CacheManager(config, env: env);
+        final manager = CacheManager(config, env: env, pubdocVersion: '1.0.0');
         final cacheDir = config.packageCacheDir('dio', '5.3.x');
         env.fs.directory(cacheDir).createSync(recursive: true);
         // Metadata says cached from 5.3.1
@@ -107,6 +109,7 @@ void main() {
           version: '5.3.x',
           packageVersion: '5.3.1',
           source: 'file:///test/source',
+          pubdocVersion: '1.0.0',
         ).write(cacheDir, fs: env.fs);
 
         final result = manager.checkCache(
@@ -120,13 +123,14 @@ void main() {
     );
 
     test('returns reuse for looseMinor when cached version >= requested', () {
-      final manager = CacheManager(config, env: env);
+      final manager = CacheManager(config, env: env, pubdocVersion: '1.0.0');
       final cacheDir = config.packageCacheDir('dio', '5.x');
       env.fs.directory(cacheDir).createSync(recursive: true);
       CacheMetadata(
         version: '5.x',
         packageVersion: '5.7.0',
         source: 'file:///test/source',
+        pubdocVersion: '1.0.0',
       ).write(cacheDir, fs: env.fs);
 
       final result = manager.checkCache(
@@ -139,7 +143,7 @@ void main() {
     });
 
     test('returns regenerate when metadata is missing in loose mode', () {
-      final manager = CacheManager(config, env: env);
+      final manager = CacheManager(config, env: env, pubdocVersion: '1.0.0');
       final cacheDir = config.packageCacheDir('dio', '5.3.x');
       // Dir exists but no metadata.json
       env.fs.directory(cacheDir).createSync(recursive: true);
@@ -152,14 +156,81 @@ void main() {
       );
       expect(result.action, CacheAction.regenerate);
     });
+
+    test('returns regenerate when metadata.pubdocVersion is null (old cache)',
+        () {
+      final manager = CacheManager(config, env: env, pubdocVersion: '1.0.0');
+      final cacheDir = config.packageCacheDir('dio', '5.3.x');
+      env.fs.directory(cacheDir).createSync(recursive: true);
+      // Write metadata without pubdoc_version field.
+      CacheMetadata(
+        version: '5.3.x',
+        packageVersion: '5.3.4',
+        source: 'file:///test/source',
+        pubdocVersion: null,
+      ).write(cacheDir, fs: env.fs);
+
+      final result = manager.checkCache(
+        packageName: 'dio',
+        packageVersion: Version.parse('5.3.2'),
+        strategy: ResolutionStrategy.loosePatch,
+        useCache: true,
+      );
+      expect(result.action, CacheAction.regenerate);
+    });
+
+    test(
+        'returns regenerate when metadata.pubdocVersion < current pubdoc version',
+        () {
+      final manager = CacheManager(config, env: env, pubdocVersion: '1.1.0');
+      final cacheDir = config.packageCacheDir('dio', '5.3.x');
+      env.fs.directory(cacheDir).createSync(recursive: true);
+      CacheMetadata(
+        version: '5.3.x',
+        packageVersion: '5.3.4',
+        source: 'file:///test/source',
+        pubdocVersion: '1.0.0',
+      ).write(cacheDir, fs: env.fs);
+
+      final result = manager.checkCache(
+        packageName: 'dio',
+        packageVersion: Version.parse('5.3.2'),
+        strategy: ResolutionStrategy.loosePatch,
+        useCache: true,
+      );
+      expect(result.action, CacheAction.regenerate);
+    });
+
+    test(
+        'returns reuse when metadata.pubdocVersion == current pubdoc version',
+        () {
+      final manager = CacheManager(config, env: env, pubdocVersion: '1.0.0');
+      final cacheDir = config.packageCacheDir('dio', '5.3.x');
+      env.fs.directory(cacheDir).createSync(recursive: true);
+      CacheMetadata(
+        version: '5.3.x',
+        packageVersion: '5.3.4',
+        source: 'file:///test/source',
+        pubdocVersion: '1.0.0',
+      ).write(cacheDir, fs: env.fs);
+
+      final result = manager.checkCache(
+        packageName: 'dio',
+        packageVersion: Version.parse('5.3.2'),
+        strategy: ResolutionStrategy.loosePatch,
+        useCache: true,
+      );
+      expect(result.action, CacheAction.reuse);
+    });
   });
 
   group('CacheMetadata', () {
-    test('round-trips through JSON', () {
+    test('round-trips through JSON including pubdoc_version', () {
       final metadata = CacheMetadata(
         version: '5.3.x',
         packageVersion: '5.3.4',
         source: 'file:///path/to/dio-5.3.4',
+        pubdocVersion: '1.0.0',
       );
       env.fs.directory('/tmp/test').createSync(recursive: true);
       metadata.write('/tmp/test', fs: env.fs);
@@ -169,6 +240,22 @@ void main() {
       expect(loaded!.version, '5.3.x');
       expect(loaded.packageVersion, '5.3.4');
       expect(loaded.source, 'file:///path/to/dio-5.3.4');
+      expect(loaded.pubdocVersion, '1.0.0');
+    });
+
+    test('round-trips through JSON with null pubdoc_version', () {
+      final metadata = CacheMetadata(
+        version: '5.3.x',
+        packageVersion: '5.3.4',
+        source: 'file:///path/to/dio-5.3.4',
+        pubdocVersion: null,
+      );
+      env.fs.directory('/tmp/test2').createSync(recursive: true);
+      metadata.write('/tmp/test2', fs: env.fs);
+
+      final loaded = CacheMetadata.read('/tmp/test2', fs: env.fs);
+      expect(loaded, isNotNull);
+      expect(loaded!.pubdocVersion, isNull);
     });
 
     test('read returns null when file does not exist', () {
