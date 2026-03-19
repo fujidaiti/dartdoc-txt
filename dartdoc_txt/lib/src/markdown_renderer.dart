@@ -18,7 +18,7 @@ class MarkdownRenderer {
     required this.packageGraph,
     this.sourceLineThreshold = 10,
     this.includeSource = true,
-    this.packageRoot = '',
+    required this.packageRoot,
   }) {
     _options = RenderOptions(
       sourceLineThreshold: sourceLineThreshold,

@@ -15,7 +15,7 @@ class RenderOptions {
   const RenderOptions({
     this.sourceLineThreshold = 10,
     this.includeSource = true,
-    this.packageRoot = '',
+    required this.packageRoot,
   });
 }
 
@@ -371,9 +371,6 @@ Map<String, dynamic> _sourceLocationData(
   ModelElement element,
   String packageRoot,
 ) {
-  if (packageRoot.isEmpty) {
-    return {'hasSourceLocation': false, 'sourceLocation': ''};
-  }
   final absolutePath = element.sourceFileName;
   final relativePath = p.relative(absolutePath, from: packageRoot);
   final lineNumber = element.characterLocation?.lineNumber;
