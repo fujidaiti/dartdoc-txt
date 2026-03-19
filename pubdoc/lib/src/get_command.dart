@@ -176,9 +176,10 @@ class GetCommand {
         _copyDirectory(sourceDir, tempDir);
         final dartToolDir = tempDir.childDirectory('.dart_tool');
         dartToolDir.createSync();
+        final transitiveDeps = project.getTransitiveDependencies(packageName);
         dartToolDir
             .childFile('package_config.json')
-            .writeAsStringSync(project.packageConfigFile.readAsStringSync());
+            .writeAsStringSync(project.filteredPackageConfig(transitiveDeps));
 
         await generator.generate(
           sourcePath: tempDir.path,

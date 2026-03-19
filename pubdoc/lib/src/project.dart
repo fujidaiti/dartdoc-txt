@@ -89,6 +89,9 @@ class ProjectContext {
   File get packageConfigFile =>
       env.fs.file(p.join(_effectiveRoot, '.dart_tool', 'package_config.json'));
 
+  File get packageGraphFile =>
+      env.fs.file(p.join(_effectiveRoot, '.dart_tool', 'package_graph.json'));
+
   Directory get pubdocDir =>
       env.fs.directory(p.join(_effectiveRoot, '.pubdoc'));
 
@@ -120,6 +123,55 @@ class ProjectContext {
     }
     final versionStr = (packages[packageName] as YamlMap)['version'] as String;
     return Version.parse(versionStr);
+  }
+
+  /// Returns the set of transitive dependency names for [packageName],
+  /// including [packageName] itself.
+  ///
+  /// Uses `.dart_tool/package_graph.json` if available; returns `null`
+  /// if the file does not exist (e.g., older Dart SDKs).
+  Set<String>? getTransitiveDependencies(String packageName) {
+    if (!packageGraphFile.existsSync()) return null;
+
+    final json =
+        jsonDecode(packageGraphFile.readAsStringSync()) as Map<String, dynamic>;
+    final packages = json['packages'] as List<dynamic>;
+
+    // Build adjacency map: name → [dependency names]
+    final graph = <String, List<String>>{};
+    for (final pkg in packages) {
+      final map = pkg as Map<String, dynamic>;
+      final name = map['name'] as String;
+      final deps = (map['dependencies'] as List<dynamic>).cast<String>();
+      graph[name] = deps;
+    }
+
+    // BFS from packageName
+    final visited = <String>{};
+    final queue = [packageName];
+    while (queue.isNotEmpty) {
+      final current = queue.removeAt(0);
+      if (!visited.add(current)) continue;
+      final deps = graph[current];
+      if (deps != null) queue.addAll(deps);
+    }
+    return visited;
+  }
+
+  /// Returns the contents of package_config.json filtered to only include
+  /// packages in [keepNames]. Falls back to the full file if [keepNames]
+  /// is null.
+  String filteredPackageConfig(Set<String>? keepNames) {
+    final content = packageConfigFile.readAsStringSync();
+    if (keepNames == null) return content;
+
+    final json = jsonDecode(content) as Map<String, dynamic>;
+    final packages = json['packages'] as List<dynamic>;
+    json['packages'] = [
+      for (final pkg in packages)
+        if (keepNames.contains((pkg as Map<String, dynamic>)['name'])) pkg,
+    ];
+    return jsonEncode(json);
   }
 
   /// Parses `.dart_tool/package_config.json` and returns the source directory

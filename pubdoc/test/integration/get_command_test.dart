@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:mockito/mockito.dart';
 import 'package:pubdoc/src/cache.dart';
 import 'package:pubdoc/src/config.dart';
@@ -894,6 +896,83 @@ void main() {
           ),
         ),
       );
+    });
+  });
+
+  group('Transitive dependency filtering', () {
+    test('getTransitiveDependencies returns transitive closure', () {
+      env.pubspec.addDependency('dio', '5.3.2');
+      env.pubspec.addDependency('http', '1.2.0');
+      env.pubspec.addDependency('collection', '1.0.0');
+      env.pubGet();
+
+      // Manually set up a dependency graph:
+      // dio -> http -> collection
+      env.packageGraph.clear();
+      env.packageGraph.addPackage(name: 'dio', dependencies: ['http']);
+      env.packageGraph.addPackage(name: 'http', dependencies: ['collection']);
+      env.packageGraph.addPackage(name: 'collection');
+      env.packageGraph.write();
+
+      final project = ProjectContext.from(_projectRoot, env: env);
+      final deps = project.getTransitiveDependencies('dio');
+      expect(deps, {'dio', 'http', 'collection'});
+    });
+
+    test('getTransitiveDependencies returns only direct subtree', () {
+      env.pubspec.addDependency('dio', '5.3.2');
+      env.pubspec.addDependency('http', '1.2.0');
+      env.pubspec.addDependency('unrelated', '1.0.0');
+      env.pubGet();
+
+      env.packageGraph.clear();
+      env.packageGraph.addPackage(name: 'dio', dependencies: ['http']);
+      env.packageGraph.addPackage(name: 'http');
+      env.packageGraph.addPackage(name: 'unrelated');
+      env.packageGraph.write();
+
+      final project = ProjectContext.from(_projectRoot, env: env);
+      final deps = project.getTransitiveDependencies('dio');
+      expect(deps, {'dio', 'http'});
+      expect(deps, isNot(contains('unrelated')));
+    });
+
+    test('getTransitiveDependencies returns null when file missing', () {
+      env.pubspec.addDependency('dio', '5.3.2');
+      env.pubGet();
+
+      // Delete package_graph.json
+      env.fs.file('$_projectRoot/.dart_tool/package_graph.json').deleteSync();
+
+      final project = ProjectContext.from(_projectRoot, env: env);
+      expect(project.getTransitiveDependencies('dio'), isNull);
+    });
+
+    test('filteredPackageConfig filters to kept names', () {
+      env.pubspec.addDependency('dio', '5.3.2');
+      env.pubspec.addDependency('http', '1.2.0');
+      env.pubspec.addDependency('unrelated', '1.0.0');
+      env.pubGet();
+
+      final project = ProjectContext.from(_projectRoot, env: env);
+      final filtered = project.filteredPackageConfig({'dio', 'http'});
+      final json = jsonDecode(filtered) as Map<String, dynamic>;
+      final packages = json['packages'] as List<dynamic>;
+      final names = [
+        for (final p in packages) (p as Map<String, dynamic>)['name'],
+      ];
+      expect(names, containsAll(['dio', 'http']));
+      expect(names, isNot(contains('unrelated')));
+    });
+
+    test('filteredPackageConfig with null returns full config', () {
+      env.pubspec.addDependency('dio', '5.3.2');
+      env.pubspec.addDependency('http', '1.2.0');
+      env.pubGet();
+
+      final project = ProjectContext.from(_projectRoot, env: env);
+      final full = project.filteredPackageConfig(null);
+      expect(full, project.packageConfigFile.readAsStringSync());
     });
   });
 

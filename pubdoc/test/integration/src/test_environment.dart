@@ -107,12 +107,42 @@ class PackageConfigJson {
   void deleteSync() => _file.deleteSync();
 }
 
+class PackageGraphJson {
+  final File _file;
+  final List<({String name, List<String> dependencies})> _packages = [];
+
+  PackageGraphJson(this._file);
+
+  void addPackage({
+    required String name,
+    List<String> dependencies = const [],
+  }) {
+    _packages.add((name: name, dependencies: dependencies));
+  }
+
+  void clear() => _packages.clear();
+
+  void write() {
+    _file.parent.createSync(recursive: true);
+    _file.writeAsStringSync(
+      jsonEncode({
+        'configVersion': 1,
+        'packages': [
+          for (final pkg in _packages)
+            {'name': pkg.name, 'dependencies': pkg.dependencies},
+        ],
+      }),
+    );
+  }
+}
+
 class TestEnvironment implements Environment {
   final String projectRoot;
   final String pubCacheBase;
   late final PubspecYaml pubspec;
   late final PubspecLock pubspecLock;
   late final PackageConfigJson packageConfig;
+  late final PackageGraphJson packageGraph;
   final Map<String, String> _variables;
 
   @override
@@ -132,6 +162,9 @@ class TestEnvironment implements Environment {
     pubspecLock = PubspecLock(fs.file('$projectRoot/pubspec.lock'));
     packageConfig = PackageConfigJson(
       fs.file('$projectRoot/.dart_tool/package_config.json'),
+    );
+    packageGraph = PackageGraphJson(
+      fs.file('$projectRoot/.dart_tool/package_graph.json'),
     );
   }
 
@@ -174,6 +207,13 @@ class TestEnvironment implements Environment {
       );
     }
     packageConfig.write();
+
+    // Write package_graph.json.
+    packageGraph._packages.clear();
+    for (final entry in pubspec.dependencies.entries) {
+      packageGraph.addPackage(name: entry.key);
+    }
+    packageGraph.write();
 
     // Create package source dirs in pub cache.
     for (final entry in pubspec.dependencies.entries) {
