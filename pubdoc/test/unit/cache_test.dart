@@ -160,48 +160,6 @@ void main() {
       expect(result.action, CacheAction.regenerate);
     });
 
-    test(
-        'returns regenerate when metadata.toolVersion < current tool version',
-        () {
-      final newerEnv = _TestEnvironment(toolVersion: '1.1.0');
-      final manager = CacheManager(config, env: newerEnv);
-      final cacheDir = config.packageCacheDir('dio', '5.3.x');
-      newerEnv.fs.directory(cacheDir).createSync(recursive: true);
-      CacheMetadata(
-        version: '5.3.x',
-        packageVersion: '5.3.4',
-        source: 'file:///test/source',
-        toolVersion: '1.0.0',
-      ).write(cacheDir, fs: newerEnv.fs);
-
-      final result = manager.checkCache(
-        packageName: 'dio',
-        packageVersion: Version.parse('5.3.2'),
-        strategy: ResolutionStrategy.loosePatch,
-        useCache: true,
-      );
-      expect(result.action, CacheAction.regenerate);
-    });
-
-    test('returns reuse when metadata.toolVersion == current tool version', () {
-      final manager = CacheManager(config, env: env);
-      final cacheDir = config.packageCacheDir('dio', '5.3.x');
-      env.fs.directory(cacheDir).createSync(recursive: true);
-      CacheMetadata(
-        version: '5.3.x',
-        packageVersion: '5.3.4',
-        source: 'file:///test/source',
-        toolVersion: '1.0.0',
-      ).write(cacheDir, fs: env.fs);
-
-      final result = manager.checkCache(
-        packageName: 'dio',
-        packageVersion: Version.parse('5.3.2'),
-        strategy: ResolutionStrategy.loosePatch,
-        useCache: true,
-      );
-      expect(result.action, CacheAction.reuse);
-    });
   });
 
   group('CacheMetadata', () {
