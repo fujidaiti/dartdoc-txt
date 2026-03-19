@@ -4,7 +4,7 @@
 MyClass.fromMap(Map map)
 ```
 
-Source: lib/src/my_class.dart:21
+Source: lib/src/my_class.dart:21:36
 
 Creates a [MyClass] from a map of values.
 

@@ -4,7 +4,7 @@
 class Comparable2
 ```
 
-Source: lib/edge_cases.dart:5
+Source: lib/edge_cases.dart:5:17
 
 A class that overloads operators.
 
@@ -19,7 +19,7 @@ Source: lib/edge_cases.dart:5
 
 ### operator +(Comparable2 other) → Comparable2
 
-Source: lib/edge_cases.dart:16
+Source: lib/edge_cases.dart:16:16
 
 Adds two [Comparable2] instances.
 

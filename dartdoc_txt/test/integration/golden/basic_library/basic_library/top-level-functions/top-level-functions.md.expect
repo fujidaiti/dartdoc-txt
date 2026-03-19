@@ -6,7 +6,7 @@
 add(int a, int b) → int
 ```
 
-Source: lib/src/functions.dart:4
+Source: lib/src/functions.dart:4:4
 
 A simple top-level function.
 

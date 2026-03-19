@@ -366,17 +366,21 @@ Map<String, dynamic> _operatorData(
   };
 }
 
-/// Computes source location data (relative path + line number) for an element.
+/// Computes source location data (relative path + line number range) for an element.
 Map<String, dynamic> _sourceLocationData(
   ModelElement element,
   String packageRoot,
 ) {
   final absolutePath = element.sourceFileName;
   final relativePath = p.relative(absolutePath, from: packageRoot);
-  final lineNumber = element.characterLocation?.lineNumber;
-  final location = lineNumber != null
-      ? '$relativePath:$lineNumber'
-      : relativePath;
+  final startLine = element.characterLocation?.lineNumber;
+  if (startLine == null) {
+    return {'hasSourceLocation': true, 'sourceLocation': relativePath};
+  }
+  final lineCount = sourceLineCount(unescapeHtml(element.sourceCode));
+  final location = lineCount > 0
+      ? '$relativePath:$startLine:${startLine + lineCount - 1}'
+      : '$relativePath:$startLine';
   return {'hasSourceLocation': true, 'sourceLocation': location};
 }
 

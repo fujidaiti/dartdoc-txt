@@ -4,7 +4,7 @@
 extension StringExtras on String
 ```
 
-Source: lib/edge_cases.dart:23
+Source: lib/edge_cases.dart:23:26
 
 An extension on [String] that adds utility methods.
 
@@ -12,7 +12,7 @@ An extension on [String] that adds utility methods.
 
 ### exclaim() → String
 
-Source: lib/edge_cases.dart:25
+Source: lib/edge_cases.dart:25:25
 
 Returns this string with an exclamation mark appended.
 

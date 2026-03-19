@@ -4,7 +4,7 @@
 class StringHelper
 ```
 
-Source: lib/categories.dart:25
+Source: lib/categories.dart:25:28
 
 A string helper.
 
@@ -19,7 +19,7 @@ Source: lib/categories.dart:25
 
 ### reverse(String input) → String
 
-Source: lib/categories.dart:27
+Source: lib/categories.dart:27:27
 
 Reverses [input].
 

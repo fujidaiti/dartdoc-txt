@@ -6,7 +6,7 @@
 capitalize(String input) → String
 ```
 
-Source: lib/categories.dart:33
+Source: lib/categories.dart:33:36
 
 Capitalizes [input].
 

@@ -4,7 +4,7 @@
 processData(String input) → String
 ```
 
-Source: lib/src/my_class.dart:49
+Source: lib/src/my_class.dart:49:60
 
 A method with a longer body that exceeds the threshold.
 

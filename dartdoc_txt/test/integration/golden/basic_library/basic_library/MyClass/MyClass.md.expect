@@ -4,7 +4,7 @@
 class MyClass
 ```
 
-Source: lib/src/my_class.dart:5
+Source: lib/src/my_class.dart:5:64
 
 A simple class with documentation.
 
@@ -15,7 +15,7 @@ constructors, methods, and properties.
 
 ### MyClass.new(String name, {int count = 0})
 
-Source: lib/src/my_class.dart:13
+Source: lib/src/my_class.dart:13:13
 
 Creates a new [MyClass] with the given [name].
 
@@ -26,7 +26,7 @@ MyClass(this.name, {this.count = 0});
 ---
 ### MyClass.defaults()
 
-Source: lib/src/my_class.dart:16
+Source: lib/src/my_class.dart:16:16
 
 Creates a [MyClass] with default values.
 
@@ -37,7 +37,7 @@ MyClass.defaults() : name = 'default', count = 0;
 ---
 ### MyClass.fromMap(Map map)
 
-Source: lib/src/my_class.dart:21
+Source: lib/src/my_class.dart:21:36
 
 Creates a [MyClass] from a map of values.
 
@@ -64,7 +64,7 @@ The count value.
 
 ### greet() → String
 
-Source: lib/src/my_class.dart:39
+Source: lib/src/my_class.dart:39:41
 
 Returns a greeting message.
 
@@ -77,7 +77,7 @@ String greet() {
 ---
 ### processData(String input) → String
 
-Source: lib/src/my_class.dart:49
+Source: lib/src/my_class.dart:49:60
 
 A method with a longer body that exceeds the threshold.
 

@@ -4,7 +4,7 @@
 class Greeter
 ```
 
-Source: lib/alpha.dart:5
+Source: lib/alpha.dart:5:11
 
 A greeting class.
 
@@ -12,7 +12,7 @@ A greeting class.
 
 ### Greeter.new(String name)
 
-Source: lib/alpha.dart:10
+Source: lib/alpha.dart:10:10
 
 Creates a [Greeter].
 
