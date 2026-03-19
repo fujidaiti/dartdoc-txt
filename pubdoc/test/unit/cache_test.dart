@@ -163,7 +163,7 @@ void main() {
   });
 
   group('CacheMetadata', () {
-    test('round-trips through JSON including tool_version', () {
+    test('round-trips through JSON', () {
       final metadata = CacheMetadata(
         version: '5.3.x',
         packageVersion: '5.3.4',
