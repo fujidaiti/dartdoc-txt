@@ -104,12 +104,14 @@ contains:
   from firebase_core v4.5.4, then the version field would be `4.5.4`.
 - `source`: The actual source location of the package that the documentation is
   generated from.
+- `tool_version`: The version of pubdoc that generated the documentation.
 
 ```json
 {
   "version": "4.5.x",
   "package_version": "4.5.4",
-  "source": "file:///Users/username/.pub-cache/hosted/pub.dev/firebase_core-4.5.4"
+  "source": "file:///Users/username/.pub-cache/hosted/pub.dev/firebase_core-4.5.4",
+  "tool_version": "1.0.0"
 }
 ```
 

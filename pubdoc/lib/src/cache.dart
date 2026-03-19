@@ -37,11 +37,13 @@ class CacheMetadata {
   final String version;
   final String packageVersion;
   final String source;
+  final String toolVersion;
 
   CacheMetadata({
     required this.version,
     required this.packageVersion,
     required this.source,
+    required this.toolVersion,
   });
 
   factory CacheMetadata.fromJson(Map<String, dynamic> json) {
@@ -49,6 +51,7 @@ class CacheMetadata {
       version: json['version'] as String,
       packageVersion: json['package_version'] as String,
       source: json['source'] as String,
+      toolVersion: json['tool_version'] as String,
     );
   }
 
@@ -56,6 +59,7 @@ class CacheMetadata {
     'version': version,
     'package_version': packageVersion,
     'source': source,
+    'tool_version': toolVersion,
   };
 
   static CacheMetadata? read(String cacheDir, {required FileSystem fs}) {

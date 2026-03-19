@@ -12,6 +12,7 @@ abstract class Environment {
   FileSystem get fs;
   Logger? get logger;
   String? getVariable(String name);
+  String get toolVersion;
 }
 
 /// The default [Environment] backed by real platform I/O.
@@ -27,4 +28,7 @@ class PlatformEnvironment implements Environment {
 
   @override
   String? getVariable(String name) => Platform.environment[name];
+
+  @override
+  String get toolVersion => '0.0.1';
 }

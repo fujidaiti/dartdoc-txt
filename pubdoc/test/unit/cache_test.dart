@@ -12,8 +12,10 @@ class _TestEnvironment implements Environment {
   final MemoryFileSystem fs;
   @override
   final Logger? logger = null;
+  @override
+  final String toolVersion;
 
-  _TestEnvironment() : fs = MemoryFileSystem.test();
+  _TestEnvironment({this.toolVersion = '1.0.0'}) : fs = MemoryFileSystem.test();
 
   @override
   String? getVariable(String name) => null;
@@ -65,6 +67,7 @@ void main() {
         version: '5.3.2',
         packageVersion: '5.3.2',
         source: 'file:///test/source',
+        toolVersion: '1.0.0',
       ).write(cacheDir, fs: env.fs);
 
       final result = manager.checkCache(
@@ -85,6 +88,7 @@ void main() {
         version: '5.3.x',
         packageVersion: '5.3.4',
         source: 'file:///test/source',
+        toolVersion: '1.0.0',
       ).write(cacheDir, fs: env.fs);
 
       final result = manager.checkCache(
@@ -107,6 +111,7 @@ void main() {
           version: '5.3.x',
           packageVersion: '5.3.1',
           source: 'file:///test/source',
+          toolVersion: '1.0.0',
         ).write(cacheDir, fs: env.fs);
 
         final result = manager.checkCache(
@@ -127,6 +132,7 @@ void main() {
         version: '5.x',
         packageVersion: '5.7.0',
         source: 'file:///test/source',
+        toolVersion: '1.0.0',
       ).write(cacheDir, fs: env.fs);
 
       final result = manager.checkCache(
@@ -155,11 +161,12 @@ void main() {
   });
 
   group('CacheMetadata', () {
-    test('round-trips through JSON', () {
+    test('serializes and deserializes all fields', () {
       final metadata = CacheMetadata(
         version: '5.3.x',
         packageVersion: '5.3.4',
         source: 'file:///path/to/dio-5.3.4',
+        toolVersion: '1.0.0',
       );
       env.fs.directory('/tmp/test').createSync(recursive: true);
       metadata.write('/tmp/test', fs: env.fs);
@@ -169,6 +176,7 @@ void main() {
       expect(loaded!.version, '5.3.x');
       expect(loaded.packageVersion, '5.3.4');
       expect(loaded.source, 'file:///path/to/dio-5.3.4');
+      expect(loaded.toolVersion, '1.0.0');
     });
 
     test('read returns null when file does not exist', () {

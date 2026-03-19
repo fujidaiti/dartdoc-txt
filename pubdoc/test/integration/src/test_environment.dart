@@ -138,6 +138,9 @@ class TestEnvironment implements Environment {
   @override
   String? getVariable(String name) => _variables[name];
 
+  @override
+  String get toolVersion => '1.0.0';
+
   var _setUpCalled = false;
 
   /// Sets up the test environment.

@@ -178,6 +178,7 @@ class GetCommand {
         version: docVersion,
         packageVersion: version.toString(),
         source: Uri.file(sourceDir.path).toString(),
+        toolVersion: env.toolVersion,
       ).write(cacheResult.cacheDir, fs: env.fs);
 
       env.logger?.info('  Documentation generated.');
