@@ -70,7 +70,11 @@ String renderTopLevelFunctions(
 }
 
 /// Renders all top-level properties and constants for a library.
-String renderTopLevelProperties(Library library, Templates templates) {
+String renderTopLevelProperties(
+  Library library,
+  RenderOptions options,
+  Templates templates,
+) {
   var properties = library.properties.where((p) => p.isPublic).toList();
   var constants = library.constants.where((c) => c.isPublic).toList();
   if (properties.isEmpty && constants.isEmpty) return '';
@@ -87,6 +91,7 @@ String renderTopLevelProperties(Library library, Templates templates) {
         'constantValue': unescapeHtml(c.constantValueBase),
         'hasDocumentation': doc.isNotEmpty,
         'documentation': doc,
+        ..._sourceLocationData(c, options.packageRoot),
       };
     }).toList(),
     'hasProperties': properties.isNotEmpty,
@@ -97,6 +102,7 @@ String renderTopLevelProperties(Library library, Templates templates) {
         'typeName': plainTypeName(prop.modelType),
         'hasDocumentation': doc.isNotEmpty,
         'documentation': doc,
+        ..._sourceLocationData(prop, options.packageRoot),
       };
     }).toList(),
   };
@@ -105,7 +111,11 @@ String renderTopLevelProperties(Library library, Templates templates) {
 }
 
 /// Renders all typedefs for a library.
-String renderTypedefs(Library library, Templates templates) {
+String renderTypedefs(
+  Library library,
+  RenderOptions options,
+  Templates templates,
+) {
   var typedefs = library.typedefs.where((t) => t.isPublic).toList();
   if (typedefs.isEmpty) return '';
 
@@ -118,6 +128,7 @@ String renderTypedefs(Library library, Templates templates) {
         'sourceCode': unescapeHtml(td.sourceCode),
         'hasDocumentation': doc.isNotEmpty,
         'documentation': doc,
+        ..._sourceLocationData(td, options.packageRoot),
       };
     }).toList(),
   };
@@ -554,24 +565,28 @@ class TopLevelFunctionsPage extends DocFile {
 /// Top-level properties page.
 class TopLevelPropertiesPage extends DocFile {
   final Library library;
+  final RenderOptions options;
   final Templates templates;
 
-  TopLevelPropertiesPage(this.library, this.templates)
+  TopLevelPropertiesPage(this.library, this.options, this.templates)
     : super('top-level-properties.md');
 
   @override
-  String renderContent() => renderTopLevelProperties(library, templates);
+  String renderContent() =>
+      renderTopLevelProperties(library, options, templates);
 }
 
 /// Typedefs page.
 class TypedefsPage extends DocFile {
   final Library library;
+  final RenderOptions options;
   final Templates templates;
 
-  TypedefsPage(this.library, this.templates) : super('typedefs.md');
+  TypedefsPage(this.library, this.options, this.templates)
+    : super('typedefs.md');
 
   @override
-  String renderContent() => renderTypedefs(library, templates);
+  String renderContent() => renderTypedefs(library, options, templates);
 }
 
 /// Category/topic page.

@@ -9,6 +9,10 @@ const typedefsTemplate = r'''
 {{{sourceCode}}}
 ```
 
+{{#hasSourceLocation}}
+Source: {{{sourceLocation}}}
+
+{{/hasSourceLocation}}
 {{#hasDocumentation}}
 {{{documentation}}}
 

@@ -12,6 +12,10 @@ const topLevelPropertiesTemplate = r'''
 `{{{constantValue}}}`
 
 {{/hasConstantValue}}
+{{#hasSourceLocation}}
+Source: {{{sourceLocation}}}
+
+{{/hasSourceLocation}}
 {{#hasDocumentation}}
 {{{documentation}}}
 
@@ -26,6 +30,10 @@ const topLevelPropertiesTemplate = r'''
 {{#properties}}
 ### {{{name}}} → {{{typeName}}}
 
+{{#hasSourceLocation}}
+Source: {{{sourceLocation}}}
+
+{{/hasSourceLocation}}
 {{#hasDocumentation}}
 {{{documentation}}}
 

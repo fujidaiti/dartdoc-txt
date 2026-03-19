@@ -6,6 +6,8 @@
 
 `'World'`
 
+Source: lib/src/constants.dart:2:2
+
 A top-level constant.
 
 ---
@@ -14,6 +16,8 @@ A top-level constant.
 
 `Point(0, 0)`
 
+Source: lib/src/constants.dart:17:17
+
 The origin point.
 
 ---
@@ -21,6 +25,8 @@ The origin point.
 ## Properties
 
 ### globalCounter → int
+
+Source: lib/src/constants.dart:5:5
 
 A top-level variable.
 

@@ -218,7 +218,7 @@ class MarkdownRenderer {
     var constants = library.constants.where((c) => c.isPublic);
     if (properties.isNotEmpty || constants.isNotEmpty) {
       var propDir = DocDir('top-level-properties');
-      propDir.children.add(TopLevelPropertiesPage(library, templates));
+      propDir.children.add(TopLevelPropertiesPage(library, _options, templates));
       libDir.children.add(propDir);
     }
 
@@ -226,7 +226,7 @@ class MarkdownRenderer {
     var typedefs = library.typedefs.where((t) => t.isPublic);
     if (typedefs.isNotEmpty) {
       var tdDir = DocDir('typedefs');
-      tdDir.children.add(TypedefsPage(library, templates));
+      tdDir.children.add(TypedefsPage(library, _options, templates));
       libDir.children.add(tdDir);
     }
 
