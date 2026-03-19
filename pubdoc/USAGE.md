@@ -8,7 +8,13 @@ globally via `.pubdocrc` file.
 The following options are available for all sub commands:
 
 - `--verbose`: Print detailed information while processing the request.
+
 - `--help`: Show the help message for the command.
+
+- `--json=<indent>`: Output the result in JSON format. The value is the
+  indentation level: `--json=0` for minified output, `--json=2` for
+  2-space-indented output. Logs and errors are included in the JSON payload
+  rather than printed to stdout/stderr.
 
 ### get
 
@@ -83,9 +89,6 @@ Refer to [PRINCIPLE.md][1] to learn more about the inner workings of
   documentation is not compatible with the package version that your project
   depends on (see [Version management][4] for more details). Default is
   `--cache`.
-
-- `--dry-run`: Report results without performing any destructive operations such
-  as generating documentation or creating symlinks.
 
 [2]: https://dart.dev/tools/pub/workspaces
 [3]: PRINCIPLE.md#resolve-documentation-version

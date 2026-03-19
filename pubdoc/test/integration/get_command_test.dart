@@ -39,13 +39,17 @@ void main() {
     });
   });
 
-  GetCommand makeCommand({required ResolutionStrategy strategy}) {
+  GetCommand makeCommand({
+    required ResolutionStrategy strategy,
+    bool useCache = true,
+  }) {
     return GetCommand(
       project: ProjectContext.from(_projectRoot, env: env),
       config: PubdocConfig(homeDir: _homeDir, cacheDir: _cacheDir),
       env: env,
       generator: generator,
       strategy: strategy,
+      useCache: useCache,
     );
   }
 
@@ -148,7 +152,7 @@ void main() {
       );
     });
 
-    test('cache reuse on second run', () async {
+    test('useCache=true reuses cache on second run if available', () async {
       env.pubspec.addDependency('dio', '5.3.2');
       env.pubGet();
       await command.run(packageNames: ['dio']);
@@ -171,6 +175,46 @@ void main() {
               source: '$_pubCacheBase/dio-5.3.2/',
               version: '5.3.2',
               cacheStatus: CacheStatus.hit,
+            ),
+          },
+        ),
+      );
+    });
+
+    test('useCache=false always generates even when cache exists', () async {
+      env.pubspec.addDependency('dio', '5.3.2');
+      env.pubGet();
+      // First run populates cache.
+      await makeCommand(strategy: .exact).run(packageNames: ['dio']);
+
+      final cacheDir = '$_cacheDir/dio/dio-5.3.2';
+      final projectCacheDir = '$_projectRoot/.pubdoc';
+      expect(env.fs.directory('$_cacheDir/dio/dio-5.3.2').existsSync(), isTrue);
+      expect(env.fs.link('$projectCacheDir/dio').existsSync(), isTrue);
+      expect(env.fs.link('$projectCacheDir/dio').targetSync(), cacheDir);
+
+      reset(generator);
+      final result = await makeCommand(
+        strategy: .exact,
+        useCache: false,
+      ).run(packageNames: ['dio']);
+
+      verify(
+        generator.generate(
+          sourcePath: anyNamed('sourcePath'),
+          outputDir: '$_cacheDir/dio/dio-5.3.2',
+        ),
+      );
+      verifyNoMoreInteractions(generator);
+      expect(
+        result,
+        _isGetResult(
+          packages: {
+            'dio': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/dio',
+              version: '5.3.2',
+              source: '$_pubCacheBase/dio-5.3.2/',
+              cacheStatus: CacheStatus.miss,
             ),
           },
         ),
@@ -624,6 +668,22 @@ void main() {
             (e) => e.message,
             'message',
             '.dart_tool/package_config.json not found. Run `dart pub get` first.',
+          ),
+        ),
+      );
+    });
+
+    test('missing pubspec.yaml throws an exception', () {
+      env.fs.file('$_projectRoot/pubspec.yaml').deleteSync();
+      expect(
+        () => ProjectContext.from(_projectRoot, env: env),
+        throwsA(
+          isA<PubdocException>().having(
+            (e) => e.message,
+            'message',
+            'pubspec.yaml not found in $_projectRoot.\n'
+                'Make sure the working directory is the root of a Dart/Flutter project, '
+                'or specify the project path via --project option.',
           ),
         ),
       );

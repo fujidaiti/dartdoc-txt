@@ -23,6 +23,7 @@ Future<void> generateDocs({
     '--output',
     outputDir,
     '--no-show-progress',
+    '--quiet',
   ]);
   if (config == null) {
     throw StateError('Failed to parse dartdoc options.');
