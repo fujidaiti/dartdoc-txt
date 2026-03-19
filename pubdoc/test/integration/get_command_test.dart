@@ -617,6 +617,153 @@ void main() {
     });
   });
 
+  group('Pre-release versions', () {
+    test('exact with pre-release', () async {
+      final command = makeCommand(strategy: .exact);
+      env.pubspec.addDependency('dio', '1.0.0-dev.1');
+      env.pubGet();
+      final result = await command.run(packageNames: ['dio']);
+
+      final cacheDir = '$_cacheDir/dio/dio-1.0.0-dev.1';
+      expect(
+        result,
+        _isGetResult(
+          packages: {
+            'dio': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/dio',
+              version: '1.0.0-dev.1',
+              source: '$_pubCacheBase/dio-1.0.0-dev.1/',
+              cacheStatus: CacheStatus.miss,
+            ),
+          },
+        ),
+      );
+      verify(
+        generator.generate(
+          sourcePath: anyNamed('sourcePath'),
+          outputDir: cacheDir,
+        ),
+      );
+      verifyNoMoreInteractions(generator);
+      expect(env.fs.directory(cacheDir).existsSync(), isTrue);
+      expect(env.fs.link('$_projectRoot/.pubdoc/dio').existsSync(), isTrue);
+      expect(env.fs.link('$_projectRoot/.pubdoc/dio').targetSync(), cacheDir);
+      expect(
+        CacheMetadata.read(cacheDir, fs: env.fs),
+        _isCacheMetadata(
+          pkgName: 'dio',
+          version: '1.0.0-dev.1',
+          pkgVersion: '1.0.0-dev.1',
+        ),
+      );
+    });
+
+    test('loosePatch with pre-release uses exact version', () async {
+      final command = makeCommand(strategy: .loosePatch);
+      env.pubspec.addDependency('dio', '1.0.0-dev.1');
+      env.pubGet();
+      final result = await command.run(packageNames: ['dio']);
+
+      expect(
+        result,
+        _isGetResult(
+          packages: {
+            'dio': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/dio',
+              version: '1.0.0-dev.1',
+              source: '$_pubCacheBase/dio-1.0.0-dev.1/',
+              cacheStatus: CacheStatus.miss,
+            ),
+          },
+        ),
+      );
+      final cacheDir = '$_cacheDir/dio/dio-1.0.0-dev.1';
+      verify(
+        generator.generate(
+          sourcePath: anyNamed('sourcePath'),
+          outputDir: cacheDir,
+        ),
+      );
+      verifyNoMoreInteractions(generator);
+      expect(
+        CacheMetadata.read(cacheDir, fs: env.fs),
+        _isCacheMetadata(
+          pkgName: 'dio',
+          version: '1.0.0-dev.1',
+          pkgVersion: '1.0.0-dev.1',
+        ),
+      );
+    });
+
+    test('looseMinor with pre-release uses exact version', () async {
+      final command = makeCommand(strategy: .looseMinor);
+      env.pubspec.addDependency('dio', '1.0.0-dev.1');
+      env.pubGet();
+      final result = await command.run(packageNames: ['dio']);
+
+      final cacheDir = '$_cacheDir/dio/dio-1.0.0-dev.1';
+      expect(
+        result,
+        _isGetResult(
+          packages: {
+            'dio': _isPackageGetResult(
+              documentation: '$_projectRoot/.pubdoc/dio',
+              version: '1.0.0-dev.1',
+              source: '$_pubCacheBase/dio-1.0.0-dev.1/',
+              cacheStatus: CacheStatus.miss,
+            ),
+          },
+        ),
+      );
+      verify(
+        generator.generate(
+          sourcePath: anyNamed('sourcePath'),
+          outputDir: cacheDir,
+        ),
+      );
+      verifyNoMoreInteractions(generator);
+      expect(
+        CacheMetadata.read(cacheDir, fs: env.fs),
+        _isCacheMetadata(
+          pkgName: 'dio',
+          version: '1.0.0-dev.1',
+          pkgVersion: '1.0.0-dev.1',
+        ),
+      );
+    });
+
+    test('never share docs with stable versions', () async {
+      final command = makeCommand(strategy: .looseMinor);
+
+      // First: pre-release version
+      env.pubspec.addDependency('dio', '1.0.0-dev.1');
+      env.pubGet();
+      await command.run(packageNames: ['dio']);
+
+      // Then: stable version
+      env.pubspec.addDependency('dio', '1.0.0');
+      env.pubGet();
+      await command.run(packageNames: ['dio']);
+
+      verifyInOrder([
+        generator.generate(
+          sourcePath: anyNamed('sourcePath'),
+          outputDir: '$_cacheDir/dio/dio-1.0.0-dev.1',
+        ),
+        generator.generate(
+          sourcePath: anyNamed('sourcePath'),
+          outputDir: '$_cacheDir/dio/dio-1.x',
+        ),
+      ]);
+      verifyNoMoreInteractions(generator);
+      expect(
+        env.fs.directory('$_cacheDir/dio/dio-1.0.0-dev.1').existsSync(),
+        isTrue,
+      );
+      expect(env.fs.directory('$_cacheDir/dio/dio-1.x').existsSync(), isTrue);
+    });
+  });
+
   group('Error cases', () {
     late GetCommand command;
 
