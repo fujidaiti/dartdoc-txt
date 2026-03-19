@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
+import 'package:logging/logging.dart' as logging;
 import 'package:pubdoc/src/config.dart';
 import 'package:pubdoc/src/environment.dart';
 import 'package:pubdoc/src/exceptions.dart';
@@ -98,6 +99,14 @@ class _GetCommand extends Command<int> {
 
   @override
   Future<int> run() async {
+    // Suppress dartdoc warnings (e.g., undefined macro warnings) that are
+    // unactionable noise for end users. The --quiet flag only suppresses
+    // INFO/DEBUG output, not warnings.
+    // This works because Logger instances are singletons keyed by name, so
+    // Logger('dartdoc') returns the same instance used by dartdoc internally.
+    logging.hierarchicalLoggingEnabled = true;
+    logging.Logger('dartdoc').level = logging.Level.OFF;
+
     final global = globalResults!;
     final verbose = global.flag('verbose');
     final rawJson = global['json'] as String?;
