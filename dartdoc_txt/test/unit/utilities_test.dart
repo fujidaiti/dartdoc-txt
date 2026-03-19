@@ -146,6 +146,10 @@ void main() {
       expect(unescapeHtml('&quot;'), equals('"'));
     });
 
+    test('unescapes decimal &#47; entity to /', () {
+      expect(unescapeHtml('a&#47;b'), equals('a/b'));
+    });
+
     test('handles multiple entities in one string', () {
       expect(
         unescapeHtml('Map&lt;String, int&gt;'),

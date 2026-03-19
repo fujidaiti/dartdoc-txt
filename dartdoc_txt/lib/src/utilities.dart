@@ -10,7 +10,8 @@ String unescapeHtml(String text) {
       .replaceAll('&#39;', "'")
       .replaceAll('&quot;', '"')
       .replaceAll('&#x27;', "'")
-      .replaceAll('&#x2F;', '/');
+      .replaceAll('&#x2F;', '/')
+      .replaceAll('&#47;', '/');
 }
 
 /// Extracts the first paragraph from a documentation string.

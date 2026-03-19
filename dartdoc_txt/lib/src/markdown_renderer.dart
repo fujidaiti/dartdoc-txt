@@ -218,7 +218,9 @@ class MarkdownRenderer {
     var constants = library.constants.where((c) => c.isPublic);
     if (properties.isNotEmpty || constants.isNotEmpty) {
       var propDir = DocDir('top-level-properties');
-      propDir.children.add(TopLevelPropertiesPage(library, _options, templates));
+      propDir.children.add(
+        TopLevelPropertiesPage(library, _options, templates),
+      );
       libDir.children.add(propDir);
     }
 

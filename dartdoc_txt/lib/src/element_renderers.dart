@@ -125,7 +125,7 @@ String renderTypedefs(
       var doc = _cleanDoc(td.documentation);
       return {
         'name': td.name,
-        'sourceCode': unescapeHtml(td.sourceCode),
+        'sourceCode': _rawSourceCode(td),
         'hasDocumentation': doc.isNotEmpty,
         'documentation': doc,
         ..._sourceLocationData(td, options.packageRoot),
@@ -159,7 +159,7 @@ String renderDetailPage(
     'deprecation': renderDeprecation(element),
     'hasDocumentation': doc.isNotEmpty,
     'documentation': doc,
-    'sourceCode': unescapeHtml(element.sourceCode),
+    'sourceCode': _rawSourceCode(element),
     ..._sourceLocationData(element, options.packageRoot),
   };
 
@@ -193,6 +193,11 @@ String renderCategory(Category category, Templates templates) {
   };
 
   return templates['category'].renderString(data);
+}
+
+/// Returns the raw source code for an element, bypassing dartdoc's HTML escaping.
+String _rawSourceCode(ModelElement element) {
+  return element.modelNode?.sourceCode ?? '';
 }
 
 // --- Private helpers ---
@@ -388,7 +393,7 @@ Map<String, dynamic> _sourceLocationData(
   if (startLine == null) {
     return {'hasSourceLocation': true, 'sourceLocation': relativePath};
   }
-  final lineCount = sourceLineCount(unescapeHtml(element.sourceCode));
+  final lineCount = sourceLineCount(_rawSourceCode(element));
   final location = lineCount > 0
       ? '$relativePath:$startLine:${startLine + lineCount - 1}'
       : '$relativePath:$startLine';
@@ -401,7 +406,7 @@ Map<String, dynamic> _sourceData(
   String detailPath,
   RenderOptions options,
 ) {
-  var source = unescapeHtml(element.sourceCode);
+  var source = _rawSourceCode(element);
   if (source.isEmpty) return _noSourceData();
 
   var lineCount = sourceLineCount(source);
@@ -429,7 +434,7 @@ bool needsDetailPage(ModelElement element, RenderOptions options) {
   if (!options.includeSource) return false;
   if (element is Method && element.element.isAbstract) return false;
   if (element is Operator && element.element.isAbstract) return false;
-  var source = unescapeHtml(element.sourceCode);
+  var source = _rawSourceCode(element);
   if (source.isEmpty) return false;
   return sourceLineCount(source) > options.sourceLineThreshold;
 }

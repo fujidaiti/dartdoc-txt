@@ -4,7 +4,7 @@
 extension type Wrapper
 ```
 
-Source: lib/edge_cases.dart:29:32
+Source: lib/edge_cases.dart:37:40
 
 An extension type wrapping an [int].
 
@@ -12,7 +12,7 @@ An extension type wrapping an [int].
 
 ### Wrapper.new(int value)
 
-Source: lib/edge_cases.dart:29
+Source: lib/edge_cases.dart:37
 
 ---
 ## Properties
@@ -26,7 +26,7 @@ Source: lib/edge_cases.dart:29
 
 ### doubled() → int
 
-Source: lib/edge_cases.dart:31:31
+Source: lib/edge_cases.dart:39:39
 
 Returns the value doubled.
 
