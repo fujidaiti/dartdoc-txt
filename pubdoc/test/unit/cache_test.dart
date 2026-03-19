@@ -154,6 +154,39 @@ void main() {
     });
   });
 
+  group('Pre-release versions', () {
+    test('pre-release version gets its own cache dir', () {
+      final manager = CacheManager(config, env: env);
+      final result = manager.checkCache(
+        packageName: 'dio',
+        packageVersion: Version.parse('1.0.0-dev.1'),
+        strategy: ResolutionStrategy.loosePatch,
+        useCache: true,
+      );
+      expect(result.action, CacheAction.generate);
+      expect(result.docVersion, '1.0.0-dev.1');
+    });
+
+    test('cache reuse works for pre-release versions', () {
+      final manager = CacheManager(config, env: env);
+      final cacheDir = config.packageCacheDir('dio', '1.0.0-dev.1');
+      env.fs.directory(cacheDir).createSync(recursive: true);
+      CacheMetadata(
+        version: '1.0.0-dev.1',
+        packageVersion: '1.0.0-dev.1',
+        source: 'file:///test/source',
+      ).write(cacheDir, fs: env.fs);
+
+      final result = manager.checkCache(
+        packageName: 'dio',
+        packageVersion: Version.parse('1.0.0-dev.1'),
+        strategy: ResolutionStrategy.loosePatch,
+        useCache: true,
+      );
+      expect(result.action, CacheAction.reuse);
+    });
+  });
+
   group('CacheMetadata', () {
     test('round-trips through JSON', () {
       final metadata = CacheMetadata(

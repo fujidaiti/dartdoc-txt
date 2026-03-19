@@ -19,9 +19,16 @@ extension VersionDocResolution on Version {
   /// - `exact`: `"1.2.3"`
   /// - `loosePatch`: `"1.2.x"`
   /// - `looseMinor`: `"1.x"`
-  String docVersion(ResolutionStrategy strategy) => switch (strategy) {
-    ResolutionStrategy.exact => '$major.$minor.$patch',
-    ResolutionStrategy.loosePatch => '$major.$minor.x',
-    ResolutionStrategy.looseMinor => '$major.x',
-  };
+  ///
+  /// Pre-release versions (e.g., `1.0.0-dev.1`) always resolve as exact
+  /// regardless of the strategy, since they have no API compatibility
+  /// guarantees.
+  String docVersion(ResolutionStrategy strategy) {
+    if (isPreRelease) return toString();
+    return switch (strategy) {
+      ResolutionStrategy.exact => '$major.$minor.$patch',
+      ResolutionStrategy.loosePatch => '$major.$minor.x',
+      ResolutionStrategy.looseMinor => '$major.x',
+    };
+  }
 }

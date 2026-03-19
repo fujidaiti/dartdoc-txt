@@ -265,6 +265,38 @@ because the workspace projects share the same dependencies, as stated [here][3].
 
 [3]: https://dart.dev/tools/pub/workspaces
 
+### How are pre-release versions handled?
+
+Pre-release versions are always resolved as if the `exact` strategy were in
+effect, regardless of the configured resolution strategy. That is, `1.0.0-dev.1`
+always resolves to documentation version `1.0.0-dev.1`, never to a shared
+version like `1.0.x` or `1.x`.
+
+This is because the `loose-*` strategies assume that versions sharing the same
+major (or major.minor) number have a compatible public API. This assumption
+holds for stable releases—semver guarantees that patch and minor bumps don't
+break the public API—but it does _not_ hold for pre-release versions. For
+example, `2.0.0-beta.1` may have a significantly different API from `2.0.0`, and
+even `2.0.0-beta.1` and `2.0.0-beta.2` are not guaranteed to be compatible with
+each other. To avoid generating misleading documentation, pubdoc treats each
+pre-release version as a distinct, non-shareable documentation version.
+
+Note that this rule applies to the documentation version resolution only. The
+rest of the flow—cache lookup, documentation generation, symlink creation—works
+the same way as for stable versions. The cache directory would look like:
+
+```
+~/.pubdoc/cache/
+`-- firebase_core/
+    |-- firebase_core-2.0.0-beta.1/  # pre-release, always exact
+    |-- firebase_core-2.0.0-beta.2/  # pre-release, always exact
+    |-- firebase_core-2.0.x/         # stable, loose-patch
+```
+
+Also note that pre-release versions never share documentation with stable
+versions. Even if both `2.0.0-beta.1` and `2.0.0` exist, they are treated as
+completely separate documentation versions.
+
 ### When should I run `pubdoc get`?
 
 You don't need to run `pubdoc get` multiple times for the same package unless
