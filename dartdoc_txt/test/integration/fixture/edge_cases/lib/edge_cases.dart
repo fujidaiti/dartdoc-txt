@@ -23,6 +23,14 @@ typedef StringCallback = void Function(String);
 extension StringExtras on String {
   /// Returns this string with an exclamation mark appended.
   String exclaim() => '$this!';
+
+  /// Splits this string by `/` and returns the first segment.
+  ///
+  /// ```dart
+  /// final path = 'usr/local/bin';
+  /// print(path.firstSegment()); // prints "usr"
+  /// ```
+  String firstSegment() => split('/').first;
 }
 
 /// An extension type wrapping an [int].
