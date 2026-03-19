@@ -4,11 +4,15 @@
 extension type Wrapper
 ```
 
+Source: lib/edge_cases.dart:29
+
 An extension type wrapping an [int].
 
 ## Constructors
 
 ### Wrapper.new(int value)
+
+Source: lib/edge_cases.dart:29
 
 ---
 ## Properties
@@ -21,6 +25,8 @@ An extension type wrapping an [int].
 ## Methods
 
 ### doubled() → int
+
+Source: lib/edge_cases.dart:31
 
 Returns the value doubled.
 

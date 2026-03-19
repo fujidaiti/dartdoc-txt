@@ -4,11 +4,15 @@
 class Greeter
 ```
 
+Source: lib/categories.dart:6
+
 A greeting class.
 
 ## Constructors
 
 ### Greeter.new(String name)
+
+Source: lib/categories.dart:11
 
 Creates a [Greeter].
 
@@ -29,6 +33,8 @@ The name.
 ## Methods
 
 ### greet() → String
+
+Source: lib/categories.dart:14
 
 Returns a greeting.
 

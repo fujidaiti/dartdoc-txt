@@ -6,6 +6,10 @@ const detailPageTemplate = r'''
 {{{signature}}}
 ```
 
+{{#hasSourceLocation}}
+Source: {{{sourceLocation}}}
+
+{{/hasSourceLocation}}
 {{#hasAnnotations}}
 {{{annotations}}}
 

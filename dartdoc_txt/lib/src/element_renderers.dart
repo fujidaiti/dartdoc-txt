@@ -10,10 +10,12 @@ import 'utilities.dart';
 class RenderOptions {
   final int sourceLineThreshold;
   final bool includeSource;
+  final String packageRoot;
 
   const RenderOptions({
     this.sourceLineThreshold = 10,
     this.includeSource = true,
+    this.packageRoot = '',
   });
 }
 
@@ -59,6 +61,7 @@ String renderTopLevelFunctions(
         'hasDocumentation': _cleanDoc(func.documentation).isNotEmpty,
         'documentation': _cleanDoc(func.documentation),
         ...sourceData,
+        ..._sourceLocationData(func, options.packageRoot),
       };
     }).toList(),
   };
@@ -146,6 +149,7 @@ String renderDetailPage(
     'hasDocumentation': doc.isNotEmpty,
     'documentation': doc,
     'sourceCode': unescapeHtml(element.sourceCode),
+    ..._sourceLocationData(element, options.packageRoot),
   };
 
   return templates['detail_page'].renderString(data);
@@ -266,6 +270,7 @@ Map<String, dynamic> _containerData(
     'methods': methods,
     'hasOperators': publicOperators.isNotEmpty,
     'operators': operators,
+    ..._sourceLocationData(container, options.packageRoot),
   };
 }
 
@@ -293,6 +298,7 @@ Map<String, dynamic> _constructorData(
     'hasDocumentation': doc.isNotEmpty,
     'documentation': doc,
     ...sourceData,
+    ..._sourceLocationData(ctor, options.packageRoot),
   };
 }
 
@@ -336,6 +342,7 @@ Map<String, dynamic> _methodData(
     'hasDocumentation': doc.isNotEmpty,
     'documentation': doc,
     ...sourceData,
+    ..._sourceLocationData(method, options.packageRoot),
   };
 }
 
@@ -355,7 +362,25 @@ Map<String, dynamic> _operatorData(
     'hasDocumentation': doc.isNotEmpty,
     'documentation': doc,
     ...sourceData,
+    ..._sourceLocationData(op, options.packageRoot),
   };
+}
+
+/// Computes source location data (relative path + line number) for an element.
+Map<String, dynamic> _sourceLocationData(
+  ModelElement element,
+  String packageRoot,
+) {
+  if (packageRoot.isEmpty) {
+    return {'hasSourceLocation': false, 'sourceLocation': ''};
+  }
+  final absolutePath = element.sourceFileName;
+  final relativePath = p.relative(absolutePath, from: packageRoot);
+  final lineNumber = element.characterLocation?.lineNumber;
+  final location = lineNumber != null
+      ? '$relativePath:$lineNumber'
+      : relativePath;
+  return {'hasSourceLocation': true, 'sourceLocation': location};
 }
 
 /// Computes source display data for an element.

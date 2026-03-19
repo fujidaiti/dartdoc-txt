@@ -2,6 +2,10 @@
 const operatorTemplate = r'''
 ### {{{signature}}}
 
+{{#hasSourceLocation}}
+Source: {{{sourceLocation}}}
+
+{{/hasSourceLocation}}
 {{#hasDocumentation}}
 {{{documentation}}}
 

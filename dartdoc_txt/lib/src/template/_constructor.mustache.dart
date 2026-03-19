@@ -2,6 +2,10 @@
 const constructorTemplate = r'''
 ### {{{signature}}}
 
+{{#hasSourceLocation}}
+Source: {{{sourceLocation}}}
+
+{{/hasSourceLocation}}
 {{#hasAnnotations}}
 {{{annotations}}}
 

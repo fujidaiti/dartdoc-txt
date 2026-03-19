@@ -4,6 +4,8 @@
 enum Color
 ```
 
+Source: lib/src/color.dart:4
+
 A simple enumeration.
 
 Represents different colors.

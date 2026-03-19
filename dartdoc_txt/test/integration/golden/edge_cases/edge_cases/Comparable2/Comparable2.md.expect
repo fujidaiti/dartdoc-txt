@@ -4,16 +4,22 @@
 class Comparable2
 ```
 
+Source: lib/edge_cases.dart:5
+
 A class that overloads operators.
 
 ## Constructors
 
 ### Comparable2.new()
 
+Source: lib/edge_cases.dart:5
+
 ---
 ## Operators
 
 ### operator +(Comparable2 other) → Comparable2
+
+Source: lib/edge_cases.dart:16
 
 Adds two [Comparable2] instances.
 

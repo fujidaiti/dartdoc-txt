@@ -33,11 +33,19 @@ Future<DocDir> renderFixture(
   int sourceThreshold = 10,
   bool includeSource = true,
 }) async {
+  var fixturePath = p.join(
+    Directory.current.path,
+    'test',
+    'integration',
+    'fixture',
+    fixtureName,
+  );
   var packageGraph = await buildFixtureGraph(fixtureName);
   var renderer = MarkdownRenderer(
     packageGraph: packageGraph,
     sourceLineThreshold: sourceThreshold,
     includeSource: includeSource,
+    packageRoot: fixturePath,
   );
   return renderer.render();
 }

@@ -4,6 +4,8 @@
 enum Shape
 ```
 
+Source: lib/beta.dart:5
+
 Supported shapes.
 
 ## Enum Values

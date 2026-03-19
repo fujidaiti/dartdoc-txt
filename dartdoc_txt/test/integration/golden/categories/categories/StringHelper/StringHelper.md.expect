@@ -4,16 +4,22 @@
 class StringHelper
 ```
 
+Source: lib/categories.dart:25
+
 A string helper.
 
 ## Constructors
 
 ### StringHelper.new()
 
+Source: lib/categories.dart:25
+
 ---
 ## Methods
 
 ### reverse(String input) → String
+
+Source: lib/categories.dart:27
 
 Reverses [input].
 

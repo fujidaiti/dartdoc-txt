@@ -6,6 +6,10 @@ const containerTemplate = r'''
 {{{declaration}}}
 ```
 
+{{#hasSourceLocation}}
+Source: {{{sourceLocation}}}
+
+{{/hasSourceLocation}}
 {{#isDeprecated}}
 {{{deprecation}}}
 

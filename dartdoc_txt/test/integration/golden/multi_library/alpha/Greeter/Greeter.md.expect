@@ -4,11 +4,15 @@
 class Greeter
 ```
 
+Source: lib/alpha.dart:5
+
 A greeting class.
 
 ## Constructors
 
 ### Greeter.new(String name)
+
+Source: lib/alpha.dart:10
 
 Creates a [Greeter].
 

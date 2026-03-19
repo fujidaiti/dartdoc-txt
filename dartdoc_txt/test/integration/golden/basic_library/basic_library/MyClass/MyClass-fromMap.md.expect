@@ -4,6 +4,8 @@
 MyClass.fromMap(Map map)
 ```
 
+Source: lib/src/my_class.dart:21
+
 Creates a [MyClass] from a map of values.
 
 This constructor validates and processes the input map.

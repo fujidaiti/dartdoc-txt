@@ -10,6 +10,7 @@ class MarkdownRenderer {
   final PackageGraph packageGraph;
   final int sourceLineThreshold;
   final bool includeSource;
+  final String packageRoot;
 
   late final RenderOptions _options;
 
@@ -17,10 +18,12 @@ class MarkdownRenderer {
     required this.packageGraph,
     this.sourceLineThreshold = 10,
     this.includeSource = true,
+    this.packageRoot = '',
   }) {
     _options = RenderOptions(
       sourceLineThreshold: sourceLineThreshold,
       includeSource: includeSource,
+      packageRoot: packageRoot,
     );
   }
 

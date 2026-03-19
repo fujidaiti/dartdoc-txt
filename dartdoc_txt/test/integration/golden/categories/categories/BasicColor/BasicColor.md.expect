@@ -4,6 +4,8 @@
 enum BasicColor
 ```
 
+Source: lib/categories.dart:20
+
 Basic colors.
 
 ## Enum Values

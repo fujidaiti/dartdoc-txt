@@ -4,11 +4,15 @@
 extension StringExtras on String
 ```
 
+Source: lib/edge_cases.dart:23
+
 An extension on [String] that adds utility methods.
 
 ## Methods
 
 ### exclaim() → String
+
+Source: lib/edge_cases.dart:25
 
 Returns this string with an exclamation mark appended.
 

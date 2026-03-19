@@ -4,11 +4,15 @@
 class Greeting
 ```
 
+Source: lib/anonymous_library.dart:2
+
 A simple class in an anonymous library (no library directive).
 
 ## Constructors
 
 ### Greeting.new(String message)
+
+Source: lib/anonymous_library.dart:7
 
 Creates a [Greeting] with the given [message].
 

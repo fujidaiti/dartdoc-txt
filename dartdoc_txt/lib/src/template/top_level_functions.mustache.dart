@@ -9,6 +9,10 @@ const topLevelFunctionsTemplate = r'''
 {{{signature}}}
 ```
 
+{{#hasSourceLocation}}
+Source: {{{sourceLocation}}}
+
+{{/hasSourceLocation}}
 {{#isDeprecated}}
 {{{deprecation}}}
 

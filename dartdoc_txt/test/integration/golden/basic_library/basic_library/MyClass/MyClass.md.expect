@@ -4,6 +4,8 @@
 class MyClass
 ```
 
+Source: lib/src/my_class.dart:5
+
 A simple class with documentation.
 
 This class demonstrates basic features like
@@ -12,6 +14,8 @@ constructors, methods, and properties.
 ## Constructors
 
 ### MyClass.new(String name, {int count = 0})
+
+Source: lib/src/my_class.dart:13
 
 Creates a new [MyClass] with the given [name].
 
@@ -22,6 +26,8 @@ MyClass(this.name, {this.count = 0});
 ---
 ### MyClass.defaults()
 
+Source: lib/src/my_class.dart:16
+
 Creates a [MyClass] with default values.
 
 ```dart
@@ -30,6 +36,8 @@ MyClass.defaults() : name = 'default', count = 0;
 
 ---
 ### MyClass.fromMap(Map map)
+
+Source: lib/src/my_class.dart:21
 
 Creates a [MyClass] from a map of values.
 
@@ -56,6 +64,8 @@ The count value.
 
 ### greet() → String
 
+Source: lib/src/my_class.dart:39
+
 Returns a greeting message.
 
 ```dart
@@ -66,6 +76,8 @@ String greet() {
 
 ---
 ### processData(String input) → String
+
+Source: lib/src/my_class.dart:49
 
 A method with a longer body that exceeds the threshold.
 
