@@ -1,3 +1,6 @@
+import 'package:file/file.dart';
+import 'package:path/path.dart' as p;
+
 import 'cache.dart';
 import 'config.dart';
 import 'doc_generator.dart';
@@ -162,18 +165,36 @@ class GetCommand {
       env.logger?.info(
         '  Generating documentation for $packageName $docVersion...',
       );
+
+      // Copy the package source into a temp directory and synthesize
+      // .dart_tool/package_config.json so the analyzer can resolve
+      // dependency types (prevents them from appearing as `dynamic`).
+      final tempDir = env.fs.systemTempDirectory.createTempSync(
+        'pubdoc_$packageName\_',
+      );
       try {
+        _copyDirectory(sourceDir, tempDir);
+        final dartToolDir = tempDir.childDirectory('.dart_tool');
+        dartToolDir.createSync();
+        dartToolDir
+            .childFile('package_config.json')
+            .writeAsStringSync(project.packageConfigFile.readAsStringSync());
+
         await generator.generate(
-          sourcePath: sourceDir.path,
+          sourcePath: tempDir.path,
           outputDir: cacheResult.cacheDir,
         );
       } on Exception catch (e) {
         throw PubdocException(
           'Failed to generate documentation for $packageName: $e',
         );
+      } finally {
+        if (tempDir.existsSync()) {
+          tempDir.deleteSync(recursive: true);
+        }
       }
 
-      // 6. Write metadata.json.
+      // 7. Write metadata.json.
       CacheMetadata(
         version: docVersion,
         packageVersion: version.toString(),
@@ -186,7 +207,7 @@ class GetCommand {
       env.logger?.info('  Using cached documentation.');
     }
 
-    // 7. Create/update symlink.
+    // 8. Create/update symlink.
     _createSymlink(packageName, cacheResult.cacheDir);
 
     final sourcePath = cacheResult.action == CacheAction.reuse
@@ -220,5 +241,19 @@ class GetCommand {
 
     link.createSync(cacheDir);
     env.logger?.detail('  Symlink: $linkPath -> $cacheDir');
+  }
+
+  /// Recursively copies the contents of [src] into [dst].
+  void _copyDirectory(Directory src, Directory dst) {
+    for (final entity in src.listSync()) {
+      final name = p.basename(entity.path);
+      if (entity is File) {
+        entity.copySync(p.join(dst.path, name));
+      } else if (entity is Directory) {
+        final sub = dst.childDirectory(name);
+        sub.createSync();
+        _copyDirectory(entity, sub);
+      }
+    }
   }
 }
