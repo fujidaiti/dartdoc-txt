@@ -15,8 +15,7 @@ class _TestEnvironment implements Environment {
   @override
   final String toolVersion;
 
-  _TestEnvironment({this.toolVersion = '1.0.0'})
-    : fs = MemoryFileSystem.test();
+  _TestEnvironment({this.toolVersion = '1.0.0'}) : fs = MemoryFileSystem.test();
 
   @override
   String? getVariable(String name) => null;
@@ -159,7 +158,6 @@ void main() {
       );
       expect(result.action, CacheAction.regenerate);
     });
-
   });
 
   group('CacheMetadata', () {
