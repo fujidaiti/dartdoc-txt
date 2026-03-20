@@ -24,6 +24,13 @@ dart run dartdoc_txt [options]
 | `-h`, `--help`          | Show usage information              |                         |
 | `--version`             | Print the tool version              |                         |
 
+### Prerequisites
+
+Run `dart pub get` (or `flutter pub get`) in the target package directory before
+running `dartdoc_txt`. The analyzer needs `.dart_tool/package_config.json` to
+resolve dependency types — without it, types from dependencies may appear as
+`dynamic` in the generated documentation.
+
 ### Example
 
 ```bash

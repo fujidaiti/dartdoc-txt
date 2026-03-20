@@ -1,3 +1,9 @@
+import 'dart:convert';
+
+import 'package:file/file.dart';
+import 'package:meta/meta.dart';
+import 'package:path/path.dart' as p;
+
 import 'cache.dart';
 import 'config.dart';
 import 'doc_generator.dart';
@@ -87,6 +93,86 @@ class GetResult {
   }
 }
 
+/// Creates a package_config.json for [package] from the project-level
+/// [projectPackageConfig] and the dependency graph [projectPackageGraph].
+///
+/// The result contains only the packages that [package] transitively
+/// depends on, so the analyzer doesn't index unrelated packages.
+///
+/// [projectPackageConfig] is the parsed `.dart_tool/package_config.json`:
+/// ```json
+/// {
+///   "configVersion": 2,
+///   "packages": [
+///     {"name": "foo", "rootUri": "...", "packageUri": "lib/"},
+///     ...
+///   ]
+/// }
+/// ```
+///
+/// [projectPackageGraph] is the parsed `.dart_tool/package_graph.json`:
+/// ```json
+/// {
+///   "configVersion": 1,
+///   "packages": [
+///     {"name": "foo", "dependencies": ["bar", "baz"]},
+///     ...
+///   ]
+/// }
+/// ```
+///
+/// All top-level fields other than `packages` are preserved.
+/// Returns a new map; the originals are not modified.
+@visibleForTesting
+Map<String, dynamic> buildPackageConfigFor({
+  required String package,
+  required Map<String, dynamic> projectPackageConfig,
+  required Map<String, dynamic> projectPackageGraph,
+}) {
+  // Build adjacency map from the graph.
+  final graphPackages = projectPackageGraph['packages'] as List<dynamic>;
+  final graph = <String, List<String>>{};
+  for (final pkg in graphPackages) {
+    final map = pkg as Map<String, dynamic>;
+    final name = map['name'] as String;
+    final deps = (map['dependencies'] as List<dynamic>).cast<String>();
+    graph[name] = deps;
+  }
+
+  // BFS from package to find transitive closure.
+  final visited = <String>{};
+  final queue = [package];
+  while (queue.isNotEmpty) {
+    final current = queue.removeAt(0);
+    if (!visited.add(current)) continue;
+    final deps = graph[current];
+    if (deps != null) queue.addAll(deps);
+  }
+
+  // Filter package_config packages to only those in the transitive closure.
+  final configPackages = projectPackageConfig['packages'] as List<dynamic>;
+  final result = Map<String, dynamic>.of(projectPackageConfig);
+  result['packages'] = [
+    for (final pkg in configPackages)
+      if (visited.contains((pkg as Map<String, dynamic>)['name'])) pkg,
+  ];
+  return result;
+}
+
+/// Recursively copies the contents of [src] into [dst].
+void _copyDirectory(Directory src, Directory dst) {
+  for (final entity in src.listSync()) {
+    final name = p.basename(entity.path);
+    if (entity is File) {
+      entity.copySync(p.join(dst.path, name));
+    } else if (entity is Directory) {
+      final sub = dst.childDirectory(name);
+      sub.createSync();
+      _copyDirectory(entity, sub);
+    }
+  }
+}
+
 class GetCommand {
   final ProjectContext project;
   final PubdocConfig config;
@@ -162,18 +248,52 @@ class GetCommand {
       env.logger?.info(
         '  Generating documentation for $packageName $docVersion...',
       );
+
+      // Copy the package source into a temp directory and synthesize
+      // .dart_tool/package_config.json so the analyzer can resolve
+      // dependency types (prevents them from appearing as `dynamic`).
+      final tempDir = env.fs.systemTempDirectory.createTempSync(
+        'pubdoc_$packageName\_',
+      );
       try {
+        _copyDirectory(sourceDir, tempDir);
+        final dartToolDir = tempDir.childDirectory('.dart_tool');
+        dartToolDir.createSync();
+        final packageConfigJson =
+            jsonDecode(project.packageConfigFile.readAsStringSync())
+                as Map<String, dynamic>;
+        final Map<String, dynamic> configToWrite;
+        if (project.packageGraphFile.existsSync()) {
+          final graphJson =
+              jsonDecode(project.packageGraphFile.readAsStringSync())
+                  as Map<String, dynamic>;
+          configToWrite = buildPackageConfigFor(
+            package: packageName,
+            projectPackageConfig: packageConfigJson,
+            projectPackageGraph: graphJson,
+          );
+        } else {
+          configToWrite = packageConfigJson;
+        }
+        dartToolDir
+            .childFile('package_config.json')
+            .writeAsStringSync(jsonEncode(configToWrite));
+
         await generator.generate(
-          sourcePath: sourceDir.path,
+          sourcePath: tempDir.path,
           outputDir: cacheResult.cacheDir,
         );
       } on Exception catch (e) {
         throw PubdocException(
           'Failed to generate documentation for $packageName: $e',
         );
+      } finally {
+        if (tempDir.existsSync()) {
+          tempDir.deleteSync(recursive: true);
+        }
       }
 
-      // 6. Write metadata.json.
+      // 7. Write metadata.json.
       CacheMetadata(
         version: docVersion,
         packageVersion: version.toString(),
@@ -186,7 +306,7 @@ class GetCommand {
       env.logger?.info('  Using cached documentation.');
     }
 
-    // 7. Create/update symlink.
+    // 8. Create/update symlink.
     _createSymlink(packageName, cacheResult.cacheDir);
 
     final sourcePath = cacheResult.action == CacheAction.reuse

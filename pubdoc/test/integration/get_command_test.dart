@@ -96,6 +96,40 @@ void main() {
       );
     });
 
+    test('includes resolved package config in working directory', () async {
+      env.pubspec.addDependency('dio', '5.3.2');
+      env.pubGet();
+
+      String? capturedSourcePath;
+      when(
+        generator.generate(
+          sourcePath: anyNamed('sourcePath'),
+          outputDir: anyNamed('outputDir'),
+        ),
+      ).thenAnswer((invocation) async {
+        capturedSourcePath = invocation.namedArguments[#sourcePath] as String;
+        // During generation the working dir and package_config.json
+        // should exist.
+        expect(env.fs.directory(capturedSourcePath!).existsSync(), isTrue);
+        expect(
+          env.fs
+              .file('$capturedSourcePath/.dart_tool/package_config.json')
+              .existsSync(),
+          isTrue,
+        );
+
+        // Simulate doc generation by creating the output dir.
+        final outputDir = invocation.namedArguments[#outputDir] as String;
+        env.fs.directory(outputDir).createSync(recursive: true);
+      });
+
+      await command.run(packageNames: ['dio']);
+
+      // After the command finishes the working dir should be deleted.
+      expect(capturedSourcePath, isNotNull);
+      expect(env.fs.directory(capturedSourcePath!).existsSync(), isFalse);
+    });
+
     test('multiple packages at the same time', () async {
       env.pubspec.addDependency('dio', '5.3.2');
       env.pubspec.addDependency('http', '1.2.0');
