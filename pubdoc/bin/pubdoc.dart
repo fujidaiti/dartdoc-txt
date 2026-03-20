@@ -29,6 +29,12 @@ class _PubdocRunner extends CommandRunner<int> {
         negatable: false,
         help: 'Show additional command output.',
       )
+      ..addFlag(
+        'quiet',
+        abbr: 'q',
+        negatable: false,
+        help: 'Suppress all log output.',
+      )
       ..addFlag('version', negatable: false, help: 'Print the tool version.')
       ..addOption(
         'json',
@@ -48,6 +54,10 @@ class _PubdocRunner extends CommandRunner<int> {
     }
 
     final verbose = topLevelResults.flag('verbose');
+    final quiet = topLevelResults.flag('quiet');
+    if (verbose && quiet) {
+      usageException('--verbose and --quiet cannot be used together.');
+    }
     final rawJson = topLevelResults['json'] as String?;
     final jsonIndent = rawJson == null ? null : int.tryParse(rawJson);
     if (rawJson != null && (jsonIndent == null || jsonIndent < 0)) {
@@ -58,7 +68,15 @@ class _PubdocRunner extends CommandRunner<int> {
     final useJson = jsonIndent != null;
 
     // Configure logging.
-    Logger.root.level = verbose ? Level.ALL : Level.INFO;
+    Logger.root.level = quiet ? Level.OFF : (verbose ? Level.ALL : Level.INFO);
+    if (quiet) {
+      // dartdoc enables hierarchicalLoggingEnabled and sets its own level,
+      // so Logger.root.level alone doesn't suppress its output.
+      // We must also suppress named loggers explicitly.
+      hierarchicalLoggingEnabled = true;
+      Logger('dartdoc').level = Level.OFF;
+      Logger('pubdoc').level = Level.OFF;
+    }
     Logger.root.onRecord.listen((record) {
       final message = verbose
           ? '[${record.loggerName}] ${record.message}'
