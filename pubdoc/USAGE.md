@@ -9,6 +9,8 @@ The following options are available for all sub commands:
 
 - `--verbose`: Print detailed information while processing the request.
 
+- `--quiet`: Suppress all log output.
+
 - `--help`: Show the help message for the command.
 
 - `--json=<indent>`: Output the result in JSON format. The value is the
