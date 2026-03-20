@@ -89,6 +89,9 @@ class ProjectContext {
   File get packageConfigFile =>
       env.fs.file(p.join(_effectiveRoot, '.dart_tool', 'package_config.json'));
 
+  File get packageGraphFile =>
+      env.fs.file(p.join(_effectiveRoot, '.dart_tool', 'package_graph.json'));
+
   Directory get pubdocDir =>
       env.fs.directory(p.join(_effectiveRoot, '.pubdoc'));
 
