@@ -21,7 +21,7 @@ documentation and exploring it.
 From the project root, run:
 
 ```
-pubdoc get --json=0 <package-name1> <package-name2> ... -p <project-root>
+fvm dart run pubdoc get --json=0 --quiet <package-name1> <package-name2> ...
 ```
 
 Parse the JSON output and extract per-package `source` and `documentation`:
@@ -46,29 +46,52 @@ Parse the JSON output and extract per-package `source` and `documentation`:
 If the command fails or `errors` is non-empty, read
 `references/troubleshooting.md` and follow its guidance.
 
-## Step 2: Explore documentation
+## Step 2: Enrich documentation (if needed)
+
+For each package where `cache != "hit"` (freshly generated docs), spawn an
+enrichment subagent. If multiple packages need enrichment, spawn them in
+parallel and wait for all to finish before continuing.
+
+- **Model:** fast, low-latency (e.g., Claude Haiku)
+- **Permissions:** read-only, except it may write/delete `OVERVIEW.md` and
+  `EXAMPLES.md` (and copy `example/` dirs) under `.pubdoc/<package>/`
+- **Pass:** the package's `documentation` and `source` paths, and the project
+  root
+- **Instructions:** read and follow `references/doc-enrichment.md`
+
+Example prompt:
+
+```
+Generate OVERVIEW.md and EXAMPLES.md for the package at:
+  Documentation: /path/to/project/.pubdoc/dio/
+  Source: /Users/you/.pub-cache/hosted/pub.dev/dio-5.3.6
+
+Read and follow <absolute-path-to-skill>/references/doc-enrichment.md.
+```
+
+If you cannot spawn a subagent, check each package for a missing `OVERVIEW.md`
+and generate it yourself by following `references/doc-enrichment.md`.
+
+## Step 3: Explore documentation
 
 If you can spawn a subagent, delegate the exploration:
 
-- **Model:** use a fast, low-latency model (e.g., Haiku for Claude)
-- **Permissions:** read-only, except it may write/delete `OVERVIEW.md` and
-  `EXAMPLES.md` (and copy `example/` dirs) under `.pubdoc/<package>/`
-- **Pass:** the query, per-package `documentation` and `source` paths from step
-  1, and the project root
+- **Model:** fast, low-latency (e.g., Claude Haiku)
+- **Permissions:** read-only
+- **Pass:** the query, per-package `documentation` paths from step 1, and the
+  project root
 - **Instructions:** read and follow `agents/doc-explorer.md`
 
-If you cannot spawn a subagent (e.g., you are already a subagent, or the runtime
-does not support it), read and follow `agents/doc-explorer.md` yourself.
+If you cannot spawn a subagent, read and follow `agents/doc-explorer.md`
+yourself.
 
-Here are some examples of the prompt:
+Example prompts:
 
 ```
 Read the documentation at /path/to/project/.pubdoc/app_links/
-(source: /Users/you/.pub-cache/hosted/pub.dev/app_links-6.3.3)
 and explain how to set up deep link handling on Android and iOS.
 
 Read the documentation at /path/to/project/.pubdoc/dio/
-(source: /Users/you/.pub-cache/hosted/pub.dev/dio-5.3.6)
 and describe the interceptor API: what parameters it accepts, how to chain
 multiple interceptors, and common patterns.
 ```

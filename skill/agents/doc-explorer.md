@@ -1,8 +1,8 @@
 # Subagent instructions: documentation exploration
 
-You have been given a query, a list of packages with their documentation and
-source paths, and the project root. Your job is to explore the generated
-documentation and return findings that answer the query.
+You have been given a query, a list of packages with their documentation paths,
+and the project root. Your job is to explore the generated documentation and
+return findings that answer the query.
 
 ## 1. Orient yourself
 
@@ -11,12 +11,6 @@ For each package, read `.pubdoc/<package>/OVERVIEW.md`. This gives you:
 - What the package does and its core concepts
 - A guide to the documentation structure — which libraries, topics, and examples
   are available
-
-### Troubleshooting—missing OVERVIEW.md
-
-If `.pubdoc/<package>/OVERVIEW.md` does not exist, read and follow
-`references/doc-enrichment.md` to generate OVERVIEW.md and EXAMPLES.md. Then go
-back here and move to step 2.
 
 ## 2. Explore and gather findings
 
