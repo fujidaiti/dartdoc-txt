@@ -24,13 +24,15 @@ int add(int a, int b) => a + b;
 capitalize(String input) → String
 ```
 
-Source: lib/src/functions.dart:28:31
+Source: lib/src/functions.dart:28:33
 
 Capitalizes [input].
 
 ```dart
 String capitalize(String input) {
-  if (input.isEmpty) return input;
+  if (input.isEmpty) {
+    return input;
+  }
   return input[0].toUpperCase() + input.substring(1);
 }
 ```
