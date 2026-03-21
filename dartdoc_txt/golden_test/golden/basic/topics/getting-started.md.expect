@@ -1,14 +1,13 @@
 Welcome to the basic package.
 
-This guide will help you get started with the core concepts
-and commonly used classes in this library.
+This guide will help you get started with the core concepts and commonly used
+classes in this library.
 
 ## Overview
 
-The basic package provides a variety of foundational types
-that demonstrate common Dart patterns. Start by exploring
-the [MyClass] and [Color] types, which cover the most
-frequently used features.
+The basic package provides a variety of foundational types that demonstrate
+common Dart patterns. Start by exploring the [MyClass] and [Color] types, which
+cover the most frequently used features.
 
 ## Quick Start
 
@@ -19,9 +18,8 @@ frequently used features.
 
 ## Next Steps
 
-Once you are familiar with the basics, check out the
-Utilities category for helper classes and functions
-that build on top of these core types.
+Once you are familiar with the basics, check out the Utilities category for
+helper classes and functions that build on top of these core types.
 
 ## Elements in this category
 
