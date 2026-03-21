@@ -17,7 +17,7 @@ rendered and compared against expected `.expect` files.
 
 ```sh
 cd dartdoc_txt
-fvm dart test test/integration/golden_test.dart
+dart test test/integration/golden_test.dart
 ```
 
 The `path` fixture requires the git submodule to be initialized. If it is
@@ -36,10 +36,10 @@ on each fixture:
 cd dartdoc_txt
 
 # basic fixture
-fvm dart run bin/dartdoc_txt.dart -i test/integration/fixture/basic -o test/integration/golden/basic
+dart run bin/dartdoc_txt.dart -i test/integration/fixture/basic -o test/integration/golden/basic
 
 # path fixture (requires submodule init + pub get first)
 git submodule update --init
-(cd test/integration/fixture/dart-core/pkgs/path && fvm dart pub get)
-fvm dart run bin/dartdoc_txt.dart -i test/integration/fixture/dart-core/pkgs/path -o test/integration/golden/path
+(cd test/integration/fixture/dart-core/pkgs/path && dart pub get)
+dart run bin/dartdoc_txt.dart -i test/integration/fixture/dart-core/pkgs/path -o test/integration/golden/path
 ```
