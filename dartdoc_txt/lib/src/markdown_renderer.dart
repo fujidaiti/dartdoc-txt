@@ -20,6 +20,28 @@ class MarkdownRenderer {
     final libraries = _documentedLibraries(package);
     final root = DocDir('');
 
+    // Build a mapping from element name → public library directory name
+    // so that cross-references in category pages are deterministic across OSes.
+    final elementLibraryMap = <String, String>{};
+    for (final lib in libraries) {
+      final libDir = lib.displayName;
+      for (final c in lib.classes.where((c) => c.isPublic)) {
+        elementLibraryMap[c.name] = libDir;
+      }
+      for (final e in lib.enums.where((e) => e.isPublic)) {
+        elementLibraryMap[e.name] = libDir;
+      }
+      for (final m in lib.mixins.where((m) => m.isPublic)) {
+        elementLibraryMap[m.name] = libDir;
+      }
+      for (final ext in lib.extensions.where((e) => e.isPublic)) {
+        elementLibraryMap[ext.name] = libDir;
+      }
+      for (final et in lib.extensionTypes.where((e) => e.isPublic)) {
+        elementLibraryMap[et.name] = libDir;
+      }
+    }
+
     // README
     final doc = package.documentation;
     if (doc != null && doc.isNotEmpty) {
@@ -47,7 +69,12 @@ class MarkdownRenderer {
       final topicsDir = DocDir('topics');
       for (final cat in package.documentedCategoriesSorted) {
         topicsDir.children.add(
-          CategoryPage(cat, templates, fileExtension: _options.fileExtension),
+          CategoryPage(
+            cat,
+            templates,
+            elementLibraryMap: elementLibraryMap,
+            fileExtension: _options.fileExtension,
+          ),
         );
       }
       root.children.add(topicsDir);
