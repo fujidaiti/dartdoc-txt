@@ -1,5 +1,5 @@
 /// Mustache partial template for one library's section in the package index.
-const librarySectionTemplate = r'''
+const librarySectionTemplate = '''
 ## {{{libraryName}}} library
 
 {{#hasDocumentation}}

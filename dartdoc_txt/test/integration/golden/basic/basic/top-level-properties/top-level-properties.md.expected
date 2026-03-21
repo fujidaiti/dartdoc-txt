@@ -16,7 +16,7 @@ A top-level constant.
 
 `Point(0, 0)`
 
-Source: lib/src/functions.dart:24:24
+Source: lib/src/functions.dart:23:23
 
 The origin point.
 

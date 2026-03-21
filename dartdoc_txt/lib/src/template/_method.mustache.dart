@@ -1,5 +1,5 @@
 /// Mustache partial template for a single method entry.
-const methodTemplate = r'''
+const methodTemplate = '''
 ### {{{signature}}}
 
 {{#hasSourceLocation}}

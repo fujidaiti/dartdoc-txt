@@ -1,4 +1,7 @@
+import 'package:meta/meta.dart';
+
 /// A class that overloads operators.
+@immutable
 class Comparable2 {
   @override
   bool operator ==(Object other) => identical(this, other);

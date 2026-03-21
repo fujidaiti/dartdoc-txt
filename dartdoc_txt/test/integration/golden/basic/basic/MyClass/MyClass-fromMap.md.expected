@@ -4,7 +4,7 @@
 MyClass.fromMap(Map map)
 ```
 
-Source: lib/src/classes.dart:25:40
+Source: lib/src/classes.dart:19:34
 
 Creates a [MyClass] from a map of values.
 
@@ -14,7 +14,7 @@ This constructor validates and processes the input map.
 
 ```dart
 MyClass.fromMap(Map<String, dynamic> map) : name = '', count = 0 {
-  var rawName = map['name'];
+  final rawName = map['name'];
   if (rawName == null) {
     throw ArgumentError('name is required');
   }
@@ -24,7 +24,7 @@ MyClass.fromMap(Map<String, dynamic> map) : name = '', count = 0 {
   if (rawName.isEmpty) {
     throw ArgumentError('name must not be empty');
   }
-  var rawCount = map['count'] ?? 0;
+  final rawCount = map['count'] ?? 0;
   if (rawCount is! int) {
     throw ArgumentError('count must be an int');
   }

@@ -1,7 +1,11 @@
+// dartdoc does not re-export these from its public API.
+// ignore: implementation_imports
 import 'package:dartdoc/src/element_type.dart';
+// dartdoc does not re-export these from its public API.
+// ignore: implementation_imports
 import 'package:dartdoc/src/model/model.dart';
 
-import 'utilities.dart';
+import 'package:dartdoc_txt/src/utilities.dart';
 
 /// Strips HTML tags and unescapes entities to get a clean type name.
 ///
@@ -10,16 +14,16 @@ import 'utilities.dart';
 String plainTypeName(ElementType type) {
   var name = type.nameWithGenericsPlain;
   // Remove any residual HTML tags (e.g. <wbr>, <span>)
-  name = name.replaceAll(RegExp(r'<[^>]+>'), '');
+  name = name.replaceAll(RegExp('<[^>]+>'), '');
   return unescapeHtml(name);
 }
 
 /// Renders a class/mixin/enum/extension type declaration as plain Dart code.
 String renderDeclaration(Container container) {
-  var buffer = StringBuffer();
+  final buffer = StringBuffer();
 
   if (container is InheritingContainer) {
-    for (var mod in container.containerModifiers) {
+    for (final mod in container.containerModifiers) {
       buffer.write('${mod.name} ');
     }
   }
@@ -38,30 +42,28 @@ String renderDeclaration(Container container) {
   }
 
   // Type parameters
-  if (container is TypeParameters) {
-    var typeParams = (container as TypeParameters).typeParameters;
-    if (typeParams.isNotEmpty) {
-      buffer.write('<');
-      buffer.write(
-        typeParams
-            .map((t) {
-              var rawName = t.element.name!;
-              var bound = t.element.bound;
-              if (bound != null && !bound.isDartCoreObject) {
-                return '$rawName extends ${bound.getDisplayString()}';
-              }
-              return rawName;
-            })
-            .join(', '),
-      );
-      buffer.write('>');
-    }
+  final typeParams = (container as TypeParameters).typeParameters;
+  if (typeParams.isNotEmpty) {
+    buffer.write('<');
+    buffer.write(
+      typeParams
+          .map((t) {
+            final rawName = t.element.name!;
+            final bound = t.element.bound;
+            if (bound != null && !bound.isDartCoreObject) {
+              return '$rawName extends ${bound.getDisplayString()}';
+            }
+            return rawName;
+          })
+          .join(', '),
+    );
+    buffer.write('>');
   }
 
   if (container is InheritingContainer) {
     // Supertype
     if (container.supertype != null) {
-      var supertypeName = plainTypeName(container.supertype!);
+      final supertypeName = plainTypeName(container.supertype!);
       if (supertypeName != 'Object' && supertypeName != 'Enum') {
         buffer.write(' extends $supertypeName');
       }
@@ -77,16 +79,18 @@ String renderDeclaration(Container container) {
     // Interfaces
     if (container.publicInterfaces.isNotEmpty) {
       buffer.write(
-        '\n    implements ${container.publicInterfaces.map(plainTypeName).join(', ')}',
+        '\n    implements '
+        '${container.publicInterfaces.map(plainTypeName).join(', ')}',
       );
     }
   }
 
   // Mixin: show superclass constraints
   if (container is Mixin && container.publicSuperclassConstraints.isNotEmpty) {
-    buffer.write(
-      ' on ${container.publicSuperclassConstraints.map(plainTypeName).join(', ')}',
-    );
+    final constraints = container.publicSuperclassConstraints
+        .map(plainTypeName)
+        .join(', ');
+    buffer.write(' on $constraints');
   }
 
   // Extension: show extended type
@@ -99,15 +103,17 @@ String renderDeclaration(Container container) {
 
 /// Renders a method/function/constructor signature as a single line.
 String renderSignature(ModelElement element) {
-  var buffer = StringBuffer();
+  final buffer = StringBuffer();
 
   if (element is Constructor) {
     buffer.write(element.name);
     buffer.write('(${_renderParams(element.parameters)})');
-    if (element.isConst) buffer.write(' const');
+    if (element.isConst) {
+      buffer.write(' const');
+    }
     if (element.isFactory) {
-      var enclosingName = element.enclosingElement.name;
-      return '$enclosingName ${buffer.toString()} factory';
+      final enclosingName = element.enclosingElement.name;
+      return '$enclosingName $buffer factory';
     }
     return buffer.toString();
   }
@@ -123,7 +129,7 @@ String renderSignature(ModelElement element) {
     buffer.write(element.name);
     // Type parameters
     if (element is TypeParameters) {
-      var typeParams = (element as TypeParameters).typeParameters;
+      final typeParams = (element).typeParameters;
       if (typeParams.isNotEmpty) {
         buffer.write('<${typeParams.map((t) => t.name).join(', ')}>');
       }
@@ -147,31 +153,33 @@ String _returnTypeName(ModelElement element) {
 }
 
 String _renderParams(List<Parameter> parameters) {
-  if (parameters.isEmpty) return '';
+  if (parameters.isEmpty) {
+    return '';
+  }
 
-  var positionalRequired = parameters
+  final positionalRequired = parameters
       .where((p) => p.isRequiredPositional)
       .toList();
-  var optionalPositional = parameters
+  final optionalPositional = parameters
       .where((p) => p.isOptionalPositional)
       .toList();
-  var named = parameters.where((p) => p.isNamed).toList();
+  final named = parameters.where((p) => p.isNamed).toList();
 
-  var parts = <String>[];
+  final parts = <String>[];
 
-  for (var p in positionalRequired) {
+  for (final p in positionalRequired) {
     parts.add(_renderParam(p));
   }
 
   if (optionalPositional.isNotEmpty) {
-    var optParts = optionalPositional.map(_renderParam).join(', ');
+    final optParts = optionalPositional.map(_renderParam).join(', ');
     parts.add('[$optParts]');
   }
 
   if (named.isNotEmpty) {
-    var namedParts = named
+    final namedParts = named
         .map((p) {
-          var prefix = p.isRequiredNamed ? 'required ' : '';
+          final prefix = p.isRequiredNamed ? 'required ' : '';
           return '$prefix${_renderParam(p)}';
         })
         .join(', ');
@@ -182,7 +190,7 @@ String _renderParams(List<Parameter> parameters) {
 }
 
 String _renderParam(Parameter p) {
-  var typeName = plainTypeName(p.modelType);
+  final typeName = plainTypeName(p.modelType);
   var result = '$typeName ${p.name}';
   if (p.hasDefaultValue) {
     result += ' = ${p.defaultValue}';
@@ -195,9 +203,15 @@ String _renderParam(Parameter p) {
 /// Returns something like: `` `@override` · `@protected` ``
 /// Excludes `@deprecated` (handled separately) and `@override` if requested.
 String renderAnnotations(ModelElement element, {bool skipOverride = false}) {
-  var annotations = element.annotations
+  final annotations = element.annotations
+      // Annotation.name has no public alternative in the dartdoc API.
+      // ignore: invalid_use_of_visible_for_overriding_member
       .where((a) => a.name != 'deprecated' && a.name != 'Deprecated')
+      // Annotation.name has no public alternative in the dartdoc API.
+      // ignore: invalid_use_of_visible_for_overriding_member
       .where((a) => !skipOverride || a.name != 'override')
+      // Annotation.name has no public alternative in the dartdoc API.
+      // ignore: invalid_use_of_visible_for_overriding_member
       .map((a) => '`@${a.name}`')
       .toList();
 
@@ -206,15 +220,23 @@ String renderAnnotations(ModelElement element, {bool skipOverride = false}) {
 
 /// Renders field attributes (final, late, const, static) as inline code badges.
 String renderAttributes(Field field) {
-  var badges = <String>[];
+  final badges = <String>[];
 
-  if (field.isStatic) badges.add('`static`');
-  if (field.isLate) badges.add('`late`');
-  if (field.isConst) badges.add('`const`');
-  if (field.isFinal) badges.add('`final`');
+  if (field.isStatic) {
+    badges.add('`static`');
+  }
+  if (field.isLate) {
+    badges.add('`late`');
+  }
+  if (field.isConst) {
+    badges.add('`const`');
+  }
+  if (field.isFinal) {
+    badges.add('`final`');
+  }
 
   // Add annotations (non-deprecated)
-  var annotationStr = renderAnnotations(field);
+  final annotationStr = renderAnnotations(field);
   if (annotationStr.isNotEmpty) {
     badges.add(annotationStr);
   }
@@ -226,14 +248,20 @@ String renderAttributes(Field field) {
 ///
 /// Returns empty string if the element is not deprecated.
 String renderDeprecation(ModelElement element) {
-  if (!element.isDeprecated) return '';
+  if (!element.isDeprecated) {
+    return '';
+  }
 
   // Try to extract the deprecation message from annotations
-  for (var annotation in element.annotations) {
+  for (final annotation in element.annotations) {
+    // Annotation.name has no public alternative in the dartdoc API.
+    // ignore: invalid_use_of_visible_for_overriding_member
     if (annotation.name == 'deprecated' || annotation.name == 'Deprecated') {
-      var source = annotation.linkedNameWithParameters;
+      final source = annotation.linkedNameWithParameters;
       // Extract message from @Deprecated('message')
-      var match = RegExp(r"""Deprecated\(['"](.+?)['"]\)""").firstMatch(source);
+      final match = RegExp(
+        r"""Deprecated\(['"](.+?)['"]\)""",
+      ).firstMatch(source);
       if (match != null) {
         return '> **Deprecated:** ${match.group(1)}';
       }

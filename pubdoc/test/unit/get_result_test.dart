@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('GetResult.format()', () {
     test('single package', () {
-      final result = GetResult(
+      const result = GetResult(
         packages: {
           'dio': PackageGetResult(
             documentation: '/project/.pubdoc/dio',
@@ -14,7 +14,7 @@ void main() {
           ),
         },
       );
-      expect(result.format(), r'''
+      expect(result.format(), '''
 dio
   documentation: /project/.pubdoc/dio
   version:       5.3.x
@@ -24,7 +24,7 @@ dio
     });
 
     test('multiple packages are separated by a blank line', () {
-      final result = GetResult(
+      const result = GetResult(
         packages: {
           'dio': PackageGetResult(
             documentation: '/project/.pubdoc/dio',
@@ -42,7 +42,7 @@ dio
       );
       expect(
         result.format(),
-        equals(r'''
+        equals('''
 dio
   documentation: /project/.pubdoc/dio
   version:       5.3.x

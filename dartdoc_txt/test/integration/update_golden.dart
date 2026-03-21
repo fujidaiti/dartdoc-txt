@@ -56,7 +56,7 @@ Future<void> _initGitSubmodule() {
     if (Directory(p.join(repoRoot.path, '.git')).existsSync()) {
       break;
     }
-    var parent = repoRoot.parent;
+    final parent = repoRoot.parent;
     if (parent.path != repoRoot.path) {
       repoRoot = parent;
     } else {

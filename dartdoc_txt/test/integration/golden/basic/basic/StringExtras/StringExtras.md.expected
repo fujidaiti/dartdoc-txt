@@ -4,7 +4,7 @@
 extension StringExtras on String
 ```
 
-Source: lib/src/extensions.dart:20:31
+Source: lib/src/extensions.dart:23:34
 
 An extension on [String] that adds utility methods.
 
@@ -12,7 +12,7 @@ An extension on [String] that adds utility methods.
 
 ### exclaim() → String
 
-Source: lib/src/extensions.dart:22:22
+Source: lib/src/extensions.dart:25:25
 
 Returns this string with an exclamation mark appended.
 
@@ -23,7 +23,7 @@ String exclaim() => '$this!';
 ---
 ### firstSegment() → String
 
-Source: lib/src/extensions.dart:30:30
+Source: lib/src/extensions.dart:33:33
 
 Splits this string by `/` and returns the first segment.
 

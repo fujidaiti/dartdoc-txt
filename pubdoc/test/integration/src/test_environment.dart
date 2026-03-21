@@ -5,8 +5,10 @@ import 'package:file/memory.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 import 'package:pubdoc/src/environment.dart';
+import 'package:pubdoc/src/project.dart' show ProjectContext;
 
 class PubspecYaml {
+  PubspecYaml(this._file);
   final File _file;
   final Map<String, String> _dependencies = {};
 
@@ -17,8 +19,6 @@ class PubspecYaml {
   /// The `workspace` field of the pubspec.yaml listing relative member paths.
   /// Non-empty only in a workspace root pubspec.yaml.
   final List<String> workspace = [];
-
-  PubspecYaml(this._file);
 
   Map<String, String> get dependencies => Map.unmodifiable(_dependencies);
 
@@ -35,7 +35,9 @@ class PubspecYaml {
   void write() {
     _file.parent.createSync(recursive: true);
     final buf = StringBuffer();
-    if (resolution != null) buf.writeln('resolution: $resolution');
+    if (resolution != null) {
+      buf.writeln('resolution: $resolution');
+    }
     if (workspace.isNotEmpty) {
       buf.writeln('workspace:');
       for (final m in workspace) {
@@ -47,10 +49,9 @@ class PubspecYaml {
 }
 
 class PubspecLock {
+  PubspecLock(this._file);
   final File _file;
   final Map<String, Map<String, dynamic>> _packages = {};
-
-  PubspecLock(this._file);
 
   void addPackage(
     String name, {
@@ -69,10 +70,9 @@ class PubspecLock {
 }
 
 class PackageConfigJson {
+  PackageConfigJson(this._file);
   final File _file;
   final List<({String name, String rootUri, String packageUri})> _packages = [];
-
-  PackageConfigJson(this._file);
 
   void addPackage({
     required String name,
@@ -107,10 +107,9 @@ class PackageConfigJson {
 }
 
 class PackageGraphJson {
+  PackageGraphJson(this._file);
   final File _file;
   final List<({String name, List<String> dependencies})> _packages = [];
-
-  PackageGraphJson(this._file);
 
   void addPackage({
     required String name,
@@ -136,17 +135,6 @@ class PackageGraphJson {
 }
 
 class TestEnvironment implements Environment {
-  final String projectRoot;
-  final String pubCacheBase;
-  late final PubspecYaml pubspec;
-  late final PubspecLock pubspecLock;
-  late final PackageConfigJson packageConfig;
-  late final PackageGraphJson packageGraph;
-  final Map<String, String> _variables;
-
-  @override
-  final MemoryFileSystem fs;
-
   TestEnvironment({
     required this.projectRoot,
     required this.pubCacheBase,
@@ -162,6 +150,16 @@ class TestEnvironment implements Environment {
       fs.file('$projectRoot/.dart_tool/package_graph.json'),
     );
   }
+  final String projectRoot;
+  final String pubCacheBase;
+  late final PubspecYaml pubspec;
+  late final PubspecLock pubspecLock;
+  late final PackageConfigJson packageConfig;
+  late final PackageGraphJson packageGraph;
+  final Map<String, String> _variables;
+
+  @override
+  final MemoryFileSystem fs;
 
   @override
   String? getVariable(String name) => _variables[name];
@@ -221,21 +219,13 @@ class TestEnvironment implements Environment {
 
 /// A [TestEnvironment] configured for a pub workspace scenario.
 ///
-/// The workspace root pubspec.yaml lists [memberRelativePath] under `workspace:`,
-/// and the member pubspec.yaml at [memberRoot] declares `resolution: workspace`.
+/// The workspace root pubspec.yaml lists [memberRelativePath] under
+/// `workspace:`, and the member pubspec.yaml at [memberRoot] declares
+/// `resolution: workspace`.
 /// Lock and config files are created under [projectRoot] (the workspace root),
 /// matching real pub workspace behavior. Use [memberRoot] as the `projectRoot`
 /// when constructing a [ProjectContext] to exercise workspace detection.
 class WorkspaceTestEnvironment extends TestEnvironment {
-  /// The absolute path of the workspace member directory, derived from
-  /// `workspaceRoot + memberRelativePath`.
-  final String memberRoot;
-
-  /// The pubspec.yaml model for the workspace member.
-  late final PubspecYaml memberPubspec;
-
-  final String memberRelativePath;
-
   WorkspaceTestEnvironment({
     required String workspaceRoot,
     required this.memberRelativePath,
@@ -244,6 +234,15 @@ class WorkspaceTestEnvironment extends TestEnvironment {
        super(projectRoot: workspaceRoot) {
     memberPubspec = PubspecYaml(fs.file(p.join(memberRoot, 'pubspec.yaml')));
   }
+
+  /// The absolute path of the workspace member directory, derived from
+  /// `workspaceRoot + memberRelativePath`.
+  final String memberRoot;
+
+  /// The pubspec.yaml model for the workspace member.
+  late final PubspecYaml memberPubspec;
+
+  final String memberRelativePath;
 
   @override
   void setUp() {

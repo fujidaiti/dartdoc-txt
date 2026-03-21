@@ -8,9 +8,9 @@ sealed class DocNode {
 
 /// A document file that lazily renders its content.
 abstract class DocFile extends DocNode {
+  DocFile(this.name);
   @override
   final String name;
-  DocFile(this.name);
 
   /// Lazily renders the document content.
   String renderContent();
@@ -18,21 +18,23 @@ abstract class DocFile extends DocNode {
 
 /// A directory node containing child [DocNode]s.
 class DocDir extends DocNode {
+  DocDir(this.name, [List<DocNode>? children]) : children = children ?? [];
   @override
   final String name;
   final List<DocNode> children;
-  DocDir(this.name, [List<DocNode>? children]) : children = children ?? [];
 
   /// Finds a [DocFile] by slash-separated path (e.g. 'lib/MyClass/MyClass.md').
   DocFile? findFile(String path) {
-    var parts = path.split('/');
-    DocDir current = this;
+    final parts = path.split('/');
+    var current = this;
     for (var i = 0; i < parts.length - 1; i++) {
-      var next = current.children
+      final next = current.children
           .whereType<DocDir>()
           .where((d) => d.name == parts[i])
           .firstOrNull;
-      if (next == null) return null;
+      if (next == null) {
+        return null;
+      }
       current = next;
     }
     return current.children
@@ -43,14 +45,16 @@ class DocDir extends DocNode {
 
   /// Finds a [DocDir] by slash-separated path (e.g. 'lib/MyClass').
   DocDir? findDir(String path) {
-    var parts = path.split('/');
-    DocDir current = this;
-    for (var part in parts) {
-      var next = current.children
+    final parts = path.split('/');
+    var current = this;
+    for (final part in parts) {
+      final next = current.children
           .whereType<DocDir>()
           .where((d) => d.name == part)
           .firstOrNull;
-      if (next == null) return null;
+      if (next == null) {
+        return null;
+      }
       current = next;
     }
     return current;
@@ -65,14 +69,14 @@ void writeDocTree(DocDir root, String outputDir) {
 void _writeNode(DocNode node, String currentPath) {
   switch (node) {
     case DocFile():
-      var file = File(p.join(currentPath, node.name));
+      final file = File(p.join(currentPath, node.name));
       file.parent.createSync(recursive: true);
       file.writeAsStringSync(node.renderContent());
     case DocDir():
-      var dirPath = node.name.isEmpty
+      final dirPath = node.name.isEmpty
           ? currentPath
           : p.join(currentPath, node.name);
-      for (var child in node.children) {
+      for (final child in node.children) {
         _writeNode(child, dirPath);
       }
   }

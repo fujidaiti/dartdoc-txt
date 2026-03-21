@@ -1,11 +1,8 @@
 import 'package:path/path.dart' as p;
 
-import 'environment.dart';
+import 'package:pubdoc/src/environment.dart';
 
 class PubdocConfig {
-  final String homeDir;
-  final String cacheDir;
-
   PubdocConfig({required this.homeDir, required this.cacheDir});
 
   /// Resolves the default configuration using the given [env].
@@ -16,6 +13,8 @@ class PubdocConfig {
     final homeDir = p.join(home, '.pubdoc');
     return PubdocConfig(homeDir: homeDir, cacheDir: p.join(homeDir, 'cache'));
   }
+  final String homeDir;
+  final String cacheDir;
 
   /// Returns the cache directory for a specific package and doc version.
   ///

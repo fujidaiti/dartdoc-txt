@@ -12,7 +12,7 @@ A generic box that holds a value of type [T].
 
 ### Box.new(T value)
 
-Source: lib/src/generics.dart:7:7
+Source: lib/src/generics.dart:4:4
 
 Creates a [Box] with the given [value].
 

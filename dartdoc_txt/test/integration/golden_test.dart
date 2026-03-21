@@ -31,13 +31,13 @@ void main() {
     );
 
     setUpAll(() async {
-      var docTree = await buildDocs(RenderOptions(packageRoot: fixturePath));
+      final docTree = await buildDocs(RenderOptions(packageRoot: fixturePath));
       generatedFiles = _collectFiles(docTree);
     });
 
     test('generated files match golden files', () {
-      for (var entry in generatedFiles.entries) {
-        var goldenFile = File(p.join(goldensDir, '${entry.key}.expected'));
+      for (final entry in generatedFiles.entries) {
+        final goldenFile = File(p.join(goldensDir, '${entry.key}.expected'));
         expect(
           goldenFile.existsSync(),
           isTrue,
@@ -52,12 +52,12 @@ void main() {
     });
 
     test('no stray golden files', () {
-      var goldenFiles = Directory(goldensDir)
+      final goldenFiles = Directory(goldensDir)
           .listSync(recursive: true)
           .whereType<File>()
           .map((f) => p.relative(f.path, from: goldensDir))
           .toSet();
-      var expectedGoldens = generatedFiles.keys
+      final expectedGoldens = generatedFiles.keys
           .map((k) => '$k.expected')
           .toSet();
       expect(goldenFiles, equals(expectedGoldens));
@@ -86,7 +86,7 @@ void main() {
     );
 
     setUpAll(() async {
-      var pubspecFile = File(p.join(fixturePath, 'pubspec.yaml'));
+      final pubspecFile = File(p.join(fixturePath, 'pubspec.yaml'));
       if (!pubspecFile.existsSync()) {
         throw StateError(
           'dart-core submodule not initialized.\n'
@@ -94,13 +94,13 @@ void main() {
           'Or see test/integration/README.md for setup instructions.',
         );
       }
-      var docTree = await buildDocs(RenderOptions(packageRoot: fixturePath));
+      final docTree = await buildDocs(RenderOptions(packageRoot: fixturePath));
       generatedFiles = _collectFiles(docTree);
     });
 
     test('generated files match golden files', () {
-      for (var entry in generatedFiles.entries) {
-        var goldenFile = File(p.join(goldensDir, '${entry.key}.expected'));
+      for (final entry in generatedFiles.entries) {
+        final goldenFile = File(p.join(goldensDir, '${entry.key}.expected'));
         expect(
           goldenFile.existsSync(),
           isTrue,
@@ -115,12 +115,12 @@ void main() {
     });
 
     test('no stray golden files', () {
-      var goldenFiles = Directory(goldensDir)
+      final goldenFiles = Directory(goldensDir)
           .listSync(recursive: true)
           .whereType<File>()
           .map((f) => p.relative(f.path, from: goldensDir))
           .toSet();
-      var expectedGoldens = generatedFiles.keys
+      final expectedGoldens = generatedFiles.keys
           .map((k) => '$k.expected')
           .toSet();
       expect(goldenFiles, equals(expectedGoldens));
@@ -130,14 +130,14 @@ void main() {
 
 /// Recursively collects all file paths and their rendered content.
 Map<String, String> _collectFiles(DocDir dir, [String prefix = '']) {
-  var result = <String, String>{};
-  for (var child in dir.children) {
+  final result = <String, String>{};
+  for (final child in dir.children) {
     switch (child) {
       case DocFile():
-        var path = prefix.isEmpty ? child.name : '$prefix/${child.name}';
+        final path = prefix.isEmpty ? child.name : '$prefix/${child.name}';
         result[path] = child.renderContent();
       case DocDir():
-        var dirPath = prefix.isEmpty ? child.name : '$prefix/${child.name}';
+        final dirPath = prefix.isEmpty ? child.name : '$prefix/${child.name}';
         result.addAll(_collectFiles(child, dirPath));
     }
   }

@@ -12,7 +12,7 @@ A simple class in an anonymous library (no library directive).
 
 ### Greeting.new(String message)
 
-Source: lib/extra.dart:7:7
+Source: lib/extra.dart:4:4
 
 Creates a [Greeting] with the given [message].
 

@@ -17,9 +17,6 @@ String _toJson(Object? obj, int indent) => indent == 0
     : JsonEncoder.withIndent(' ' * indent).convert(obj);
 
 class _PubdocRunner extends CommandRunner<int> {
-  final List<String> _logs = [];
-  final List<String> _errors = [];
-
   _PubdocRunner()
     : super('pubdoc', 'Generate documentation for Dart packages.') {
     argParser
@@ -41,15 +38,18 @@ class _PubdocRunner extends CommandRunner<int> {
         valueHelp: 'indent',
         help:
             'Output results in JSON format. '
-            'Value is the indent level (e.g. --json=0 for minified, --json=2 for 2-space indent).',
+            'Value is the indent level '
+            '(e.g. --json=0 for minified, --json=2 for 2-space indent).',
       );
     addCommand(_GetCommand());
   }
+  final List<String> _logs = [];
+  final List<String> _errors = [];
 
   @override
   Future<int?> runCommand(ArgResults topLevelResults) async {
     if (topLevelResults.flag('version')) {
-      print('pubdoc version: ${PlatformEnvironment().toolVersion}');
+      stdout.writeln('pubdoc version: ${PlatformEnvironment().toolVersion}');
       return 0;
     }
 
@@ -93,11 +93,6 @@ class _PubdocRunner extends CommandRunner<int> {
 }
 
 class _GetCommand extends Command<int> {
-  @override
-  final String name = 'get';
-  @override
-  final String description = 'Generate documentation for specified packages.';
-
   _GetCommand() {
     argParser
       ..addOption(
@@ -129,13 +124,18 @@ class _GetCommand extends Command<int> {
           'loose-minor': 'Share docs across minor versions (e.g. 5.x).',
         },
         help:
-            'Strategy to resolve the documentation version from the package version.',
+            'Strategy to resolve the documentation version '
+            'from the package version.',
       );
   }
+  @override
+  final String name = 'get';
+  @override
+  final String description = 'Generate documentation for specified packages.';
 
   @override
   Future<int> run() async {
-    final runner = this.runner as _PubdocRunner;
+    final runner = this.runner! as _PubdocRunner;
     final global = globalResults!;
     final rawJson = global['json'] as String?;
     final jsonIndent = rawJson == null ? null : int.tryParse(rawJson);
@@ -162,7 +162,7 @@ class _GetCommand extends Command<int> {
       ).run(packageNames: argResults!.rest);
 
       if (useJson) {
-        print(
+        stdout.writeln(
           _toJson({
             'output': result.toJson(),
             'errors': runner._errors,
@@ -170,12 +170,12 @@ class _GetCommand extends Command<int> {
           }, jsonIndent),
         );
       } else {
-        print(result.format());
+        stdout.writeln(result.format());
       }
       return 0;
     } on PubdocException catch (e) {
       if (useJson) {
-        print(
+        stdout.writeln(
           _toJson({
             'output': null,
             'errors': [...runner._errors, e.message],

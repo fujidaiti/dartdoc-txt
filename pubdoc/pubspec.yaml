@@ -3,6 +3,7 @@ description: >
   A CLI tool that provides LLM-friendly, version-aware API documentation for
   Dart/Flutter packages.
 version: 0.0.1
+publish_to: none
 repository: https://github.com/fujidaiti/pubdoc.git
 
 environment:
