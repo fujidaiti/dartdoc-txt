@@ -186,12 +186,15 @@ String renderCategory(
       : '';
 
   final sections = <Map<String, dynamic>>[];
-  _addCategorySection(
-      sections, 'Classes', category.classes, elementLibraryMap);
+  _addCategorySection(sections, 'Classes', category.classes, elementLibraryMap);
   _addCategorySection(sections, 'Enums', category.enums, elementLibraryMap);
   _addCategorySection(sections, 'Mixins', category.mixins, elementLibraryMap);
   _addCategorySection(
-      sections, 'Extensions', category.extensions, elementLibraryMap);
+    sections,
+    'Extensions',
+    category.extensions,
+    elementLibraryMap,
+  );
   _addCategorySection(
     sections,
     'Extension Types',
@@ -199,11 +202,23 @@ String renderCategory(
     elementLibraryMap,
   );
   _addCategorySection(
-      sections, 'Functions', category.functions, elementLibraryMap);
+    sections,
+    'Functions',
+    category.functions,
+    elementLibraryMap,
+  );
   _addCategorySection(
-      sections, 'Properties', category.properties, elementLibraryMap);
+    sections,
+    'Properties',
+    category.properties,
+    elementLibraryMap,
+  );
   _addCategorySection(
-      sections, 'Typedefs', category.typedefs, elementLibraryMap);
+    sections,
+    'Typedefs',
+    category.typedefs,
+    elementLibraryMap,
+  );
 
   final data = {
     'hasDocumentation': cleanDoc.isNotEmpty,
