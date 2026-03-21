@@ -67,14 +67,16 @@ void main() {
   group('path', () {
     late Map<String, String> generatedFiles;
 
-    final submoduleDir = p.join(
+    final fixturePath = p.join(
       Directory.current.path,
       'test',
       'integration',
       'fixture',
       'dart-core',
+      'pkgs',
+      'path',
     );
-    final fixturePath = p.join(submoduleDir, 'pkgs', 'path');
+
     final goldensDir = p.join(
       Directory.current.path,
       'test',
