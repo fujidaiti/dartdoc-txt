@@ -15,7 +15,7 @@ Future<void> main() async {
 
   // Ensure the dart-core submodule is initialized.
   print('Initializing dart-core submodule...');
-  var repoRoot = _findRepoRoot(packageRoot);
+  var repoRoot = findRepoRoot(packageRoot);
   var submodulePath = p.relative(
     p.join(goldenTestDir, 'fixture', 'dart-core'),
     from: repoRoot,
@@ -86,19 +86,3 @@ Future<void> main() async {
   print('Done. $totalFiles golden files written in total.');
 }
 
-/// Walks up from [start] to find the repo root (directory containing .git).
-String _findRepoRoot(String start) {
-  var dir = Directory(start);
-  while (true) {
-    if (Directory(p.join(dir.path, '.git')).existsSync() ||
-        File(p.join(dir.path, '.git')).existsSync()) {
-      return dir.path;
-    }
-    var parent = dir.parent;
-    if (parent.path == dir.path) {
-      // Fallback: return start if we can't find .git.
-      return start;
-    }
-    dir = parent;
-  }
-}

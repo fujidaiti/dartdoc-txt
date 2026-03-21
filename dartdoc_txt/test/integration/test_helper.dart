@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dartdoc/dartdoc.dart';
 import 'package:dartdoc_txt/dartdoc_txt.dart';
+import 'package:path/path.dart' as p;
 
 /// Builds a [PackageGraph] from a fixture at [fixturePath].
 Future<PackageGraph> buildFixtureGraph(String fixturePath) async {
@@ -49,4 +50,20 @@ Map<String, String> collectFiles(DocDir dir, [String prefix = '']) {
     }
   }
   return result;
+}
+
+/// Walks up from [start] to find the repo root (directory containing .git).
+String findRepoRoot(String start) {
+  var dir = Directory(start);
+  while (true) {
+    if (Directory(p.join(dir.path, '.git')).existsSync() ||
+        File(p.join(dir.path, '.git')).existsSync()) {
+      return dir.path;
+    }
+    var parent = dir.parent;
+    if (parent.path == dir.path) {
+      return start;
+    }
+    dir = parent;
+  }
 }
