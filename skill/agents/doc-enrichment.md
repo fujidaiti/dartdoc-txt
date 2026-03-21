@@ -1,7 +1,7 @@
 # Documentation enrichment
 
 Generate OVERVIEW.md and EXAMPLES.md for a package. You have been given the
-package's `source` path and its documentation path at `.pubdoc/<package>/`.
+package's `source` path and its `documentation` path.
 
 ## 1. Generate EXAMPLES.md
 
@@ -11,14 +11,11 @@ examples. Otherwise:
 1. Copy examples into the documentation:
 
    ```
-   cp -r <source>/example/ .pubdoc/<package>/example/
+   cp -r <source>/example/ <documentation>/example/
    ```
 
-   The symlink at `.pubdoc/<package>` points to the real cache directory, so
-   this write lands in the shared cache and is reused across projects.
-
 2. Explore the copied `example/` directory and write
-   `.pubdoc/<package>/EXAMPLES.md` with this structure:
+   `<documentation>/EXAMPLES.md` with this structure:
    - **Table of Contents** at the top — one line per example file, linked to its
      section heading. An agent can read just this section to orient quickly.
 
@@ -40,13 +37,13 @@ Gather source material:
 
 - **README:** read `<source>/README.md`. If absent, skip the summary section and
   proceed to the documentation guide below.
-- **Topics:** list `.pubdoc/<package>/topics/` if it exists — note each `.md`
+- **Topics:** list `<documentation>/topics/` if it exists — note each `.md`
   filename and read the first heading or first sentence to get a one-line
   description.
-- **Libraries:** list the subdirectories in `.pubdoc/<package>/` that contain an
-  `index.md` file — these are the public library directories.
+- **Libraries:** list the subdirectories in the documentation root that contain
+  an `index.md` file — these are the public library directories.
 
-Write `.pubdoc/<package>/OVERVIEW.md` with two sections:
+Write `<documentation>/OVERVIEW.md` with two sections:
 
 ---
 
@@ -99,7 +96,7 @@ Include:
      `<library>/index.md — <brief description if inferrable from the library name, otherwise omit>`
    - `EXAMPLES.md — code examples with explanations` (only if it exists)
 
-3. **Topics** (only if `.pubdoc/<package>/topics/` contains `.md` files): Add a
+3. **Topics** (only if `<documentation>/topics/` contains `.md` files): Add a
    "Topics" sub-section with one bullet per file:
    `- [topics/<FileName>.md](topics/<FileName>.md) — <one-line description>`
    These often contain migration guides, advanced usage, or conceptual

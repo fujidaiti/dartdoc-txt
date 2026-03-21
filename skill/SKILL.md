@@ -31,7 +31,7 @@ Parse the JSON output and extract per-package `source` and `documentation`:
   "output": {
     "packages": {
       "dio": {
-        "documentation": "/path/to/project/.pubdoc/dio",
+        "documentation": "/Users/you/.pubdoc/cache/dio/dio-5.3.x",
         "version": "5.3.x",
         "source": "/Users/you/.pub-cache/hosted/pub.dev/dio-5.3.6",
         "cache": "hit"
@@ -54,23 +54,24 @@ parallel and wait for all to finish before continuing.
 
 - **Model:** fast, low-latency (e.g., Claude Haiku)
 - **Permissions:** read-only, except it may write/delete `OVERVIEW.md` and
-  `EXAMPLES.md` (and copy `example/` dirs) under `.pubdoc/<package>/`
+  `EXAMPLES.md` (and copy `example/` dirs) under `documentation` directory
 - **Pass:** the package's `documentation` and `source` paths, and the project
   root
-- **Instructions:** read and follow `references/doc-enrichment.md`
+- **Instructions:** read and follow
+  `${CLAUDE_SKILL_DIR}/agents/doc-enrichment.md`
 
 Example prompt:
 
 ```
 Generate OVERVIEW.md and EXAMPLES.md for the package at:
-  Documentation: /path/to/project/.pubdoc/dio/
+  Documentation: /Users/you/.pubdoc/cache/dio/dio-5.3.x
   Source: /Users/you/.pub-cache/hosted/pub.dev/dio-5.3.6
 
-Read and follow <absolute-path-to-skill>/references/doc-enrichment.md.
+Read and follow ${CLAUDE_SKILL_DIR}/agents/doc-enrichment.md.
 ```
 
 If you cannot spawn a subagent, check each package for a missing `OVERVIEW.md`
-and generate it yourself by following `references/doc-enrichment.md`.
+and generate it yourself by following `agents/doc-enrichment.md`.
 
 ## Step 3: Explore documentation
 
@@ -80,18 +81,19 @@ If you can spawn a subagent, delegate the exploration:
 - **Permissions:** read-only
 - **Pass:** the query, per-package `documentation` paths from step 1, and the
   project root
-- **Instructions:** read and follow `agents/doc-explorer.md`
+- **Instructions:** read and follow `${CLAUDE_SKILL_DIR}/agents/doc-explorer.md`
 
-If you cannot spawn a subagent, read and follow `agents/doc-explorer.md`
-yourself.
+If you can use a built-in read-only agent optimized for searching and analyzing
+codebases (e.g., Explore agent), use it here. If you cannot spawn a subagent,
+read and follow `agents/doc-explorer.md` yourself.
 
 Example prompts:
 
 ```
-Read the documentation at /path/to/project/.pubdoc/app_links/
+Read the documentation at /Users/you/.pubdoc/cache/app_links/app_links-5.3.x/
 and explain how to set up deep link handling on Android and iOS.
 
-Read the documentation at /path/to/project/.pubdoc/dio/
+Read the documentation at /Users/you/.pubdoc/cache/dio/dio-5.3.x/
 and describe the interceptor API: what parameters it accepts, how to chain
 multiple interceptors, and common patterns.
 ```
@@ -100,6 +102,5 @@ Wait for the findings, then use them to proceed with your task.
 
 ## Note on documentation access
 
-Generated docs live at `.pubdoc/<package>/` in the project root. Rely on the
-subagent's findings — do not read the documentation yourself unless the
-subagent's report is insufficient and further reading is clearly needed.
+Rely on the subagent's findings — do not read the documentation yourself unless
+the subagent's report is insufficient and further reading is clearly needed.

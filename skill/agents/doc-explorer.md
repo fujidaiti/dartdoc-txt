@@ -6,7 +6,7 @@ return findings that answer the query.
 
 ## 1. Orient yourself
 
-For each package, read `.pubdoc/<package>/OVERVIEW.md`. This gives you:
+For each package, read `<documentation-root>/OVERVIEW.md`. This gives you:
 
 - What the package does and its core concepts
 - A guide to the documentation structure — which libraries, topics, and examples
@@ -59,8 +59,8 @@ configuration steps the caller will need.>
 
 ### Sources consulted
 
-- .pubdoc/<package>/OVERVIEW.md
-- .pubdoc/<package>/<library>/<ClassName>/<ClassName>.md
+- <documentation-root>/OVERVIEW.md
+- <documentation-root>/<library>/<ClassName>/<ClassName>.md
 - ...
 ```
 
