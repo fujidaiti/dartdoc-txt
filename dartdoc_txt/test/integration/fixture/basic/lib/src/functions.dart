@@ -13,11 +13,10 @@ int globalCounter = 0;
 ///
 /// {@macro basic.my_class}
 class Point {
-  final int x;
-  final int y;
-
   /// Creates a point with the given coordinates.
   const Point(this.x, this.y);
+  final int x;
+  final int y;
 }
 
 /// The origin point.
@@ -27,6 +26,8 @@ const Point origin = Point(0, 0);
 ///
 /// {@category Utilities}
 String capitalize(String input) {
-  if (input.isEmpty) return input;
+  if (input.isEmpty) {
+    return input;
+  }
   return input[0].toUpperCase() + input.substring(1);
 }

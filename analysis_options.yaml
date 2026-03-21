@@ -1,0 +1,36 @@
+include: all_lint_rules.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+  errors:
+    # Otherwise cause the import of all_lint_rules to warn because of some rules conflicts.
+    # We explicitly enabled even conflicting rules and are fixing the conflict in this file.
+    included_file_warning: ignore
+
+linter:
+  rules:
+    specify_nonobvious_local_variable_types: false
+    always_specify_types: false
+    use_setters_to_change_properties: false
+    one_member_abstracts: false
+    avoid_redundant_argument_values: false
+    prefer_int_literals: false
+    prefer_double_quotes: false
+    prefer_final_parameters: false
+    flutter_style_todos: false
+    cascade_invocations: false
+    join_return_with_assignment: false
+    prefer_relative_imports: false
+    unnecessary_parenthesis: false
+    avoid_positional_boolean_parameters: false
+    public_member_api_docs: false
+    unnecessary_final: false
+    sort_pub_dependencies: false
+    prefer_expression_function_bodies: false
+    diagnostic_describe_all_properties: false
+    use_to_and_as_if_applicable: false
+    prefer_asserts_with_message: false
+    omit_obvious_property_types: false

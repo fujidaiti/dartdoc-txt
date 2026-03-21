@@ -3,19 +3,11 @@ import 'dart:convert';
 import 'package:file/file.dart';
 import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
+import 'package:pubdoc/src/environment.dart';
+import 'package:pubdoc/src/exceptions.dart';
 import 'package:yaml/yaml.dart';
 
-import 'environment.dart';
-import 'exceptions.dart';
-
 class ProjectContext {
-  final String projectRoot;
-  final Environment env;
-
-  /// The workspace root if [projectRoot] is a workspace member, or null if it
-  /// is not a workspace member (including the workspace root itself).
-  final String? _workspaceRoot;
-
   ProjectContext._(
     this.projectRoot, {
     required this.env,
@@ -41,7 +33,7 @@ class ProjectContext {
       final YamlMap? pubspec;
       try {
         pubspec = loadYaml(pubspecFile.readAsStringSync()) as YamlMap?;
-      } catch (_) {
+      } on Exception catch (_) {
         return ProjectContext._(projectRoot, env: env, workspaceRoot: null);
       }
       if (pubspec != null && pubspec['resolution'] == 'workspace') {
@@ -56,18 +48,21 @@ class ProjectContext {
                 workspaceRoot = current;
                 break;
               }
-            } catch (_) {}
+            } on Exception catch (_) {}
           }
           final parent = p.dirname(current);
-          if (parent == current) break;
+          if (parent == current) {
+            break;
+          }
           current = parent;
         }
         if (workspaceRoot == null) {
-          // Found `resolution: workspace` but no workspace root — invalid repository structure.
+          // Found `resolution: workspace` but no workspace root —
+          // invalid repository structure.
           throw PubdocException(
             'pubspec.yaml in $projectRoot declares `resolution: workspace`, '
-            'but no workspace root (pubspec.yaml with `workspace:` key) was found '
-            'in the parent directories.',
+            'but no workspace root (pubspec.yaml with `workspace:` key)'
+            ' was found in the parent directories.',
           );
         }
       }
@@ -78,6 +73,12 @@ class ProjectContext {
       workspaceRoot: workspaceRoot,
     );
   }
+  final String projectRoot;
+  final Environment env;
+
+  /// The workspace root if [projectRoot] is a workspace member, or null if it
+  /// is not a workspace member (including the workspace root itself).
+  final String? _workspaceRoot;
 
   /// Resolves to the workspace root when [projectRoot] is a workspace member,
   /// or [projectRoot] itself otherwise.

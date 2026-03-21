@@ -1,5 +1,5 @@
 /// Mustache template for the typedefs page of a library.
-const typedefsTemplate = r'''
+const typedefsTemplate = '''
 # Typedefs — {{{libraryName}}}
 
 {{#typedefs}}

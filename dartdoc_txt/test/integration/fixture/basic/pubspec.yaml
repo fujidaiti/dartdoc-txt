@@ -4,3 +4,5 @@ description: A comprehensive test fixture for dartdoc_txt.
 
 environment:
   sdk: ^3.10.0
+dependencies:
+  meta: ^1.18.2

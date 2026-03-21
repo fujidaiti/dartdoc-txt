@@ -4,7 +4,7 @@
 class Point
 ```
 
-Source: lib/src/functions.dart:15:21
+Source: lib/src/functions.dart:15:20
 
 An immutable 2D point.
 
@@ -15,7 +15,7 @@ constructors, methods, and properties.
 
 ### Point.new(int x, int y) const
 
-Source: lib/src/functions.dart:20:20
+Source: lib/src/functions.dart:17:17
 
 Creates a point with the given coordinates.
 

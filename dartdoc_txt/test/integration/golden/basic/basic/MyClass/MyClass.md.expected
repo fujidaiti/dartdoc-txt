@@ -15,7 +15,7 @@ constructors, methods, and properties.
 
 ### MyClass.new(String name, {int count = 0})
 
-Source: lib/src/classes.dart:17:17
+Source: lib/src/classes.dart:11:11
 
 Creates a new [MyClass] with the given [name].
 
@@ -26,7 +26,7 @@ MyClass(this.name, {this.count = 0});
 ---
 ### MyClass.defaults()
 
-Source: lib/src/classes.dart:20:20
+Source: lib/src/classes.dart:14:14
 
 Creates a [MyClass] with default values.
 
@@ -37,7 +37,7 @@ MyClass.defaults() : name = 'default', count = 0;
 ---
 ### MyClass.fromMap(Map map)
 
-Source: lib/src/classes.dart:25:40
+Source: lib/src/classes.dart:19:34
 
 Creates a [MyClass] from a map of values.
 

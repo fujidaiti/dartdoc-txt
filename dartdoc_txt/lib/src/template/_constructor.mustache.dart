@@ -1,5 +1,5 @@
 /// Mustache partial template for a single constructor entry.
-const constructorTemplate = r'''
+const constructorTemplate = '''
 ### {{{signature}}}
 
 {{#hasSourceLocation}}

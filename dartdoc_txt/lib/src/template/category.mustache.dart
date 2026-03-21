@@ -1,5 +1,5 @@
 /// Mustache template for category/topic pages listing categorized elements.
-const categoryTemplate = r'''
+const categoryTemplate = '''
 {{#hasDocumentation}}
 {{{documentation}}}
 

@@ -1,5 +1,5 @@
 /// Mustache template for top-level functions page of a library.
-const topLevelFunctionsTemplate = r'''
+const topLevelFunctionsTemplate = '''
 # Top-level Functions — {{{libraryName}}}
 
 {{#functions}}

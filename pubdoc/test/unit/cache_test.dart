@@ -7,12 +7,13 @@ import 'package:pubdoc/src/version_resolution.dart';
 import 'package:test/test.dart';
 
 class _TestEnvironment implements Environment {
+  _TestEnvironment() : fs = MemoryFileSystem.test();
+
   @override
   final MemoryFileSystem fs;
-  @override
-  final String toolVersion;
 
-  _TestEnvironment({this.toolVersion = '1.0.0'}) : fs = MemoryFileSystem.test();
+  @override
+  final String toolVersion = '1.0.0';
 
   @override
   String? getVariable(String name) => null;

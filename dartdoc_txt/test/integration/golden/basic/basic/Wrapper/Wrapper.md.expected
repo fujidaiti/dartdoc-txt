@@ -4,7 +4,7 @@
 extension type Wrapper
 ```
 
-Source: lib/src/extensions.dart:34:37
+Source: lib/src/extensions.dart:37:40
 
 An extension type wrapping an [int].
 
@@ -12,7 +12,7 @@ An extension type wrapping an [int].
 
 ### Wrapper.new(int value)
 
-Source: lib/src/extensions.dart:34
+Source: lib/src/extensions.dart:37
 
 ---
 ## Properties
@@ -26,7 +26,7 @@ Source: lib/src/extensions.dart:34
 
 ### doubled() → int
 
-Source: lib/src/extensions.dart:36:36
+Source: lib/src/extensions.dart:39:39
 
 Returns the value doubled.
 

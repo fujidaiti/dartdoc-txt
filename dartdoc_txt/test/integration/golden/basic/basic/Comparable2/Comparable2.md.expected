@@ -4,7 +4,7 @@
 class Comparable2
 ```
 
-Source: lib/src/extensions.dart:2:14
+Source: lib/src/extensions.dart:5:18
 
 A class that overloads operators.
 
@@ -12,14 +12,14 @@ A class that overloads operators.
 
 ### Comparable2.new()
 
-Source: lib/src/extensions.dart:2
+Source: lib/src/extensions.dart:5
 
 ---
 ## Operators
 
 ### operator +(Comparable2 other) → Comparable2
 
-Source: lib/src/extensions.dart:13:13
+Source: lib/src/extensions.dart:16:16
 
 Adds two [Comparable2] instances.
 

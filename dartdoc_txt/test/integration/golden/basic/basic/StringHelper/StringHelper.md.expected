@@ -4,7 +4,7 @@
 class StringHelper
 ```
 
-Source: lib/src/extensions.dart:42:45
+Source: lib/src/extensions.dart:45:48
 
 A string helper.
 
@@ -12,14 +12,14 @@ A string helper.
 
 ### StringHelper.new()
 
-Source: lib/src/extensions.dart:42
+Source: lib/src/extensions.dart:45
 
 ---
 ## Methods
 
 ### reverse(String input) → String
 
-Source: lib/src/extensions.dart:44:44
+Source: lib/src/extensions.dart:47:47
 
 Reverses [input].
 

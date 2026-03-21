@@ -44,21 +44,12 @@ Future<void> main(List<String> arguments) async {
     return;
   }
   if (results.flag('version')) {
-    print('dartdoc_txt version: $version');
+    stdout.writeln('dartdoc_txt version: $version');
     return;
   }
 
-  final String inputDir;
-  final String outputDir;
-  try {
-    inputDir = results.option('input')!;
-    outputDir = results.option('output')!;
-  } on ArgumentError catch (e) {
-    log.severe(e.message);
-    _printUsage(argParser);
-    exitCode = 64;
-    return;
-  }
+  final inputDir = results.option('input')!;
+  final outputDir = results.option('output')!;
   final sourceThreshold = int.parse(results.option('source-threshold')!);
   final includeSource = results.flag('include-source');
 
@@ -75,7 +66,7 @@ Future<void> main(List<String> arguments) async {
 }
 
 void _printUsage(ArgParser argParser) {
-  print('Usage: dart run dartdoc_txt [options]');
-  print('');
-  print(argParser.usage);
+  stdout.writeln('Usage: dart run dartdoc_txt [options]');
+  stdout.writeln('');
+  stdout.writeln(argParser.usage);
 }
