@@ -21,6 +21,9 @@ class DocGenerator {
     }
 
     log.fine('Analyzing package at $sourcePath...');
-    await generateDocs(inputDir: sourcePath, outputDir: outputDir);
+    await generateDocs(
+      outputDir: outputDir,
+      options: RenderOptions(packageRoot: sourcePath),
+    );
   }
 }

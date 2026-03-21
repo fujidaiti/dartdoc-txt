@@ -1,0 +1,43 @@
+# Animal
+
+```dart
+class Animal
+```
+
+Source: lib/src/inheritance.dart:2:11
+
+A base animal class.
+
+## Constructors
+
+### Animal.new(String name)
+
+Source: lib/src/inheritance.dart:7:7
+
+Creates an [Animal] with the given [name].
+
+```dart
+Animal(this.name);
+```
+
+---
+## Properties
+
+### name → String
+
+The name of this animal.
+
+---
+## Methods
+
+### speak() → String
+
+Source: lib/src/inheritance.dart:10:10
+
+Returns the sound this animal makes.
+
+```dart
+String speak() => name;
+```
+
+---

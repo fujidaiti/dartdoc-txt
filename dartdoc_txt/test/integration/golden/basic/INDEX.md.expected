@@ -1,0 +1,74 @@
+# basic Index
+
+Version: 1.0.0
+
+## Topics
+
+- [Getting Started](topics/getting-started.md) — Welcome to the basic package.
+- [Utilities](topics/utilities.md) — Utility classes and functions.
+
+## basic library
+
+A comprehensive test library for dartdoc_txt.
+
+This library contains various Dart elements for testing
+the Markdown documentation generator.
+
+### Classes from basic
+
+- [MyClass](basic/MyClass/MyClass.md) — A simple class with documentation.
+- [Comparable2](basic/Comparable2/Comparable2.md) — A class that overloads operators.
+- [StringHelper](basic/StringHelper/StringHelper.md) — A string helper.
+- [Point](basic/Point/Point.md) — An immutable 2D point.
+- [Box](basic/Box/Box.md) — A generic box that holds a value of type [T].
+- [BoundedBox](basic/BoundedBox/BoundedBox.md) — A generic box with a bounded type parameter.
+- [Animal](basic/Animal/Animal.md) — A base animal class.
+- [Dog](basic/Dog/Dog.md) — A dog that extends [Animal].
+- [Labrador](basic/Labrador/Labrador.md) — A Labrador that extends [Dog] and mixes in [Swimmable].
+- [AbstractFoo](basic/AbstractFoo/AbstractFoo.md) — An abstract class that cannot be instantiated directly.
+- [SealedBar](basic/SealedBar/SealedBar.md) — A sealed class that can only be extended within this library.
+- [BaseBaz](basic/BaseBaz/BaseBaz.md) — A base class that can be extended but not implemented.
+- [FinalQux](basic/FinalQux/FinalQux.md) — A final class that cannot be extended or implemented.
+- [InterfaceQuux](basic/InterfaceQuux/InterfaceQuux.md) — An interface class that can be implemented but not extended.
+- [MixinClass](basic/MixinClass/MixinClass.md) — A mixin class that can be used as both a class and a mixin.
+- [ThresholdTest](basic/ThresholdTest/ThresholdTest.md) — A class with methods of varying sizes for threshold testing.
+### Enums from basic
+
+- [Color](basic/Color/Color.md) — A simple enumeration.
+### Mixins from basic
+
+- [Swimmable](basic/Swimmable/Swimmable.md) — A mixin that provides swimming ability.
+- [MyMixin](basic/MyMixin/MyMixin.md) — A mixin that provides shared behavior.
+### Extensions from basic
+
+- [StringExtras](basic/StringExtras/StringExtras.md) — An extension on [String] that adds utility methods.
+### Extension Types from basic
+
+- [Wrapper](basic/Wrapper/Wrapper.md) — An extension type wrapping an [int].
+### Functions from basic
+
+See [top-level-functions.md](basic/top-level-functions/top-level-functions.md) for more details.
+
+- add — A simple top-level function.
+- capitalize — Capitalizes [input].
+- identity — A generic identity function that returns its input.
+
+### Properties from basic
+
+See [top-level-properties.md](basic/top-level-properties/top-level-properties.md) for more details.
+
+- defaultName — A top-level constant.
+- origin — The origin point.
+- globalCounter — A top-level variable.
+
+### Typedefs from basic
+
+See [typedefs.md](basic/typedefs/typedefs.md) for more details.
+
+- StringCallback — A typedef for a callback that takes a [String].
+
+## extra library
+
+### Classes from extra
+
+- [Greeting](extra/Greeting/Greeting.md) — A simple class in an anonymous library (no library directive).

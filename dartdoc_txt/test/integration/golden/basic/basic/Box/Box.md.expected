@@ -1,0 +1,45 @@
+# Box
+
+```dart
+class Box<T>
+```
+
+Source: lib/src/generics.dart:2:11
+
+A generic box that holds a value of type [T].
+
+## Constructors
+
+### Box.new(T value)
+
+Source: lib/src/generics.dart:7:7
+
+Creates a [Box] with the given [value].
+
+```dart
+Box(this.value);
+```
+
+---
+## Properties
+
+### value → T
+
+`final`
+
+The value stored in this box.
+
+---
+## Methods
+
+### unwrap() → T
+
+Source: lib/src/generics.dart:10:10
+
+Returns the value stored in this box.
+
+```dart
+T unwrap() => value;
+```
+
+---
