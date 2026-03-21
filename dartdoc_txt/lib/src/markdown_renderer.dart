@@ -8,24 +8,10 @@ import 'utilities.dart';
 /// Walks a [PackageGraph] and builds a lazy [DocDir] tree.
 class MarkdownRenderer {
   final PackageGraph packageGraph;
-  final int sourceLineThreshold;
-  final bool includeSource;
-  final String packageRoot;
+  final RenderOptions _options;
 
-  late final RenderOptions _options;
-
-  MarkdownRenderer({
-    required this.packageGraph,
-    this.sourceLineThreshold = 10,
-    this.includeSource = true,
-    required this.packageRoot,
-  }) {
-    _options = RenderOptions(
-      sourceLineThreshold: sourceLineThreshold,
-      includeSource: includeSource,
-      packageRoot: packageRoot,
-    );
-  }
+  MarkdownRenderer({required this.packageGraph, required RenderOptions options})
+    : _options = options;
 
   DocDir render() {
     var templates = Templates.load();
@@ -36,12 +22,18 @@ class MarkdownRenderer {
     // README
     var doc = package.documentation;
     if (doc != null && doc.isNotEmpty) {
-      root.children.add(ReadmePage(doc));
+      root.children.add(ReadmePage(doc, fileExtension: _options.fileExtension));
     }
 
     // INDEX
     root.children.add(
-      IndexPage(package, libraries, templates, _librarySectionData),
+      IndexPage(
+        package,
+        libraries,
+        templates,
+        _librarySectionData,
+        fileExtension: _options.fileExtension,
+      ),
     );
 
     // Libraries
@@ -53,7 +45,9 @@ class MarkdownRenderer {
     if (package.hasDocumentedCategories) {
       var topicsDir = DocDir('topics');
       for (var cat in package.documentedCategoriesSorted) {
-        topicsDir.children.add(CategoryPage(cat, templates));
+        topicsDir.children.add(
+          CategoryPage(cat, templates, fileExtension: _options.fileExtension),
+        );
       }
       root.children.add(topicsDir);
     }
@@ -201,7 +195,7 @@ class MarkdownRenderer {
         if (needsDetailPage(func, _options)) {
           funcDir.children.add(
             DetailPage(
-              '${func.name}.md',
+              '${func.name}.${_options.fileExtension}',
               func,
               library.name,
               _options,
@@ -245,7 +239,7 @@ class MarkdownRenderer {
         if (needsDetailPage(ctor, _options)) {
           containerDir.children.add(
             DetailPage(
-              '${container.name}-${ctorBaseName(ctor.name, container.name)}.md',
+              '${container.name}-${ctorBaseName(ctor.name, container.name)}.${_options.fileExtension}',
               ctor,
               container.name,
               _options,
@@ -263,7 +257,7 @@ class MarkdownRenderer {
       if (needsDetailPage(method, _options)) {
         containerDir.children.add(
           DetailPage(
-            '${container.name}-${safeFileName(method.name)}.md',
+            '${container.name}-${safeFileName(method.name)}.${_options.fileExtension}',
             method,
             container.name,
             _options,
@@ -276,7 +270,7 @@ class MarkdownRenderer {
       if (needsDetailPage(method, _options)) {
         containerDir.children.add(
           DetailPage(
-            '${container.name}-${safeFileName(method.name)}.md',
+            '${container.name}-${safeFileName(method.name)}.${_options.fileExtension}',
             method,
             container.name,
             _options,
@@ -292,7 +286,7 @@ class MarkdownRenderer {
         var safeName = safeFileName('operator ${op.element.name}');
         containerDir.children.add(
           DetailPage(
-            '${container.name}-$safeName.md',
+            '${container.name}-$safeName.${_options.fileExtension}',
             op,
             container.name,
             _options,

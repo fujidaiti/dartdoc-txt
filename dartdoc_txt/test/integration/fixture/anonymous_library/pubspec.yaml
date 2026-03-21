@@ -1,6 +1,0 @@
-name: anonymous_library
-version: 1.0.0
-description: A test fixture with no library directive.
-
-environment:
-  sdk: ^3.10.0

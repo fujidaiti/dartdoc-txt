@@ -1,0 +1,4 @@
+# This configuration tells `dart test` to ignore tests in the git-submodule.
+paths:
+  - test/unit/
+  - test/integration/golden_test.dart

@@ -8,14 +8,16 @@ import 'utilities.dart';
 
 /// Options controlling rendering behavior.
 class RenderOptions {
+  final String packageRoot;
   final int sourceLineThreshold;
   final bool includeSource;
-  final String packageRoot;
+  final String fileExtension;
 
   const RenderOptions({
+    required this.packageRoot,
     this.sourceLineThreshold = 10,
     this.includeSource = true,
-    required this.packageRoot,
+    this.fileExtension = 'md',
   });
 }
 
@@ -469,16 +471,19 @@ void _addCategorySection(
 // ---------------------------------------------------------------------------
 
 /// Computes the file name for a category/topic page.
-String topicFileName(Category category) {
+String topicFileName(Category category, [String fileExtension = 'md']) {
   final docFile = category.documentationFile;
-  if (docFile != null) return p.basename(docFile.path);
-  return '${category.name.replaceAll(RegExp(r'\s+'), '_')}.md';
+  if (docFile != null) {
+    return p.setExtension(p.basename(docFile.path), '.$fileExtension');
+  }
+  return '${category.name.replaceAll(RegExp(r'\s+'), '_')}.$fileExtension';
 }
 
 /// README page — strips HTML from package docs.
 class ReadmePage extends DocFile {
   final String documentation;
-  ReadmePage(this.documentation) : super('README.md');
+  ReadmePage(this.documentation, {String fileExtension = 'md'})
+    : super('README.$fileExtension');
 
   @override
   String renderContent() => stripResidualHtml(documentation);
@@ -495,8 +500,9 @@ class IndexPage extends DocFile {
     this.package,
     this.libraries,
     this.templates,
-    this.librarySectionData,
-  ) : super('INDEX.md');
+    this.librarySectionData, {
+    String fileExtension = 'md',
+  }) : super('INDEX.$fileExtension');
 
   @override
   String renderContent() {
@@ -527,7 +533,7 @@ class ContainerPage extends DocFile {
   final Templates templates;
 
   ContainerPage(this.container, this.options, this.templates)
-    : super('${container.name}.md');
+    : super('${container.name}.${options.fileExtension}');
 
   @override
   String renderContent() => renderContainer(container, options, templates);
@@ -560,7 +566,7 @@ class TopLevelFunctionsPage extends DocFile {
   final Templates templates;
 
   TopLevelFunctionsPage(this.library, this.options, this.templates)
-    : super('top-level-functions.md');
+    : super('top-level-functions.${options.fileExtension}');
 
   @override
   String renderContent() =>
@@ -574,7 +580,7 @@ class TopLevelPropertiesPage extends DocFile {
   final Templates templates;
 
   TopLevelPropertiesPage(this.library, this.options, this.templates)
-    : super('top-level-properties.md');
+    : super('top-level-properties.${options.fileExtension}');
 
   @override
   String renderContent() =>
@@ -588,7 +594,7 @@ class TypedefsPage extends DocFile {
   final Templates templates;
 
   TypedefsPage(this.library, this.options, this.templates)
-    : super('typedefs.md');
+    : super('typedefs.${options.fileExtension}');
 
   @override
   String renderContent() => renderTypedefs(library, options, templates);
@@ -599,7 +605,8 @@ class CategoryPage extends DocFile {
   final Category category;
   final Templates templates;
 
-  CategoryPage(this.category, this.templates) : super(topicFileName(category));
+  CategoryPage(this.category, this.templates, {String fileExtension = 'md'})
+    : super(topicFileName(category, fileExtension));
 
   @override
   String renderContent() => renderCategory(category, templates);

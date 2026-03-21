@@ -1,0 +1,3 @@
+[submodule "dartdoc_txt/golden_test/fixture/dart-core"]
+	path = dartdoc_txt/test/integration/fixture/dart-core
+	url = https://github.com/dart-lang/core.git

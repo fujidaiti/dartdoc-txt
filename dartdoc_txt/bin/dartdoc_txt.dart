@@ -64,10 +64,12 @@ Future<void> main(List<String> arguments) async {
 
   log.info('Analyzing package...');
   await generateDocs(
-    inputDir: inputDir,
     outputDir: outputDir,
-    sourceLineThreshold: sourceThreshold,
-    includeSource: includeSource,
+    options: RenderOptions(
+      packageRoot: inputDir,
+      sourceLineThreshold: sourceThreshold,
+      includeSource: includeSource,
+    ),
   );
   log.info('Documentation written to $outputDir');
 }
