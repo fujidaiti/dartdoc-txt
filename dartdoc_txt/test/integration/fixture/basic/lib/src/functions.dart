@@ -13,11 +13,10 @@ int globalCounter = 0;
 ///
 /// {@macro basic.my_class}
 class Point {
-  final int x;
-  final int y;
-
   /// Creates a point with the given coordinates.
   const Point(this.x, this.y);
+  final int x;
+  final int y;
 }
 
 /// The origin point.

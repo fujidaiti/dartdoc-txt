@@ -1,5 +1,5 @@
 /// Mustache partial template for a single operator entry.
-const operatorTemplate = r'''
+const operatorTemplate = '''
 ### {{{signature}}}
 
 {{#hasSourceLocation}}

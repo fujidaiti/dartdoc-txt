@@ -17,9 +17,6 @@ String _toJson(Object? obj, int indent) => indent == 0
     : JsonEncoder.withIndent(' ' * indent).convert(obj);
 
 class _PubdocRunner extends CommandRunner<int> {
-  final List<String> _logs = [];
-  final List<String> _errors = [];
-
   _PubdocRunner()
     : super('pubdoc', 'Generate documentation for Dart packages.') {
     argParser
@@ -45,6 +42,8 @@ class _PubdocRunner extends CommandRunner<int> {
       );
     addCommand(_GetCommand());
   }
+  final List<String> _logs = [];
+  final List<String> _errors = [];
 
   @override
   Future<int?> runCommand(ArgResults topLevelResults) async {
@@ -93,11 +92,6 @@ class _PubdocRunner extends CommandRunner<int> {
 }
 
 class _GetCommand extends Command<int> {
-  @override
-  final String name = 'get';
-  @override
-  final String description = 'Generate documentation for specified packages.';
-
   _GetCommand() {
     argParser
       ..addOption(
@@ -132,10 +126,14 @@ class _GetCommand extends Command<int> {
             'Strategy to resolve the documentation version from the package version.',
       );
   }
+  @override
+  final String name = 'get';
+  @override
+  final String description = 'Generate documentation for specified packages.';
 
   @override
   Future<int> run() async {
-    final runner = this.runner as _PubdocRunner;
+    final runner = this.runner! as _PubdocRunner;
     final global = globalResults!;
     final rawJson = global['json'] as String?;
     final jsonIndent = rawJson == null ? null : int.tryParse(rawJson);

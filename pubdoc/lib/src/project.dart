@@ -3,19 +3,11 @@ import 'dart:convert';
 import 'package:file/file.dart';
 import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
+import 'package:pubdoc/src/environment.dart';
+import 'package:pubdoc/src/exceptions.dart';
 import 'package:yaml/yaml.dart';
 
-import 'environment.dart';
-import 'exceptions.dart';
-
 class ProjectContext {
-  final String projectRoot;
-  final Environment env;
-
-  /// The workspace root if [projectRoot] is a workspace member, or null if it
-  /// is not a workspace member (including the workspace root itself).
-  final String? _workspaceRoot;
-
   ProjectContext._(
     this.projectRoot, {
     required this.env,
@@ -78,6 +70,12 @@ class ProjectContext {
       workspaceRoot: workspaceRoot,
     );
   }
+  final String projectRoot;
+  final Environment env;
+
+  /// The workspace root if [projectRoot] is a workspace member, or null if it
+  /// is not a workspace member (including the workspace root itself).
+  final String? _workspaceRoot;
 
   /// Resolves to the workspace root when [projectRoot] is a workspace member,
   /// or [projectRoot] itself otherwise.

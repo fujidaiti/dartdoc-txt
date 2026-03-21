@@ -1,5 +1,5 @@
 /// Mustache template for class, enum, mixin, extension, and extension type pages.
-const containerTemplate = r'''
+const containerTemplate = '''
 # {{{name}}}
 
 ```dart

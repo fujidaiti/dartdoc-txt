@@ -2,7 +2,7 @@
 ///
 /// This library contains various Dart elements for testing
 /// the Markdown documentation generator.
-library basic;
+library;
 
 export 'src/classes.dart';
 export 'src/enums.dart';

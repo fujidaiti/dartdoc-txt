@@ -1,24 +1,22 @@
 import 'package:dartdoc/src/model/model.dart';
+import 'package:dartdoc_txt/src/doc_tree.dart';
+import 'package:dartdoc_txt/src/signature_builder.dart';
+import 'package:dartdoc_txt/src/template_loader.dart';
+import 'package:dartdoc_txt/src/utilities.dart';
 import 'package:path/path.dart' as p;
-
-import 'doc_tree.dart';
-import 'signature_builder.dart';
-import 'template_loader.dart';
-import 'utilities.dart';
 
 /// Options controlling rendering behavior.
 class RenderOptions {
-  final String packageRoot;
-  final int sourceLineThreshold;
-  final bool includeSource;
-  final String fileExtension;
-
   const RenderOptions({
     required this.packageRoot,
     this.sourceLineThreshold = 10,
     this.includeSource = true,
     this.fileExtension = 'md',
   });
+  final String packageRoot;
+  final int sourceLineThreshold;
+  final bool includeSource;
+  final String fileExtension;
 }
 
 /// Renders a container (Class, Enum, Mixin, ExtensionType) to Markdown.
@@ -27,7 +25,7 @@ String renderContainer(
   RenderOptions options,
   Templates templates,
 ) {
-  var data = _containerData(container, options);
+  final data = _containerData(container, options);
   return templates['container'].renderString(data);
 }
 
@@ -46,13 +44,13 @@ String renderTopLevelFunctions(
   RenderOptions options,
   Templates templates,
 ) {
-  var functions = library.functions.where((f) => f.isPublic).toList();
+  final functions = library.functions.where((f) => f.isPublic).toList();
   if (functions.isEmpty) return '';
 
-  var data = {
+  final data = {
     'libraryName': library.name,
     'functions': functions.map((func) {
-      var sourceData = _sourceData(func, func.name, options);
+      final sourceData = _sourceData(func, func.name, options);
       return {
         'name': func.name,
         'signature': renderSignature(func),
@@ -77,15 +75,15 @@ String renderTopLevelProperties(
   RenderOptions options,
   Templates templates,
 ) {
-  var properties = library.properties.where((p) => p.isPublic).toList();
-  var constants = library.constants.where((c) => c.isPublic).toList();
+  final properties = library.properties.where((p) => p.isPublic).toList();
+  final constants = library.constants.where((c) => c.isPublic).toList();
   if (properties.isEmpty && constants.isEmpty) return '';
 
-  var data = {
+  final data = {
     'libraryName': library.name,
     'hasConstants': constants.isNotEmpty,
     'constants': constants.map((c) {
-      var doc = _cleanDoc(c.documentation);
+      final doc = _cleanDoc(c.documentation);
       return {
         'name': c.name,
         'typeName': plainTypeName(c.modelType),
@@ -98,7 +96,7 @@ String renderTopLevelProperties(
     }).toList(),
     'hasProperties': properties.isNotEmpty,
     'properties': properties.map((prop) {
-      var doc = _cleanDoc(prop.documentation);
+      final doc = _cleanDoc(prop.documentation);
       return {
         'name': prop.name,
         'typeName': plainTypeName(prop.modelType),
@@ -118,13 +116,13 @@ String renderTypedefs(
   RenderOptions options,
   Templates templates,
 ) {
-  var typedefs = library.typedefs.where((t) => t.isPublic).toList();
+  final typedefs = library.typedefs.where((t) => t.isPublic).toList();
   if (typedefs.isEmpty) return '';
 
-  var data = {
+  final data = {
     'libraryName': library.name,
     'typedefs': typedefs.map((td) {
-      var doc = _cleanDoc(td.documentation);
+      final doc = _cleanDoc(td.documentation);
       return {
         'name': td.name,
         'sourceCode': _rawSourceCode(td),
@@ -145,14 +143,14 @@ String renderDetailPage(
   RenderOptions options,
   Templates templates,
 ) {
-  var title = element is Constructor
+  final title = element is Constructor
       ? (element.name == parentName ? '$parentName.new' : element.name)
       : '$parentName.${element.name}';
 
-  var annotations = renderAnnotations(element);
-  var doc = _cleanDoc(element.documentation);
+  final annotations = renderAnnotations(element);
+  final doc = _cleanDoc(element.documentation);
 
-  var data = {
+  final data = {
     'title': title,
     'signature': renderSignature(element),
     'hasAnnotations': annotations.isNotEmpty,
@@ -170,10 +168,12 @@ String renderDetailPage(
 
 /// Renders a category page.
 String renderCategory(Category category, Templates templates) {
-  var doc = category.documentation;
-  var cleanDoc = (doc != null && doc.isNotEmpty) ? stripResidualHtml(doc) : '';
+  final doc = category.documentation;
+  final cleanDoc = (doc != null && doc.isNotEmpty)
+      ? stripResidualHtml(doc)
+      : '';
 
-  var sections = <Map<String, dynamic>>[];
+  final sections = <Map<String, dynamic>>[];
   _addCategorySection(sections, 'Classes', category.classes, category);
   _addCategorySection(sections, 'Enums', category.enums, category);
   _addCategorySection(sections, 'Mixins', category.mixins, category);
@@ -188,7 +188,7 @@ String renderCategory(Category category, Templates templates) {
   _addCategorySection(sections, 'Properties', category.properties, category);
   _addCategorySection(sections, 'Typedefs', category.typedefs, category);
 
-  var data = {
+  final data = {
     'hasDocumentation': cleanDoc.isNotEmpty,
     'documentation': cleanDoc,
     'sections': sections,
@@ -213,15 +213,15 @@ Map<String, dynamic> _containerData(
   Container container,
   RenderOptions options,
 ) {
-  var doc = _cleanDoc(container.documentation);
+  final doc = _cleanDoc(container.documentation);
 
   // Enum values
-  var hasEnumValues =
+  final hasEnumValues =
       container is Enum && container.publicEnumValues.isNotEmpty;
-  var enumValues = <Map<String, dynamic>>[];
+  final enumValues = <Map<String, dynamic>>[];
   if (container is Enum) {
-    for (var value in container.publicEnumValues) {
-      var valueDoc = _cleanDoc(value.documentation);
+    for (final value in container.publicEnumValues) {
+      final valueDoc = _cleanDoc(value.documentation);
       enumValues.add({
         'name': value.name,
         'hasDocumentation': valueDoc.isNotEmpty,
@@ -231,43 +231,43 @@ Map<String, dynamic> _containerData(
   }
 
   // Constructors
-  var hasConstructors =
+  final hasConstructors =
       container is Constructable && container.hasPublicConstructors;
-  var constructors = <Map<String, dynamic>>[];
+  final constructors = <Map<String, dynamic>>[];
   if (container is Constructable) {
-    for (var ctor in container.publicConstructorsSorted) {
+    for (final ctor in container.publicConstructorsSorted) {
       constructors.add(_constructorData(ctor, container.name, options));
     }
   }
 
   // Properties (declared only, not inherited, excluding enum values)
-  var publicFields = container.declaredFields
+  final publicFields = container.declaredFields
       .where((f) => f.isPublic && !f.isEnumValue)
       .where((f) => f.name != 'hashCode')
       .toList();
-  var properties = publicFields.map(_fieldData).toList();
+  final properties = publicFields.map(_fieldData).toList();
 
   // Methods (declared only, not inherited)
-  var publicMethods = container.declaredMethods
+  final publicMethods = container.declaredMethods
       .whereType<Method>()
       .where((m) => !m.isOperator)
       .where((m) => m.isPublic)
       .where((m) => m.name != 'toString')
       .toList();
-  var publicStaticMethods = container.staticMethods
+  final publicStaticMethods = container.staticMethods
       .where((m) => m.isPublic)
       .toList();
-  var allPublicMethods = [...publicMethods, ...publicStaticMethods];
-  var methods = allPublicMethods
+  final allPublicMethods = [...publicMethods, ...publicStaticMethods];
+  final methods = allPublicMethods
       .map((m) => _methodData(m, container.name, options))
       .toList();
 
   // Operators (declared only, not inherited)
-  var publicOperators = container.declaredOperators
+  final publicOperators = container.declaredOperators
       .where((o) => o.isPublic)
       .where((o) => o.name != 'operator ==')
       .toList();
-  var operators = publicOperators
+  final operators = publicOperators
       .map((o) => _operatorData(o, container.name, options))
       .toList();
 
@@ -297,9 +297,9 @@ Map<String, dynamic> _constructorData(
   String containerName,
   RenderOptions options,
 ) {
-  var annotations = renderAnnotations(ctor);
-  var doc = _cleanDoc(ctor.documentation);
-  var sourceData = options.includeSource
+  final annotations = renderAnnotations(ctor);
+  final doc = _cleanDoc(ctor.documentation);
+  final sourceData = options.includeSource
       ? _sourceData(
           ctor,
           '$containerName-${ctorBaseName(ctor.name, containerName)}',
@@ -321,8 +321,8 @@ Map<String, dynamic> _constructorData(
 }
 
 Map<String, dynamic> _fieldData(Field field) {
-  var attributes = renderAttributes(field);
-  var doc = _cleanDoc(field.documentation);
+  final attributes = renderAttributes(field);
+  final doc = _cleanDoc(field.documentation);
 
   return {
     'name': field.name,
@@ -341,9 +341,9 @@ Map<String, dynamic> _methodData(
   String containerName,
   RenderOptions options,
 ) {
-  var annotations = renderAnnotations(method);
-  var doc = _cleanDoc(method.documentation);
-  var sourceData = (options.includeSource && !method.element.isAbstract)
+  final annotations = renderAnnotations(method);
+  final doc = _cleanDoc(method.documentation);
+  final sourceData = (options.includeSource && !method.element.isAbstract)
       ? _sourceData(
           method,
           '$containerName-${safeFileName(method.name)}',
@@ -369,9 +369,9 @@ Map<String, dynamic> _operatorData(
   String containerName,
   RenderOptions options,
 ) {
-  var doc = _cleanDoc(op.documentation);
-  var safeName = safeFileName('operator ${op.element.name}');
-  var sourceData = (options.includeSource && !op.element.isAbstract)
+  final doc = _cleanDoc(op.documentation);
+  final safeName = safeFileName('operator ${op.element.name}');
+  final sourceData = (options.includeSource && !op.element.isAbstract)
       ? _sourceData(op, '$containerName-$safeName', options)
       : _noSourceData();
 
@@ -408,10 +408,10 @@ Map<String, dynamic> _sourceData(
   String detailPath,
   RenderOptions options,
 ) {
-  var source = _rawSourceCode(element);
+  final source = _rawSourceCode(element);
   if (source.isEmpty) return _noSourceData();
 
-  var lineCount = sourceLineCount(source);
+  final lineCount = sourceLineCount(source);
   if (lineCount <= options.sourceLineThreshold) {
     return {
       'hasInlineSource': true,
@@ -436,7 +436,7 @@ bool needsDetailPage(ModelElement element, RenderOptions options) {
   if (!options.includeSource) return false;
   if (element is Method && element.element.isAbstract) return false;
   if (element is Operator && element.element.isAbstract) return false;
-  var source = _rawSourceCode(element);
+  final source = _rawSourceCode(element);
   if (source.isEmpty) return false;
   return sourceLineCount(source) > options.sourceLineThreshold;
 }
@@ -447,13 +447,13 @@ void _addCategorySection(
   Iterable<ModelElement> elements,
   Category category,
 ) {
-  var publicElements = elements.where((e) => e.isPublic).toList();
+  final publicElements = elements.where((e) => e.isPublic).toList();
   if (publicElements.isEmpty) return;
 
   sections.add({
     'heading': heading,
     'elements': publicElements.map((element) {
-      var lib = element.canonicalLibrary ?? element.library;
+      final lib = element.canonicalLibrary ?? element.library;
       if (element is Container && lib != null) {
         return {
           'line':
@@ -481,9 +481,9 @@ String topicFileName(Category category, [String fileExtension = 'md']) {
 
 /// README page — strips HTML from package docs.
 class ReadmePage extends DocFile {
-  final String documentation;
   ReadmePage(this.documentation, {String fileExtension = 'md'})
     : super('README.$fileExtension');
+  final String documentation;
 
   @override
   String renderContent() => stripResidualHtml(documentation);
@@ -491,11 +491,6 @@ class ReadmePage extends DocFile {
 
 /// Package-level INDEX.md.
 class IndexPage extends DocFile {
-  final Package package;
-  final List<Library> libraries;
-  final Templates templates;
-  final Map<String, dynamic> Function(Library) librarySectionData;
-
   IndexPage(
     this.package,
     this.libraries,
@@ -503,24 +498,28 @@ class IndexPage extends DocFile {
     this.librarySectionData, {
     String fileExtension = 'md',
   }) : super('INDEX.$fileExtension');
+  final Package package;
+  final List<Library> libraries;
+  final Templates templates;
+  final Map<String, dynamic> Function(Library) librarySectionData;
 
   @override
   String renderContent() {
-    var data = {
+    final data = {
       'packageName': package.name,
       'version': package.version,
       'hasCategories': package.hasDocumentedCategories,
       'categories': package.hasDocumentedCategories
           ? package.documentedCategoriesSorted.map((category) {
-              var summary = extractSummary(category.documentation);
-              var desc = summary.isNotEmpty ? ' — $summary' : '';
+              final summary = extractSummary(category.documentation);
+              final desc = summary.isNotEmpty ? ' — $summary' : '';
               return {
                 'line':
                     '- [${category.name}](topics/${topicFileName(category)})$desc',
               };
             }).toList()
           : <Map<String, dynamic>>[],
-      'libraries': libraries.map((lib) => librarySectionData(lib)).toList(),
+      'libraries': libraries.map(librarySectionData).toList(),
     };
     return templates['index'].renderString(data);
   }
@@ -528,12 +527,11 @@ class IndexPage extends DocFile {
 
 /// Container page (class, enum, mixin, extension, extension type).
 class ContainerPage extends DocFile {
+  ContainerPage(this.container, this.options, this.templates)
+    : super('${container.name}.${options.fileExtension}');
   final Container container;
   final RenderOptions options;
   final Templates templates;
-
-  ContainerPage(this.container, this.options, this.templates)
-    : super('${container.name}.${options.fileExtension}');
 
   @override
   String renderContent() => renderContainer(container, options, templates);
@@ -541,18 +539,17 @@ class ContainerPage extends DocFile {
 
 /// Detail page for members with large source.
 class DetailPage extends DocFile {
-  final ModelElement element;
-  final String parentName;
-  final RenderOptions options;
-  final Templates templates;
-
   DetailPage(
-    String fileName,
+    super.fileName,
     this.element,
     this.parentName,
     this.options,
     this.templates,
-  ) : super(fileName);
+  );
+  final ModelElement element;
+  final String parentName;
+  final RenderOptions options;
+  final Templates templates;
 
   @override
   String renderContent() =>
@@ -561,12 +558,11 @@ class DetailPage extends DocFile {
 
 /// Top-level functions page.
 class TopLevelFunctionsPage extends DocFile {
+  TopLevelFunctionsPage(this.library, this.options, this.templates)
+    : super('top-level-functions.${options.fileExtension}');
   final Library library;
   final RenderOptions options;
   final Templates templates;
-
-  TopLevelFunctionsPage(this.library, this.options, this.templates)
-    : super('top-level-functions.${options.fileExtension}');
 
   @override
   String renderContent() =>
@@ -575,12 +571,11 @@ class TopLevelFunctionsPage extends DocFile {
 
 /// Top-level properties page.
 class TopLevelPropertiesPage extends DocFile {
+  TopLevelPropertiesPage(this.library, this.options, this.templates)
+    : super('top-level-properties.${options.fileExtension}');
   final Library library;
   final RenderOptions options;
   final Templates templates;
-
-  TopLevelPropertiesPage(this.library, this.options, this.templates)
-    : super('top-level-properties.${options.fileExtension}');
 
   @override
   String renderContent() =>
@@ -589,12 +584,11 @@ class TopLevelPropertiesPage extends DocFile {
 
 /// Typedefs page.
 class TypedefsPage extends DocFile {
+  TypedefsPage(this.library, this.options, this.templates)
+    : super('typedefs.${options.fileExtension}');
   final Library library;
   final RenderOptions options;
   final Templates templates;
-
-  TypedefsPage(this.library, this.options, this.templates)
-    : super('typedefs.${options.fileExtension}');
 
   @override
   String renderContent() => renderTypedefs(library, options, templates);
@@ -602,11 +596,10 @@ class TypedefsPage extends DocFile {
 
 /// Category/topic page.
 class CategoryPage extends DocFile {
-  final Category category;
-  final Templates templates;
-
   CategoryPage(this.category, this.templates, {String fileExtension = 'md'})
     : super(topicFileName(category, fileExtension));
+  final Category category;
+  final Templates templates;
 
   @override
   String renderContent() => renderCategory(category, templates);

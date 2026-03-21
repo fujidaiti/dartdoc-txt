@@ -79,7 +79,7 @@ void main() {
         ),
       );
 
-      final cacheDir = '$_cacheDir/dio/dio-5.3.2';
+      const cacheDir = '$_cacheDir/dio/dio-5.3.2';
       verify(
         generator.generate(
           sourcePath: anyNamed('sourcePath'),
@@ -110,7 +110,7 @@ void main() {
         capturedSourcePath = invocation.namedArguments[#sourcePath] as String;
         // During generation the working dir and package_config.json
         // should exist.
-        expect(env.fs.directory(capturedSourcePath!).existsSync(), isTrue);
+        expect(env.fs.directory(capturedSourcePath).existsSync(), isTrue);
         expect(
           env.fs
               .file('$capturedSourcePath/.dart_tool/package_config.json')
@@ -127,7 +127,7 @@ void main() {
 
       // After the command finishes the working dir should be deleted.
       expect(capturedSourcePath, isNotNull);
-      expect(env.fs.directory(capturedSourcePath!).existsSync(), isFalse);
+      expect(env.fs.directory(capturedSourcePath).existsSync(), isFalse);
     });
 
     test('multiple packages at the same time', () async {
@@ -221,8 +221,8 @@ void main() {
       // First run populates cache.
       await makeCommand(strategy: .exact).run(packageNames: ['dio']);
 
-      final cacheDir = '$_cacheDir/dio/dio-5.3.2';
-      final projectCacheDir = '$_projectRoot/.pubdoc';
+      const cacheDir = '$_cacheDir/dio/dio-5.3.2';
+      const projectCacheDir = '$_projectRoot/.pubdoc';
       expect(env.fs.directory('$_cacheDir/dio/dio-5.3.2').existsSync(), isTrue);
       expect(env.fs.link('$projectCacheDir/dio').existsSync(), isTrue);
       expect(env.fs.link('$projectCacheDir/dio').targetSync(), cacheDir);
@@ -347,7 +347,7 @@ void main() {
         ),
       );
 
-      final cacheDir = '$_cacheDir/dio/dio-5.3.x';
+      const cacheDir = '$_cacheDir/dio/dio-5.3.x';
       verify(
         generator.generate(
           sourcePath: anyNamed('sourcePath'),
@@ -512,7 +512,7 @@ void main() {
         ),
       );
 
-      final cacheDir = '$_cacheDir/dio/dio-5.x';
+      const cacheDir = '$_cacheDir/dio/dio-5.x';
       verify(
         generator.generate(
           sourcePath: anyNamed('sourcePath'),
@@ -658,7 +658,7 @@ void main() {
       env.pubGet();
       final result = await command.run(packageNames: ['dio']);
 
-      final cacheDir = '$_cacheDir/dio/dio-1.0.0-dev.1';
+      const cacheDir = '$_cacheDir/dio/dio-1.0.0-dev.1';
       expect(
         result,
         _isGetResult(
@@ -711,7 +711,7 @@ void main() {
           },
         ),
       );
-      final cacheDir = '$_cacheDir/dio/dio-1.0.0-dev.1';
+      const cacheDir = '$_cacheDir/dio/dio-1.0.0-dev.1';
       verify(
         generator.generate(
           sourcePath: anyNamed('sourcePath'),
@@ -735,7 +735,7 @@ void main() {
       env.pubGet();
       final result = await command.run(packageNames: ['dio']);
 
-      final cacheDir = '$_cacheDir/dio/dio-1.0.0-dev.1';
+      const cacheDir = '$_cacheDir/dio/dio-1.0.0-dev.1';
       expect(
         result,
         _isGetResult(

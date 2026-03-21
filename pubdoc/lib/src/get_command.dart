@@ -4,14 +4,14 @@ import 'package:file/file.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 
-import 'cache.dart';
-import 'config.dart';
-import 'doc_generator.dart';
-import 'environment.dart';
-import 'exceptions.dart';
-import 'logger.dart';
-import 'project.dart';
-import 'version_resolution.dart';
+import 'package:pubdoc/src/cache.dart';
+import 'package:pubdoc/src/config.dart';
+import 'package:pubdoc/src/doc_generator.dart';
+import 'package:pubdoc/src/environment.dart';
+import 'package:pubdoc/src/exceptions.dart';
+import 'package:pubdoc/src/logger.dart';
+import 'package:pubdoc/src/project.dart';
+import 'package:pubdoc/src/version_resolution.dart';
 
 /// Cache status for a single package after `pubdoc get`.
 enum CacheStatus {
@@ -28,6 +28,13 @@ enum CacheStatus {
 
 /// Per-package result from [GetCommand.run].
 class PackageGetResult {
+  const PackageGetResult({
+    required this.documentation,
+    required this.source,
+    required this.version,
+    required this.cacheStatus,
+  });
+
   /// Absolute path to the symlink in the project's `.pubdoc/` directory.
   final String documentation;
 
@@ -41,13 +48,6 @@ class PackageGetResult {
   /// Whether documentation was served from cache, generated fresh, or refreshed.
   final CacheStatus cacheStatus;
 
-  const PackageGetResult({
-    required this.documentation,
-    required this.source,
-    required this.version,
-    required this.cacheStatus,
-  });
-
   Map<String, dynamic> toJson() => {
     'documentation': documentation,
     'version': version,
@@ -58,10 +58,10 @@ class PackageGetResult {
 
 /// Aggregated result from [GetCommand.run], keyed by package name.
 class GetResult {
+  const GetResult({required this.packages});
+
   /// Results indexed by package name.
   final Map<String, PackageGetResult> packages;
-
-  const GetResult({required this.packages});
 
   Map<String, dynamic> toJson() => {
     'packages': {for (final e in packages.entries) e.key: e.value.toJson()},
@@ -175,13 +175,6 @@ void _copyDirectory(Directory src, Directory dst) {
 }
 
 class GetCommand {
-  final ProjectContext project;
-  final PubdocConfig config;
-  final Environment env;
-  final ResolutionStrategy strategy;
-  final bool useCache;
-  final DocGenerator? _generator;
-
   GetCommand({
     required this.project,
     required this.config,
@@ -190,6 +183,12 @@ class GetCommand {
     this.useCache = true,
     DocGenerator? generator,
   }) : _generator = generator;
+  final ProjectContext project;
+  final PubdocConfig config;
+  final Environment env;
+  final ResolutionStrategy strategy;
+  final bool useCache;
+  final DocGenerator? _generator;
 
   /// Runs the get command for the given [packageNames] and returns a
   /// [GetResult] containing per-package metadata.
@@ -252,7 +251,7 @@ class GetCommand {
       // .dart_tool/package_config.json so the analyzer can resolve
       // dependency types (prevents them from appearing as `dynamic`).
       final tempDir = env.fs.systemTempDirectory.createTempSync(
-        'pubdoc_$packageName\_',
+        'pubdoc_${packageName}_',
       );
       try {
         _copyDirectory(sourceDir, tempDir);

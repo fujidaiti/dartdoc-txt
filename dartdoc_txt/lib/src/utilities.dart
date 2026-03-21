@@ -17,9 +17,9 @@ String unescapeHtml(String text) {
 /// Extracts the first paragraph from a documentation string.
 String extractSummary(String? documentation) {
   if (documentation == null || documentation.isEmpty) return '';
-  var paragraphs = documentation.split(RegExp(r'\n\s*\n'));
-  for (var p in paragraphs) {
-    var trimmed = p.trim();
+  final paragraphs = documentation.split(RegExp(r'\n\s*\n'));
+  for (final p in paragraphs) {
+    final trimmed = p.trim();
     if (trimmed.isNotEmpty) return trimmed.replaceAll(RegExp(r'\s*\n\s*'), ' ');
   }
   return '';
@@ -31,15 +31,12 @@ String extractSummary(String? documentation) {
 /// injected by `{@youtube}`, `{@animation}`, and `{@inject-html}` directives.
 String stripResidualHtml(String text) {
   // Strip <iframe ...>...</iframe> (from {@youtube})
-  text = text.replaceAll(
-    RegExp(r'<iframe[^>]*>.*?</iframe>', dotAll: true),
-    '',
-  );
+  text = text.replaceAll(RegExp('<iframe[^>]*>.*?</iframe>', dotAll: true), '');
   // Strip <video ...>...</video> (from {@animation})
-  text = text.replaceAll(RegExp(r'<video[^>]*>.*?</video>', dotAll: true), '');
+  text = text.replaceAll(RegExp('<video[^>]*>.*?</video>', dotAll: true), '');
   // Strip <dartdoc-html>...</dartdoc-html> (from {@inject-html})
   text = text.replaceAll(
-    RegExp(r'<dartdoc-html>.*?</dartdoc-html>', dotAll: true),
+    RegExp('<dartdoc-html>.*?</dartdoc-html>', dotAll: true),
     '',
   );
   // Clean up extra blank lines left behind

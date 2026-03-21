@@ -4,9 +4,9 @@ import 'package:file/file.dart';
 import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
 
-import 'config.dart';
-import 'environment.dart';
-import 'version_resolution.dart';
+import 'package:pubdoc/src/config.dart';
+import 'package:pubdoc/src/environment.dart';
+import 'package:pubdoc/src/version_resolution.dart';
 
 enum CacheAction {
   /// The cached documentation can be reused as-is.
@@ -20,25 +20,19 @@ enum CacheAction {
 }
 
 class CacheResult {
-  final CacheAction action;
-  final String cacheDir;
-  final String docVersion;
-  final CacheMetadata? metadata;
-
   CacheResult({
     required this.action,
     required this.cacheDir,
     required this.docVersion,
     this.metadata,
   });
+  final CacheAction action;
+  final String cacheDir;
+  final String docVersion;
+  final CacheMetadata? metadata;
 }
 
 class CacheMetadata {
-  final String version;
-  final String packageVersion;
-  final String source;
-  final String toolVersion;
-
   CacheMetadata({
     required this.version,
     required this.packageVersion,
@@ -54,6 +48,10 @@ class CacheMetadata {
       toolVersion: json['tool_version'] as String,
     );
   }
+  final String version;
+  final String packageVersion;
+  final String source;
+  final String toolVersion;
 
   Map<String, dynamic> toJson() => {
     'version': version,
@@ -78,10 +76,9 @@ class CacheMetadata {
 }
 
 class CacheManager {
+  CacheManager(this.config, {required this.env});
   final PubdocConfig config;
   final Environment env;
-
-  CacheManager(this.config, {required this.env});
 
   /// Checks whether the cache can be reused for the given package.
   CacheResult checkCache({

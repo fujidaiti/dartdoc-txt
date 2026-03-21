@@ -1,12 +1,11 @@
 import 'package:dartdoc_txt/dartdoc_txt.dart';
 
-import 'environment.dart';
-import 'logger.dart';
+import 'package:pubdoc/src/environment.dart';
+import 'package:pubdoc/src/logger.dart';
 
 class DocGenerator {
-  final Environment env;
-
   DocGenerator({required this.env});
+  final Environment env;
 
   /// Generates documentation for the package at [sourcePath] and writes it
   /// to [outputDir].

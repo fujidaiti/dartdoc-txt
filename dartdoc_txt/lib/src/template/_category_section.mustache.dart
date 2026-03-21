@@ -1,5 +1,5 @@
 /// Mustache partial template for an element group within a category page.
-const categorySectionTemplate = r'''
+const categorySectionTemplate = '''
 ### {{{heading}}}
 
 {{#elements}}

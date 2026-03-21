@@ -7,12 +7,6 @@
 ///
 /// {@category Getting Started}
 class MyClass {
-  /// The name of this instance.
-  final String name;
-
-  /// The count value.
-  int count;
-
   /// Creates a new [MyClass] with the given [name].
   MyClass(this.name, {this.count = 0});
 
@@ -23,7 +17,7 @@ class MyClass {
   ///
   /// This constructor validates and processes the input map.
   MyClass.fromMap(Map<String, dynamic> map) : name = '', count = 0 {
-    var rawName = map['name'];
+    final rawName = map['name'];
     if (rawName == null) {
       throw ArgumentError('name is required');
     }
@@ -33,11 +27,17 @@ class MyClass {
     if (rawName.isEmpty) {
       throw ArgumentError('name must not be empty');
     }
-    var rawCount = map['count'] ?? 0;
+    final rawCount = map['count'] ?? 0;
     if (rawCount is! int) {
       throw ArgumentError('count must be an int');
     }
   }
+
+  /// The name of this instance.
+  final String name;
+
+  /// The count value.
+  int count;
 
   /// Returns a greeting message.
   String greet() {

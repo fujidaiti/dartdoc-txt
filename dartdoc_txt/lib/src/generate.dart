@@ -1,8 +1,8 @@
 import 'package:dartdoc/dartdoc.dart';
 
-import 'doc_tree.dart';
-import 'element_renderers.dart';
-import 'markdown_renderer.dart';
+import 'package:dartdoc_txt/src/doc_tree.dart';
+import 'package:dartdoc_txt/src/element_renderers.dart';
+import 'package:dartdoc_txt/src/markdown_renderer.dart';
 
 /// Generates LLM-friendly Markdown documentation for a Dart package.
 ///
