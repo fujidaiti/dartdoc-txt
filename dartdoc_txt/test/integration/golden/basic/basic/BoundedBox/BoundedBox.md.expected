@@ -1,0 +1,32 @@
+# BoundedBox
+
+```dart
+class BoundedBox<T extends Comparable<T>>
+```
+
+Source: lib/src/generics.dart:14:20
+
+A generic box with a bounded type parameter.
+
+## Constructors
+
+### BoundedBox.new(T value)
+
+Source: lib/src/generics.dart:19:19
+
+Creates a [BoundedBox] with the given [value].
+
+```dart
+BoundedBox(this.value);
+```
+
+---
+## Properties
+
+### value → T
+
+`final`
+
+The value stored in this box.
+
+---

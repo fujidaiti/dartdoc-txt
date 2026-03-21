@@ -1,0 +1,55 @@
+# Top-level Functions — basic
+
+## add
+
+```dart
+add(int a, int b) → int
+```
+
+Source: lib/src/functions.dart:4:4
+
+A simple top-level function.
+
+Returns the sum of [a] and [b].
+
+```dart
+int add(int a, int b) => a + b;
+```
+
+---
+
+## capitalize
+
+```dart
+capitalize(String input) → String
+```
+
+Source: lib/src/functions.dart:29:32
+
+Capitalizes [input].
+
+```dart
+String capitalize(String input) {
+  if (input.isEmpty) return input;
+  return input[0].toUpperCase() + input.substring(1);
+}
+```
+
+---
+
+## identity
+
+```dart
+identity<T>(T value) → T
+```
+
+Source: lib/src/generics.dart:23:23
+
+A generic identity function that returns its input.
+
+```dart
+T identity<T>(T value) => value;
+```
+
+---
+

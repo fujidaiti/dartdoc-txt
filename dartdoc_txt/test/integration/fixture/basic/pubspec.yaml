@@ -1,0 +1,6 @@
+name: basic
+version: 1.0.0
+description: A comprehensive test fixture for dartdoc_txt.
+
+environment:
+  sdk: ^3.10.0
