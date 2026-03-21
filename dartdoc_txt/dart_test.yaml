@@ -1,0 +1,3 @@
+paths:
+  - test/unit/
+  - test/integration/golden_test.dart

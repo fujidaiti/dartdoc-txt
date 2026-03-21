@@ -17,7 +17,7 @@ rendered and compared against expected `.expect` files.
 
 ```sh
 cd dartdoc_txt
-fvm dart test golden_test/golden_test.dart
+fvm dart test test/integration/golden_test.dart
 ```
 
 The `path` fixture requires the git submodule to be initialized. If it is
@@ -33,7 +33,7 @@ To regenerate all golden files after changing the renderer or fixtures:
 
 ```sh
 cd dartdoc_txt
-fvm dart run golden_test/update_golden.dart
+fvm dart run test/integration/update_golden.dart
 ```
 
 This will initialize the submodule (if needed), run `pub get` in the path

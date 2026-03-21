@@ -16,13 +16,15 @@ void main() {
 
     final fixturePath = p.join(
       Directory.current.path,
-      'golden_test',
+      'test',
+      'integration',
       'fixture',
       'basic',
     );
     final goldensDir = p.join(
       Directory.current.path,
-      'golden_test',
+      'test',
+      'integration',
       'golden',
       'basic',
     );
@@ -65,14 +67,16 @@ void main() {
 
     final submoduleDir = p.join(
       Directory.current.path,
-      'golden_test',
+      'test',
+      'integration',
       'fixture',
       'dart-core',
     );
     final fixturePath = p.join(submoduleDir, 'pkgs', 'path');
     final goldensDir = p.join(
       Directory.current.path,
-      'golden_test',
+      'test',
+      'integration',
       'golden',
       'path',
     );
@@ -83,7 +87,7 @@ void main() {
         throw StateError(
           'dart-core submodule not initialized.\n'
           'Run: git submodule update --init\n'
-          'Or:  fvm dart run golden_test/update_golden.dart',
+          'Or:  fvm dart run test/integration/update_golden.dart',
         );
       }
       var docTree = await renderFixture(fixturePath);

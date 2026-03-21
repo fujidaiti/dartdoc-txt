@@ -11,7 +11,7 @@ Future<void> main() async {
   Logger('dartdoc').level = Level.OFF;
 
   var packageRoot = Directory.current.path;
-  var goldenTestDir = p.join(packageRoot, 'golden_test');
+  var goldenTestDir = p.join(packageRoot, 'test', 'integration');
 
   // Ensure the dart-core submodule is initialized.
   print('Initializing dart-core submodule...');
