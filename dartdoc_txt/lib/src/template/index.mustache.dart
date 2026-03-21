@@ -1,5 +1,5 @@
 /// Mustache template for the package INDEX.md with topics and library sections.
-const indexTemplate = r'''
+const indexTemplate = '''
 # {{{packageName}}} Index
 
 Version: {{{version}}}

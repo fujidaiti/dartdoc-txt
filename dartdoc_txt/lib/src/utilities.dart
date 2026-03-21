@@ -16,11 +16,15 @@ String unescapeHtml(String text) {
 
 /// Extracts the first paragraph from a documentation string.
 String extractSummary(String? documentation) {
-  if (documentation == null || documentation.isEmpty) return '';
-  var paragraphs = documentation.split(RegExp(r'\n\s*\n'));
-  for (var p in paragraphs) {
-    var trimmed = p.trim();
-    if (trimmed.isNotEmpty) return trimmed.replaceAll(RegExp(r'\s*\n\s*'), ' ');
+  if (documentation == null || documentation.isEmpty) {
+    return '';
+  }
+  final paragraphs = documentation.split(RegExp(r'\n\s*\n'));
+  for (final p in paragraphs) {
+    final trimmed = p.trim();
+    if (trimmed.isNotEmpty) {
+      return trimmed.replaceAll(RegExp(r'\s*\n\s*'), ' ');
+    }
   }
   return '';
 }
@@ -30,26 +34,32 @@ String extractSummary(String? documentation) {
 /// Removes `<iframe>`, `<video>`, and `<dartdoc-html>` elements that are
 /// injected by `{@youtube}`, `{@animation}`, and `{@inject-html}` directives.
 String stripResidualHtml(String text) {
+  var result = text;
   // Strip <iframe ...>...</iframe> (from {@youtube})
-  text = text.replaceAll(
-    RegExp(r'<iframe[^>]*>.*?</iframe>', dotAll: true),
+  result = result.replaceAll(
+    RegExp('<iframe[^>]*>.*?</iframe>', dotAll: true),
     '',
   );
   // Strip <video ...>...</video> (from {@animation})
-  text = text.replaceAll(RegExp(r'<video[^>]*>.*?</video>', dotAll: true), '');
+  result = result.replaceAll(
+    RegExp('<video[^>]*>.*?</video>', dotAll: true),
+    '',
+  );
   // Strip <dartdoc-html>...</dartdoc-html> (from {@inject-html})
-  text = text.replaceAll(
-    RegExp(r'<dartdoc-html>.*?</dartdoc-html>', dotAll: true),
+  result = result.replaceAll(
+    RegExp('<dartdoc-html>.*?</dartdoc-html>', dotAll: true),
     '',
   );
   // Clean up extra blank lines left behind
-  text = text.replaceAll(RegExp(r'\n{3,}'), '\n\n');
-  return text.trim();
+  result = result.replaceAll(RegExp(r'\n{3,}'), '\n\n');
+  return result.trim();
 }
 
 /// Counts the number of lines in source code text.
 int sourceLineCount(String? sourceCode) {
-  if (sourceCode == null || sourceCode.isEmpty) return 0;
+  if (sourceCode == null || sourceCode.isEmpty) {
+    return 0;
+  }
   return sourceCode.split('\n').length;
 }
 
@@ -58,7 +68,9 @@ int sourceLineCount(String? sourceCode) {
 /// Unnamed constructors (whose name equals the container) return `'new'`.
 /// Named constructors like `MyClass.fromJson` return `'fromJson'`.
 String ctorBaseName(String ctorName, String containerName) {
-  if (ctorName == containerName) return 'new';
+  if (ctorName == containerName) {
+    return 'new';
+  }
   return ctorName.substring(containerName.length + 1);
 }
 

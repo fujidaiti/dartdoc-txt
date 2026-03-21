@@ -51,28 +51,28 @@ void main() {
 
   group('stripResidualHtml', () {
     test('strips <iframe> from youtube artifacts', () {
-      var input = 'Before\n<iframe src="youtube.com"></iframe>\nAfter';
+      const input = 'Before\n<iframe src="youtube.com"></iframe>\nAfter';
       expect(stripResidualHtml(input), equals('Before\n\nAfter'));
     });
 
     test('strips <video> from animation artifacts', () {
-      var input = 'Before\n<video src="anim.mp4">fallback</video>\nAfter';
+      const input = 'Before\n<video src="anim.mp4">fallback</video>\nAfter';
       expect(stripResidualHtml(input), equals('Before\n\nAfter'));
     });
 
     test('strips <dartdoc-html> placeholders', () {
-      var input = 'Before\n<dartdoc-html>abc123</dartdoc-html>\nAfter';
+      const input = 'Before\n<dartdoc-html>abc123</dartdoc-html>\nAfter';
       expect(stripResidualHtml(input), equals('Before\n\nAfter'));
     });
 
     test('preserves normal markdown content', () {
-      var input = '# Hello\n\nSome **bold** text.';
+      const input = '# Hello\n\nSome **bold** text.';
       expect(stripResidualHtml(input), equals(input));
     });
 
     test('handles mixed content with HTML and markdown', () {
-      var input = '# Title\n\n<iframe></iframe>\n\nParagraph.';
-      var result = stripResidualHtml(input);
+      const input = '# Title\n\n<iframe></iframe>\n\nParagraph.';
+      final result = stripResidualHtml(input);
       expect(result, contains('# Title'));
       expect(result, contains('Paragraph.'));
       expect(result, isNot(contains('<iframe')));

@@ -6,7 +6,7 @@
 typedef StringCallback = void Function(String);
 ```
 
-Source: lib/src/extensions.dart:17:17
+Source: lib/src/extensions.dart:20:20
 
 A typedef for a callback that takes a [String].
 

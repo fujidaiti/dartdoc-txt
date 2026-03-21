@@ -1,5 +1,5 @@
 /// Mustache partial template for a single field/property entry.
-const fieldTemplate = r'''
+const fieldTemplate = '''
 ### {{{name}}} → {{{typeName}}}
 
 {{#hasAttributes}}

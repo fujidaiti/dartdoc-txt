@@ -16,7 +16,9 @@ enum ResolutionStrategy {
 extension VersionDocResolution on Version {
   /// Returns the documentation version string for the given strategy.
   String docVersion(ResolutionStrategy strategy) {
-    if (isPreRelease) return toString();
+    if (isPreRelease) {
+      return toString();
+    }
     return switch (strategy) {
       ResolutionStrategy.exact => '$major.$minor.$patch',
       ResolutionStrategy.loosePatch => '$major.$minor.x',

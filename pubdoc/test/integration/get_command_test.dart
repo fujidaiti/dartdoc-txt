@@ -79,7 +79,7 @@ void main() {
         ),
       );
 
-      final cacheDir = '$_cacheDir/dio/dio-5.3.2';
+      const cacheDir = '$_cacheDir/dio/dio-5.3.2';
       verify(
         generator.generate(
           sourcePath: anyNamed('sourcePath'),
@@ -110,7 +110,7 @@ void main() {
         capturedSourcePath = invocation.namedArguments[#sourcePath] as String;
         // During generation the working dir and package_config.json
         // should exist.
-        expect(env.fs.directory(capturedSourcePath!).existsSync(), isTrue);
+        expect(env.fs.directory(capturedSourcePath).existsSync(), isTrue);
         expect(
           env.fs
               .file('$capturedSourcePath/.dart_tool/package_config.json')
@@ -127,7 +127,7 @@ void main() {
 
       // After the command finishes the working dir should be deleted.
       expect(capturedSourcePath, isNotNull);
-      expect(env.fs.directory(capturedSourcePath!).existsSync(), isFalse);
+      expect(env.fs.directory(capturedSourcePath).existsSync(), isFalse);
     });
 
     test('multiple packages at the same time', () async {
@@ -221,8 +221,8 @@ void main() {
       // First run populates cache.
       await makeCommand(strategy: .exact).run(packageNames: ['dio']);
 
-      final cacheDir = '$_cacheDir/dio/dio-5.3.2';
-      final projectCacheDir = '$_projectRoot/.pubdoc';
+      const cacheDir = '$_cacheDir/dio/dio-5.3.2';
+      const projectCacheDir = '$_projectRoot/.pubdoc';
       expect(env.fs.directory('$_cacheDir/dio/dio-5.3.2').existsSync(), isTrue);
       expect(env.fs.link('$projectCacheDir/dio').existsSync(), isTrue);
       expect(env.fs.link('$projectCacheDir/dio').targetSync(), cacheDir);
@@ -347,7 +347,7 @@ void main() {
         ),
       );
 
-      final cacheDir = '$_cacheDir/dio/dio-5.3.x';
+      const cacheDir = '$_cacheDir/dio/dio-5.3.x';
       verify(
         generator.generate(
           sourcePath: anyNamed('sourcePath'),
@@ -512,7 +512,7 @@ void main() {
         ),
       );
 
-      final cacheDir = '$_cacheDir/dio/dio-5.x';
+      const cacheDir = '$_cacheDir/dio/dio-5.x';
       verify(
         generator.generate(
           sourcePath: anyNamed('sourcePath'),
@@ -658,7 +658,7 @@ void main() {
       env.pubGet();
       final result = await command.run(packageNames: ['dio']);
 
-      final cacheDir = '$_cacheDir/dio/dio-1.0.0-dev.1';
+      const cacheDir = '$_cacheDir/dio/dio-1.0.0-dev.1';
       expect(
         result,
         _isGetResult(
@@ -711,7 +711,7 @@ void main() {
           },
         ),
       );
-      final cacheDir = '$_cacheDir/dio/dio-1.0.0-dev.1';
+      const cacheDir = '$_cacheDir/dio/dio-1.0.0-dev.1';
       verify(
         generator.generate(
           sourcePath: anyNamed('sourcePath'),
@@ -735,7 +735,7 @@ void main() {
       env.pubGet();
       final result = await command.run(packageNames: ['dio']);
 
-      final cacheDir = '$_cacheDir/dio/dio-1.0.0-dev.1';
+      const cacheDir = '$_cacheDir/dio/dio-1.0.0-dev.1';
       expect(
         result,
         _isGetResult(
@@ -804,7 +804,7 @@ void main() {
     setUp(() {
       command = makeCommand(strategy: .exact);
     });
-    test('empty package list throws an exception', () async {
+    test('empty package list throws an exception', () {
       env.pubspec.addDependency('dio', '5.3.2');
       env.pubGet();
 
@@ -814,13 +814,14 @@ void main() {
           isA<PubdocException>().having(
             (e) => e.message,
             'message',
-            'No packages specified. Usage: pubdoc get <package1> [package2 ...]',
+            'No packages specified. '
+                'Usage: pubdoc get <package1> [package2 ...]',
           ),
         ),
       );
     });
 
-    test('missing pubspec.lock throws an exception', () async {
+    test('missing pubspec.lock throws an exception', () {
       env.pubspec.addDependency('dio', '5.3.2');
       env.pubGet();
       env.pubspecLock.deleteSync();
@@ -831,13 +832,14 @@ void main() {
           isA<PubdocException>().having(
             (e) => e.message,
             'message',
-            'pubspec.lock not found in $_projectRoot. Run `dart pub get` first.',
+            'pubspec.lock not found in $_projectRoot.'
+                ' Run `dart pub get` first.',
           ),
         ),
       );
     });
 
-    test('missing package_config.json throws an exception', () async {
+    test('missing package_config.json throws an exception', () {
       env.pubspec.addDependency('dio', '5.3.2');
       env.pubGet();
       env.packageConfig.deleteSync();
@@ -870,7 +872,7 @@ void main() {
       );
     });
 
-    test('package not in pubspec.lock throws an exception', () async {
+    test('package not in pubspec.lock throws an exception', () {
       env.pubspec.addDependency('dio', '5.3.2');
       env.pubGet();
 
@@ -886,7 +888,7 @@ void main() {
       );
     });
 
-    test('doc generation failure throws an exception', () async {
+    test('doc generation failure throws an exception', () {
       when(
         generator.generate(
           sourcePath: anyNamed('sourcePath'),
@@ -909,7 +911,7 @@ void main() {
       );
     });
 
-    test('package not in package_config.json throws an exception', () async {
+    test('package not in package_config.json throws an exception', () {
       env.pubspec.addDependency('dio', '5.3.2');
       env.pubspec.addDependency('missing_pkg', '1.0.0');
       env.pubGet();
@@ -987,27 +989,25 @@ void main() {
       );
     });
 
-    test(
-      'missing pubspec.lock from workspace root names workspace root',
-      () async {
-        env.pubspec.addDependency('dio', '5.3.2');
-        env.pubGet();
-        env.pubspecLock.deleteSync();
+    test('missing pubspec.lock from workspace root names workspace root', () {
+      env.pubspec.addDependency('dio', '5.3.2');
+      env.pubGet();
+      env.pubspecLock.deleteSync();
 
-        expect(
-          () => commandFor(memberRoot).run(packageNames: ['dio']),
-          throwsA(
-            isA<PubdocException>().having(
-              (e) => e.message,
-              'message',
-              'pubspec.lock not found in $workspaceRoot. Run `dart pub get` first.',
-            ),
+      expect(
+        () => commandFor(memberRoot).run(packageNames: ['dio']),
+        throwsA(
+          isA<PubdocException>().having(
+            (e) => e.message,
+            'message',
+            'pubspec.lock not found in $workspaceRoot.'
+                ' Run `dart pub get` first.',
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
-    test('no workspace root found throws PubdocException', () async {
+    test('no workspace root found throws PubdocException', () {
       env.pubspec.addDependency('dio', '5.3.2');
       env.pubGet();
       // Delete the workspace root pubspec.yaml so the walk finds nothing.
@@ -1020,8 +1020,8 @@ void main() {
             (e) => e.message,
             'message',
             'pubspec.yaml in $memberRoot declares `resolution: workspace`, '
-                'but no workspace root (pubspec.yaml with `workspace:` key) was found '
-                'in the parent directories.',
+                'but no workspace root (pubspec.yaml with `workspace:` key)'
+                ' was found in the parent directories.',
           ),
         ),
       );

@@ -36,13 +36,13 @@ A method with exactly 10 lines body (should be inline at threshold=10).
 
 ```dart
 String medium() {
-  var a = 1;
-  var b = 2;
-  var c = 3;
-  var d = 4;
-  var e = 5;
-  var f = a + b;
-  var g = c + d;
+  const a = 1;
+  const b = 2;
+  const c = 3;
+  const d = 4;
+  const e = 5;
+  const f = a + b;
+  const g = c + d;
   return '$f$g$e';
 }
 ```
