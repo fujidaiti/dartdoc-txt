@@ -175,26 +175,50 @@ String renderDetailPage(
 }
 
 /// Renders a category page.
-String renderCategory(Category category, Templates templates) {
+String renderCategory(
+  Category category,
+  Templates templates,
+  Map<String, String> elementLibraryMap,
+) {
   final doc = category.documentation;
   final cleanDoc = (doc != null && doc.isNotEmpty)
       ? stripResidualHtml(doc)
       : '';
 
   final sections = <Map<String, dynamic>>[];
-  _addCategorySection(sections, 'Classes', category.classes, category);
-  _addCategorySection(sections, 'Enums', category.enums, category);
-  _addCategorySection(sections, 'Mixins', category.mixins, category);
-  _addCategorySection(sections, 'Extensions', category.extensions, category);
+  _addCategorySection(sections, 'Classes', category.classes, elementLibraryMap);
+  _addCategorySection(sections, 'Enums', category.enums, elementLibraryMap);
+  _addCategorySection(sections, 'Mixins', category.mixins, elementLibraryMap);
+  _addCategorySection(
+    sections,
+    'Extensions',
+    category.extensions,
+    elementLibraryMap,
+  );
   _addCategorySection(
     sections,
     'Extension Types',
     category.extensionTypes,
-    category,
+    elementLibraryMap,
   );
-  _addCategorySection(sections, 'Functions', category.functions, category);
-  _addCategorySection(sections, 'Properties', category.properties, category);
-  _addCategorySection(sections, 'Typedefs', category.typedefs, category);
+  _addCategorySection(
+    sections,
+    'Functions',
+    category.functions,
+    elementLibraryMap,
+  );
+  _addCategorySection(
+    sections,
+    'Properties',
+    category.properties,
+    elementLibraryMap,
+  );
+  _addCategorySection(
+    sections,
+    'Typedefs',
+    category.typedefs,
+    elementLibraryMap,
+  );
 
   final data = {
     'hasDocumentation': cleanDoc.isNotEmpty,
@@ -467,7 +491,7 @@ void _addCategorySection(
   List<Map<String, dynamic>> sections,
   String heading,
   Iterable<ModelElement> elements,
-  Category category,
+  Map<String, String> elementLibraryMap,
 ) {
   final publicElements = elements.where((e) => e.isPublic).toList();
   if (publicElements.isEmpty) {
@@ -477,11 +501,11 @@ void _addCategorySection(
   sections.add({
     'heading': heading,
     'elements': publicElements.map((element) {
-      final lib = element.canonicalLibrary ?? element.library;
-      if (element is Container && lib != null) {
+      final libDir = elementLibraryMap[element.name];
+      if (element is Container && libDir != null) {
         return {
           'line':
-              '- [${element.name}](${lib.displayName}/${element.name}/${element.name}.md)',
+              '- [${element.name}]($libDir/${element.name}/${element.name}.md)',
         };
       } else {
         return {'line': '- ${element.name}'};
@@ -620,11 +644,17 @@ class TypedefsPage extends DocFile {
 
 /// Category/topic page.
 class CategoryPage extends DocFile {
-  CategoryPage(this.category, this.templates, {String fileExtension = 'md'})
-    : super(topicFileName(category, fileExtension));
+  CategoryPage(
+    this.category,
+    this.templates, {
+    required this.elementLibraryMap,
+    String fileExtension = 'md',
+  }) : super(topicFileName(category, fileExtension));
   final Category category;
   final Templates templates;
+  final Map<String, String> elementLibraryMap;
 
   @override
-  String renderContent() => renderCategory(category, templates);
+  String renderContent() =>
+      renderCategory(category, templates, elementLibraryMap);
 }
