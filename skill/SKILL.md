@@ -18,44 +18,39 @@ documentation and exploring it.
 
 ## Step 1: Prepare documentation
 
-From the project root, run:
+Run the prepare_documentation script:
 
 ```shell
-fvm dart run pubdoc get --json=0 --quiet <package-name1> <package-name2> ...
+fvm dart ${CLAUDE_SKILL_DIR}/scripts/prepare_documentation.dart [--project <project-root>] <package-name1> <package-name2> ...
 ```
 
-Read the JSON output and extract per-package `source` and `documentation`:
+Read the JSON output:
 
 ```json
 {
-  "output": {
-    "packages": {
-      "dio": {
-        "documentation": "/Users/you/.pubdoc/cache/dio/dio-5.3.x",
-        "version": "5.3.x",
-        "source": "/Users/you/.pub-cache/hosted/pub.dev/dio-5.3.6",
-        "cache": "hit"
-      }
+  "packages": {
+    "dio": {
+      "documentation": "/Users/you/.pubdoc/cache/dio/dio-5.3.x",
+      "needsEnrichment": true
     }
   },
-  "errors": [],
-  "logs": []
+  "error": null
 }
 ```
 
-If the command fails or `errors` is non-empty, read
-`references/troubleshooting.md` and follow its guidance.
+If `error` is non-null, read `references/troubleshooting.md` and follow its
+guidance.
 
 ## Step 2: Enrich documentation (if needed)
 
-For each package where `cache != "hit"` (freshly generated docs), spawn an
-enrichment subagent. If multiple packages need enrichment, spawn them in
-parallel and wait for all to finish before continuing.
+For each package where `needsEnrichment == true`, spawn an enrichment subagent.
+If multiple packages need enrichment, spawn them in parallel and wait for all to
+finish before continuing.
 
 - Model: fast, low-latency (e.g., Claude Haiku)
-- Permissions: read-only, except it may write/delete `OVERVIEW.md` and
-  `EXAMPLES.md` (and copy `example/` dirs) under `documentation` directory
-- Pass: the package's `documentation` and `source` paths, and the project root
+- Permissions: allow to write `OVERVIEW.md` and `EXAMPLES.md` under
+  `documentation` directory
+- Pass: the package's `documentation` path and the project root
 - Instructions: read and follow `${CLAUDE_SKILL_DIR}/agents/doc-enrichment.md`
 
 Example prompt:
@@ -63,13 +58,15 @@ Example prompt:
 ```
 Generate OVERVIEW.md and EXAMPLES.md for the package at:
   Documentation: /Users/you/.pubdoc/cache/dio/dio-5.3.x
-  Source: /Users/you/.pub-cache/hosted/pub.dev/dio-5.3.6
 
 Read and follow ${CLAUDE_SKILL_DIR}/agents/doc-enrichment.md.
 ```
 
 If you cannot spawn a subagent, check each package for a missing `OVERVIEW.md`
 and generate it yourself by following `agents/doc-enrichment.md`.
+
+**IMPORTANT**: do not proceed to step 3 until enrichment is complete for all
+packages that need it.
 
 ## Step 3: Explore documentation
 

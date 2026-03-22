@@ -1,16 +1,15 @@
 # Documentation enrichment
 
 Write OVERVIEW.md and EXAMPLES.md for a package. You have been given the
-package's `source` directory path and its `documentation` directory path.
+package's `documentation` directory path.
 
 ## Write EXAMPLES.md
 
-Run `test -d <source>/example/` to check whether an `example/` subdirectory is
-present. If absent, skip — not all packages ship examples. Otherwise:
+Run `test -d <documentation>/example/` to check whether an `example/`
+subdirectory is present. If absent, skip — not all packages ship examples.
+Otherwise:
 
-1. Copy examples into the documentation:
-   `cp -r <source>/example/ <documentation>/example/`
-2. Explore the copied `example/` directory and write
+1. Explore the `<documentation>/example/` directory and write
    `<documentation>/EXAMPLES.md` following this template:
 
 Goal is that the reader of EXAMPLES.md should be able to identify the most
@@ -141,6 +140,8 @@ Use this guide to find what you need without exploring every file.
   listing
 - "Debug this error about Z" — look for the class/method mentioned in the error,
   check for topics/ that might cover common pitfalls or migration guides
+
+<!-- ADD NO MORE CONTENT BELOW -->
 ````
 
 ## Cleanup
