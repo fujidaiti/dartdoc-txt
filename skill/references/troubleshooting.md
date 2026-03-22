@@ -5,14 +5,7 @@
 Install pubdoc:
 
 ```
-dart pub global activate pubdoc
-```
-
-If `dart` is not on PATH (the user may use fvm to manage Flutter SDK versions),
-try:
-
-```
-fvm dart pub global activate pubdoc
+dart install pubdoc
 ```
 
 ## Missing pubspec.lock or package_config.json
@@ -22,12 +15,6 @@ exist. Tell the user to run:
 
 ```
 dart pub get
-```
-
-or, if the user uses fvm:
-
-```
-fvm dart pub get
 ```
 
 Then retry `pubdoc get`.

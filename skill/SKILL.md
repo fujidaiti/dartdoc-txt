@@ -21,7 +21,7 @@ documentation and exploring it.
 Run the prepare_documentation script:
 
 ```shell
-fvm dart ${CLAUDE_SKILL_DIR}/scripts/prepare_documentation.dart [--project <project-root>] <package-name1> <package-name2> ...
+dart ${CLAUDE_SKILL_DIR}/scripts/prepare_documentation.dart [--project <project-root>] <package-name1> <package-name2> ...
 ```
 
 Read the JSON output:
