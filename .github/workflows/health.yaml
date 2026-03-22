@@ -10,15 +10,17 @@ jobs:
         env:
           TITLE: ${{ github.event.pull_request.title }}
         run: |
-          if ! echo "$TITLE" | grep -qP '^\[(misc|dartdoc|pubdoc)\] [A-Z]'; then
-            echo "PR title does not follow the required format."
-            echo "Expected: [<scope>] Sentence case title"
-            echo "Where <scope> is one of: misc, dartdoc, pubdoc"
-            echo "And the title starts with an uppercase letter."
-            echo ""
-            echo "Got: $TITLE"
-            exit 1
+          pattern='^\[(misc|dartdoc|pubdoc)\] [A-Z]'
+          if echo "$TITLE" | grep -qP "$pattern"; then
+            exit 0
           fi
+          echo "PR title does not follow the required format."
+          echo "Expected: [<scope>] Sentence case title"
+          echo "Where <scope> is one of: misc, dartdoc, pubdoc"
+          echo "And the title starts with an uppercase letter."
+          echo ""
+          echo "Got: $TITLE"
+          exit 1
 
   analysis:
     runs-on: ubuntu-latest
