@@ -1,10 +1,9 @@
 import 'package:dartdoc/dartdoc.dart';
-
 import 'package:dartdoc_txt/src/doc_tree.dart';
 import 'package:dartdoc_txt/src/element_renderers.dart';
 import 'package:dartdoc_txt/src/markdown_renderer.dart';
 
-/// Generates LLM-friendly Markdown documentation for a Dart package.
+/// Generates Markdown documentation for a Dart package.
 ///
 /// Analyzes the package at [RenderOptions.packageRoot] and writes
 /// documentation files to [outputDir]. The output directory is created

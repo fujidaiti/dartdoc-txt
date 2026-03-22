@@ -1,13 +1,16 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dartdoc_txt/dartdoc_txt.dart';
-import 'package:dartdoc_txt/src/logger.dart';
+import 'package:logging/logging.dart';
 
-const String version = '0.0.1';
+const String _version = '0.1.0';
 
 Future<void> main(List<String> arguments) async {
-  setupLogging();
+  final log = Logger('dartdoc_txt');
+  _setupLogging();
+
   final argParser = ArgParser()
     ..addOption('input', abbr: 'i', help: 'Input directory.', mandatory: true)
     ..addOption('output', abbr: 'o', help: 'Output directory.', mandatory: true)
@@ -44,7 +47,7 @@ Future<void> main(List<String> arguments) async {
     return;
   }
   if (results.flag('version')) {
-    stdout.writeln('dartdoc_txt version: $version');
+    stdout.writeln('dartdoc_txt version: $_version');
     return;
   }
 
@@ -69,4 +72,19 @@ void _printUsage(ArgParser argParser) {
   stdout.writeln('Usage: dart run dartdoc_txt [options]');
   stdout.writeln('');
   stdout.writeln(argParser.usage);
+}
+
+/// Configures the root logger for CLI usage.
+///
+/// Routes INFO and below to stdout, WARNING and above to stderr.
+/// Returns the subscription so it can be cancelled if needed.
+StreamSubscription<LogRecord> _setupLogging({bool verbose = false}) {
+  Logger.root.level = verbose ? Level.ALL : Level.INFO;
+  return Logger.root.onRecord.listen((record) {
+    if (record.level >= Level.WARNING) {
+      stderr.writeln(record.message);
+    } else {
+      stdout.writeln(record.message);
+    }
+  });
 }

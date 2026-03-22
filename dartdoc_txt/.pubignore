@@ -1,0 +1,2 @@
+# Exclude the git-submodule and a lot of golden files
+test/

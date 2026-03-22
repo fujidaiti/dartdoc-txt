@@ -7,34 +7,25 @@ Unlike `dartdoc` (which generates interactive HTML), `dartdoc_txt` reuses
 dartdoc's analysis engine but produces structured, grep-friendly Markdown files
 designed for language models to traverse and understand.
 
+### Requirements
+
+Run `dart pub get` in the target package directory before running `dartdoc_txt`.
+Otherwise, types from dependency packages appear as `dynamic` in the generated
+documentation.
+
 ## Usage
 
 ```
-dart run dartdoc_txt [options]
-```
+Usage: dart run dartdoc_txt [options]
 
-### Options
-
-| Option                  | Description                         | Default                 |
-| ----------------------- | ----------------------------------- | ----------------------- |
-| `-i`, `--input`         | Input package directory             | `.` (current directory) |
-| `-o`, `--output`        | Output directory                    | `doc/md`                |
-| `--source-threshold`    | Max lines of source to embed inline | `10`                    |
-| `--[no-]include-source` | Include source code snippets        | on                      |
-| `-h`, `--help`          | Show usage information              |                         |
-| `--version`             | Print the tool version              |                         |
-
-### Prerequisites
-
-Run `dart pub get` (or `flutter pub get`) in the target package directory before
-running `dartdoc_txt`. The analyzer needs `.dart_tool/package_config.json` to
-resolve dependency types — without it, types from dependencies may appear as
-`dynamic` in the generated documentation.
-
-### Example
-
-```bash
-dart run dartdoc_txt -i path/to/my_package -o docs
+-i, --input (mandatory)      Input directory.
+-o, --output (mandatory)     Output directory.
+    --source-threshold       Max lines of source to embed inline (default: 10).
+                             (defaults to "10")
+    --[no-]include-source    Include source code snippets.
+                             (defaults to on)
+-h, --help                   Show usage information.
+    --version                Print the tool version.
 ```
 
 ## Output Structure
@@ -57,19 +48,3 @@ dart run dartdoc_txt -i path/to/my_package -o docs
     └── typedefs/
         └── typedefs.md               # Type definitions
 ```
-
-## Features
-
-- **LLM-optimized output** — Structured Markdown with full type signatures,
-  modifiers, and doc comments
-- **Smart source embedding** — Short source code is inlined; long source is
-  linked to separate detail pages
-- **Public API only** — Filters out private elements and `lib/src/` internal
-  libraries
-- **Category/topic support** — Reads `dartdoc_options.yaml` for category
-  definitions and generates topic pages
-- **Doc comment directives** — Resolves `{@template}`, `{@macro}`, `{@example}`
-  and strips unsupported directives
-- **Comprehensive coverage** — Classes, enums, mixins, extensions, extension
-  types, constructors, methods, properties, operators, typedefs, and top-level
-  elements
