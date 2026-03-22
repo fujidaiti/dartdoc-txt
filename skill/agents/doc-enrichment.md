@@ -1,130 +1,147 @@
 # Documentation enrichment
 
-Generate OVERVIEW.md and EXAMPLES.md for a package. You have been given the
-package's `source` path and its `documentation` path.
+Write OVERVIEW.md and EXAMPLES.md for a package. You have been given the
+package's `source` directory path and its `documentation` directory path.
 
-## 1. Generate EXAMPLES.md
+## Write EXAMPLES.md
 
-Run `ls <source>/` and check whether an `example/` subdirectory is present. If
-absent, skip — not all packages ship examples. Otherwise:
+Run `test -d <source>/example/` to check whether an `example/` subdirectory is
+present. If absent, skip — not all packages ship examples. Otherwise:
 
 1. Copy examples into the documentation:
-
-   ```
-   cp -r <source>/example/ <documentation>/example/
-   ```
-
+   `cp -r <source>/example/ <documentation>/example/`
 2. Explore the copied `example/` directory and write
-   `<documentation>/EXAMPLES.md` with this structure:
-   - **Table of Contents** at the top — one line per example file, linked to its
-     section heading. An agent can read just this section to orient quickly.
-   - **One section per example file**, containing:
-     - Short prose: what the example demonstrates and which key APIs or classes
-       it uses
-     - Essential code snippets — not the full file, just the parts showing the
-       core usage pattern (initialization, key method calls, important config)
-     - A path link to the source file for further reading, e.g.
-       `[example/lib/main.dart](example/lib/main.dart)`
+   `<documentation>/EXAMPLES.md` following this template:
 
-   Goal: an agent skimming EXAMPLES.md should be able to identify the most
-   relevant example and extract enough to write correct code, without opening
-   the raw `.dart` files.
+Goal is that the reader of EXAMPLES.md should be able to identify the most
+relevant example and extract enough to write correct code, without opening the
+raw `.dart` files.
 
-## 2. Generate OVERVIEW.md
+Use this template for EXAMPLES.md:
+
+````markdown
+# Examples
+
+This document is a summary of curated examples of the <package-name> package.
+Actual example code lives in the `example/` directory.
+
+## Example Title
+
+<!-- short prose: what this example demonstrates and which key APIs or classes it uses -->
+
+```dart
+<!-- essential snippets only — not the full file; just initialization, key method calls, and important configuration -->
+```
+
+<!-- List the paths to related files for this example -->
+
+See also:
+
+- example/bin/main.dart: the original source file for this example.
+- <library>/ClassName/ClassName.md: the documentation page for a key class used
+  in this example.
+
+## Example Title 2
+
+<!-- Another section for a different example goes here following the same structure -->
+````
+
+## Write OVERVIEW.md
+
+The goal is to preserve every piece of technical information from the README so
+that OVERVIEW.md can fully replace it. Do **not** summarize or distill — keep
+all usage examples, API descriptions, configuration options, and caveats
+verbatim.
 
 Gather source material:
 
-- **README:** read `<source>/README.md`. If absent, skip the summary section and
-  proceed to the documentation guide below.
-- **Topics:** run `ls <documentation>/topics/` (or Glob `topics/*.md`) if the
-  directory exists — note each `.md` filename and read the first heading or
-  first sentence to get a one-line description.
-- **Libraries:** read `<documentation>/INDEX.md` — it lists all public
-  libraries. Do not read into library subdirectories; the library names from
-  INDEX.md are sufficient for the Documentation Guide.
+- README: read `<documentation>/README.md`.
+- Topics: run `ls <documentation>/topics/` (or Glob `topics/*.md`) if the
+  directory exists — read each `.md` file enough to write a 3-sentence summary.
+- Libraries: read `<documentation>/INDEX.md` — it lists all public API of the
+  package.
 
-Write `<documentation>/OVERVIEW.md` with two sections:
+Then, write `<documentation>/OVERVIEW.md` using the template below. Follow these
+guidelines:
 
----
+- Make it concise without summarizing — all technical sections kept verbatim.
+- Prefer natural prose or bullet lists over cosmetic format such as tables and
+  HTML.
+- Strip non-technical content such as:
+  - Badges/shields (`![badge]`, `[![...](...)`)
+  - Cosmetic HTML (`<p align="center">`, `<img>`, `<br>`, `<div>`)
+  - Duplicate blank lines, extra whitespace, and other formatting that doesn't
+    add technical value
+  - Contribution guides, "how to file issues", "star us on GitHub" sections
+  - Background commentary ("The story behind this package…")
+  - And other stuff that doesn't directly help the reader understand how to use
+    the package
 
-**Section 1 — Package summary** (from README)
+Here's the template for OVERVIEW.md:
 
-Goal: a 3-minute read that tells the reader what the package does and how to use
-it. Omit everything that doesn't help an agent write code.
+````markdown
+# <package-name>
 
-- If the README is ≤ 80 lines of substantive content, include it with minimal
-  editing (just strip the noise listed below).
-- If longer, distill it: keep the purpose, core API concepts, key configuration,
-  and any important caveats. Cut aggressively.
+<!-- README content comes here -->
 
-Strip unconditionally:
+## Reading Guide
 
-- Badges/shields (`![badge]`, `[![...](...)`)
-- Cosmetic HTML (`<p align="center">`, `<img>`, `<br>`, `<div>`)
-- Contribution guides, "how to file issues", "star us on GitHub" sections
-- Changelog entries
-- Non-technical background commentary ("The story behind this package…")
+Use this guide to find what you need without exploring every file.
 
-Convert markdown tables to bullet lists. For example, an options table:
+### Documentation structure
 
-```
-| Option    | Default | Description      |
-| --------- | ------- | ---------------- |
-| --timeout | 30      | Request timeout  |
-```
-
-becomes:
+<!-- Eliminate items from the structure overview if they don't exist -->
 
 ```
-- `--timeout` (default: 30) — request timeout
+<documentation>/
+├── OVERVIEW.md # This file
+├── INDEX.md # Full API listing: all libraries, classes, functions
+├── EXAMPLES.md # Curated code examples with explanations
+├── example/ # Raw example code
+├── topics/ # Additional notes and guides on specific topics
+│   └── <TopicName>.md
+└── <library>/
+    ├── <ClassName>/
+    │   ├── <ClassName>.md # Class overview: constructors, fields, methods
+    │   └── <ClassName>-<methodName>.md # Detail page for a large method
+    ├── top-level-functions/
+    │   ├── top-level-functions.md # Top level functions overview
+    │   └── <functionName>.md # Detail page for a large function
+    ├── top-level-properties/
+    │   ├── top-level-properties.md # Top level properties overview
+    │   └── <topLevelProperty>.md # Detail page for a large property
+    └── typedefs/
+        ├── typedefs.md # Overview of typedefs in this library
+        └── <TypedefName>.md # Detail page for a large typedef
+
 ```
-
----
-
-**Section 2 — Documentation guide**
-
-Goal: help the reader find what they need without exploring every file.
-
-Include:
-
-1. A short paragraph explaining the directory layout — mention that
-   `EXAMPLES.md` has curated snippets and that each `<library>/index.md` lists
-   the available API.
-
-2. A flat bullet list of the key files and directories:
-   - One line per public library directory:
-     `<library>/index.md — <brief description if inferrable from the library name, otherwise omit>`
-   - `EXAMPLES.md — code examples with explanations` (only if it exists)
-
-3. **Topics** (only if `<documentation>/topics/` contains `.md` files): Add a
-   "Topics" sub-section with one bullet per file:
-   `- [topics/<FileName>.md](topics/<FileName>.md) — <one-line description>`
-   These often contain migration guides, advanced usage, or conceptual
-   explanations worth consulting for deeper understanding.
-
----
-
-The finished file should look like:
-
-```markdown
-# <PackageName>
-
-<package summary — prose, no tables, no badges>
-
----
-
-## Documentation
-
-<one-paragraph explanation of layout>
-
-Key files:
-
-- `EXAMPLES.md` — code examples with explanations
-- `<library>/index.md` — API reference for <library>
-- ...
 
 ### Topics
 
-- [`topics/MigrationGuide.md`](topics/MigrationGuide.md) — migrating from v1 to
-  v2
-```
+<!-- Include only if `<documentation>/topics/` exists. One entry per file -->
+
+- Topic Name
+  - Location: topics/TopicName.md
+  - Summary: <3-sentence summary of the topic>
+- Topic Name 2
+  - Location: topics/TopicName2.md
+  - Summary: <3-sentence summary of the topic>
+
+### Where to look
+
+<!-- Eliminate items that don't match the actual documentation content -->
+
+- "How do I do X?" — check EXAMPLES.md for usage patterns, then drill into the
+  relevant class/method pages
+- "What does class/method Y do?" — go directly to the class or method page under
+  `<library>/<ClassName>/<ClassName>.md`
+- "What API does the package expose?" — read INDEX.md for the full library
+  listing
+- "Debug this error about Z" — look for the class/method mentioned in the error,
+  check for topics/ that might cover common pitfalls or migration guides
+````
+
+## Cleanup
+
+Remove the original `<documentation>/README.md` file, as OVERVIEW.md is now the
+main entry point for documentation.

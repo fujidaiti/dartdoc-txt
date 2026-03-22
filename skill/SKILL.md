@@ -16,15 +16,15 @@ description: >
 Answers questions about Dart/Flutter packages by generating version-accurate
 documentation and exploring it.
 
-## Step 1: Run `pubdoc get`
+## Step 1: Prepare documentation
 
 From the project root, run:
 
-```
+```shell
 fvm dart run pubdoc get --json=0 --quiet <package-name1> <package-name2> ...
 ```
 
-Parse the JSON output and extract per-package `source` and `documentation`:
+Read the JSON output and extract per-package `source` and `documentation`:
 
 ```json
 {
@@ -52,13 +52,11 @@ For each package where `cache != "hit"` (freshly generated docs), spawn an
 enrichment subagent. If multiple packages need enrichment, spawn them in
 parallel and wait for all to finish before continuing.
 
-- **Model:** fast, low-latency (e.g., Claude Haiku)
-- **Permissions:** read-only, except it may write/delete `OVERVIEW.md` and
+- Model: fast, low-latency (e.g., Claude Haiku)
+- Permissions: read-only, except it may write/delete `OVERVIEW.md` and
   `EXAMPLES.md` (and copy `example/` dirs) under `documentation` directory
-- **Pass:** the package's `documentation` and `source` paths, and the project
-  root
-- **Instructions:** read and follow
-  `${CLAUDE_SKILL_DIR}/agents/doc-enrichment.md`
+- Pass: the package's `documentation` and `source` paths, and the project root
+- Instructions: read and follow `${CLAUDE_SKILL_DIR}/agents/doc-enrichment.md`
 
 Example prompt:
 
@@ -70,18 +68,18 @@ Generate OVERVIEW.md and EXAMPLES.md for the package at:
 Read and follow ${CLAUDE_SKILL_DIR}/agents/doc-enrichment.md.
 ```
 
-If you cannot spawn a subagent, check each package for a missing `OVERVIEW.md`
+If you cannot spawn a subagent, check each package for a missing `OVERV IEW.md`
 and generate it yourself by following `agents/doc-enrichment.md`.
 
 ## Step 3: Explore documentation
 
-If you can spawn a subagent, delegate the exploration:
+Spawn a subagent to delegate the exploration:
 
-- **Model:** fast, low-latency (e.g., Claude Haiku)
-- **Permissions:** read-only
-- **Pass:** the query, per-package `documentation` paths from step 1, and the
+- Model: fast, low-latency (e.g., Claude Haiku)
+- Permissions: read-only
+- Pass: the query, per-package `documentation` paths from step 1, and the
   project root
-- **Instructions:** read and follow `${CLAUDE_SKILL_DIR}/agents/doc-explorer.md`
+- Instructions: read and follow `${CLAUDE_SKILL_DIR}/agents/doc-explorer.md`
 
 If you can use a built-in read-only agent optimized for searching and analyzing
 codebases (e.g., Explore agent), use it here. If you cannot spawn a subagent,
