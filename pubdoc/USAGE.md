@@ -62,8 +62,8 @@ After running, the command prints a summary for each package:
 ```
 dio
   version:       5.3.x
-  documentation: /Users/username/.pubdoc/cache/dio/dio-5.3.x/
-  source:        /Users/username/.pub-cache/hosted/pub.dev/dio-5.3.6/
+  documentation: /Users/username/.pubdoc/cache/dio/dio-5.3.x
+  source:        /Users/username/.pub-cache/hosted/pub.dev/dio-5.3.6
   cache:         hit
 ```
 

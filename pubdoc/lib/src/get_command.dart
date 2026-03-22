@@ -87,8 +87,8 @@ class GetResult {
       first = false;
       final r = entry.value;
       buffer.write('${entry.key}\n');
-      buffer.write('  documentation: ${r.documentation}\n');
       buffer.write('  version:       ${r.version}\n');
+      buffer.write('  documentation: ${r.documentation}\n');
       buffer.write('  source:        ${r.source}\n');
       buffer.write('  cache:         ${r.cacheStatus.name}\n');
     }
