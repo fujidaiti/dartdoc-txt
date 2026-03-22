@@ -16,8 +16,8 @@ void main() {
       );
       expect(result.format(), '''
 dio
-  documentation: /project/.pubdoc/dio
   version:       5.3.x
+  documentation: /project/.pubdoc/dio
   source:        /pub-cache/dio-5.3.2
   cache:         miss
 ''');
@@ -44,14 +44,14 @@ dio
         result.format(),
         equals('''
 dio
-  documentation: /project/.pubdoc/dio
   version:       5.3.x
+  documentation: /project/.pubdoc/dio
   source:        /pub-cache/dio-5.3.2
   cache:         miss
 
 http
-  documentation: /project/.pubdoc/http
   version:       1.2.x
+  documentation: /project/.pubdoc/http
   source:        /pub-cache/http-1.2.0
   cache:         hit
 '''),
