@@ -67,15 +67,17 @@ guidelines:
 - Make it concise without summarizing — all technical sections kept verbatim.
 - Prefer natural prose or bullet lists over cosmetic format such as tables and
   HTML.
-- Strip non-technical content such as:
+- **IMPORTANT**: strip anything that doesn't help a reader _use_ the package:
   - Badges/shields (`![badge]`, `[![...](...)`)
   - Cosmetic HTML (`<p align="center">`, `<img>`, `<br>`, `<div>`)
   - Duplicate blank lines, extra whitespace, and other formatting that doesn't
     add technical value
-  - Contribution guides, "how to file issues", "star us on GitHub" sections
+  - Contribution guides, links to CONTRIBUTING.md, "how to file issues", "star
+    us on GitHub" sections
+  - Issue tracker triage rules, bug priority labels (P0/P1/P2…), and other
+    project-management content
+  - Links to ecosystem/related repos that aren't about how to use this package
   - Background commentary ("The story behind this package…")
-  - And other stuff that doesn't directly help the reader understand how to use
-    the package
 
 Here's the template for OVERVIEW.md:
 
