@@ -1,11 +1,14 @@
 name: dartdoc_txt
 description: An LLM-friendly documentation generator for Dart source code.
-version: 0.1.1
+version: 0.1.2
 repository: https://github.com/fujidaiti/pubdoc
 
 environment:
   sdk: ^3.10.0
 resolution: workspace
+
+executables:
+  dartdox: main
 
 dependencies:
   args: ^2.7.0

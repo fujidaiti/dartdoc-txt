@@ -3,20 +3,36 @@
 A CLI tool that generates Markdown documentation from Dart/Flutter packages,
 optimized for LLM consumption.
 
-Unlike `dartdoc` (which generates interactive HTML), `dartdoc_txt` reuses
+Unlike [dartdoc][] (which generates interactive HTML), dartdoc_txt reuses
 dartdoc's analysis engine but produces structured, grep-friendly Markdown files
 designed for language models to traverse and understand.
 
-### Requirements
+[dartdoc]: https://pub.dev/packages/dartdoc
 
-Run `dart pub get` in the target package directory before running `dartdoc_txt`.
-Otherwise, types from dependency packages appear as `dynamic` in the generated
-documentation.
+## Installation
+
+> [!NOTE]
+>
+> Requires Dart SDK 3.10 or higher.
+
+Use [dart install][] to globally activate the tool:
+
+```shell
+dart install dartdoc_txt
+```
+
+Then, dartdoc_txt will be available as the `dartdox` command in your terminal.
+
+[dart install]: https://dart.dev/tools/dart-install
 
 ## Usage
 
+Run `dart pub get` in the target package directory before running `dartdox`.
+Otherwise, types from dependency packages appear as `dynamic` in the generated
+documentation.
+
 ```
-Usage: dart run dartdoc_txt [options]
+Usage: dartdox [options]
 
 -i, --input (mandatory)      Input directory.
 -o, --output (mandatory)     Output directory.
