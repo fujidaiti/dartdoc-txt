@@ -21,5 +21,5 @@ class PlatformEnvironment implements Environment {
   String? getVariable(String name) => Platform.environment[name];
 
   @override
-  String get toolVersion => '0.1.0';
+  String get toolVersion => '0.1.1';
 }

@@ -2,7 +2,7 @@ name: pubdoc
 description: >
   A CLI tool that provides LLM-friendly, version-aware API documentation for
   Dart/Flutter packages.
-version: 0.1.0
+version: 0.1.1
 repository: https://github.com/fujidaiti/pubdoc
 
 environment:
@@ -11,7 +11,7 @@ resolution: workspace
 
 dependencies:
   args: ^2.7.0
-  dartdoc_txt: ^0.1.0
+  dartdoc_txt: ^0.1.1
   logging: ^1.3.0
   file: ^7.0.1
   meta: ^1.17.0
