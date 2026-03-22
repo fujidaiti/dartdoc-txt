@@ -50,8 +50,8 @@ without knowing the actual version and the cache location.
 
 After running, the command prints a summary for each package:
 
-- `documentation`: the symlink in `.pubdoc/` that points to the generated docs.
 - `version`: the documentation version (see `--resolution`).
+- `documentation`: the absolute path to the generated documentation.
 - `source`: the package source directory the documentation was generated from.
 - `cache`: the cache status, which can be one of the following:
   - `hit`: the existing cache was reused as-is.
@@ -61,9 +61,9 @@ After running, the command prints a summary for each package:
 
 ```
 dio
-  documentation: /path/to/project/.pubdoc/dio
   version:       5.3.x
-  source:        /Users/you/.pub-cache/hosted/pub.dev/dio-5.3.6/
+  documentation: /Users/username/.pubdoc/cache/dio/dio-5.3.x
+  source:        /Users/username/.pub-cache/hosted/pub.dev/dio-5.3.6
   cache:         hit
 ```
 

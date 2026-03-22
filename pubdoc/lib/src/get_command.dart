@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:file/file.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
-
 import 'package:pubdoc/src/cache.dart';
 import 'package:pubdoc/src/config.dart';
 import 'package:pubdoc/src/doc_generator.dart';
@@ -35,7 +34,7 @@ class PackageGetResult {
     required this.cacheStatus,
   });
 
-  /// Absolute path to the symlink in the project's `.pubdoc/` directory.
+  /// Absolute path to the generated documentation directory in the cache.
   final String documentation;
 
   /// Absolute path to the package source directory that the documentation was
@@ -88,8 +87,8 @@ class GetResult {
       first = false;
       final r = entry.value;
       buffer.write('${entry.key}\n');
-      buffer.write('  documentation: ${r.documentation}\n');
       buffer.write('  version:       ${r.version}\n');
+      buffer.write('  documentation: ${r.documentation}\n');
       buffer.write('  source:        ${r.source}\n');
       buffer.write('  cache:         ${r.cacheStatus.name}\n');
     }
@@ -318,9 +317,8 @@ class GetCommand {
         ? Uri.parse(cacheResult.metadata!.source).toFilePath()
         : sourceDir.path;
 
-    final linkPath = '${project.pubdocDir.path}/$packageName';
     return PackageGetResult(
-      documentation: linkPath,
+      documentation: cacheResult.cacheDir,
       source: sourcePath,
       version: docVersion,
       cacheStatus: switch (cacheResult.action) {
