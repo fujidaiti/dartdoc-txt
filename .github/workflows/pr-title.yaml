@@ -1,0 +1,25 @@
+name: PR Title
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title format
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          pattern='^\[(misc|dartdoc|pubdoc)\] [A-Z]'
+          if echo "$TITLE" | grep -qP "$pattern"; then
+            exit 0
+          fi
+          echo "PR title does not follow the required format."
+          echo "Expected: [<scope>] Sentence case title"
+          echo "Where <scope> is one of: misc, dartdoc, pubdoc"
+          echo "And the title starts with an uppercase letter."
+          echo ""
+          echo "Got: $TITLE"
+          exit 1
