@@ -70,7 +70,7 @@ void main() {
         _isGetResult(
           packages: {
             'dio': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/dio',
+              documentation: '$_cacheDir/dio/dio-5.3.2',
               version: '5.3.2',
               source: '$_pubCacheBase/dio-5.3.2/',
               cacheStatus: CacheStatus.miss,
@@ -141,13 +141,13 @@ void main() {
         _isGetResult(
           packages: {
             'dio': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/dio',
+              documentation: '$_cacheDir/dio/dio-5.3.2',
               source: '$_pubCacheBase/dio-5.3.2/',
               version: '5.3.2',
               cacheStatus: CacheStatus.miss,
             ),
             'http': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/http',
+              documentation: '$_cacheDir/http/http-1.2.0',
               source: '$_pubCacheBase/http-1.2.0/',
               version: '1.2.0',
               cacheStatus: CacheStatus.miss,
@@ -205,7 +205,7 @@ void main() {
         _isGetResult(
           packages: {
             'dio': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/dio',
+              documentation: '$_cacheDir/dio/dio-5.3.2',
               source: '$_pubCacheBase/dio-5.3.2/',
               version: '5.3.2',
               cacheStatus: CacheStatus.hit,
@@ -245,7 +245,7 @@ void main() {
         _isGetResult(
           packages: {
             'dio': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/dio',
+              documentation: '$_cacheDir/dio/dio-5.3.2',
               version: '5.3.2',
               source: '$_pubCacheBase/dio-5.3.2/',
               cacheStatus: CacheStatus.miss,
@@ -277,7 +277,7 @@ void main() {
         _isGetResult(
           packages: {
             'dio': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/dio',
+              documentation: '$_cacheDir/dio/dio-5.3.6',
               version: '5.3.6',
               source: '$_pubCacheBase/dio-5.3.6/',
               cacheStatus: CacheStatus.miss,
@@ -338,7 +338,7 @@ void main() {
         _isGetResult(
           packages: {
             'dio': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/dio',
+              documentation: '$_cacheDir/dio/dio-5.3.x',
               source: '$_pubCacheBase/dio-5.3.2/',
               version: '5.3.x',
               cacheStatus: CacheStatus.miss,
@@ -377,7 +377,7 @@ void main() {
         _isGetResult(
           packages: {
             'dio': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/dio',
+              documentation: '$_cacheDir/dio/dio-5.3.x',
               source: '$_pubCacheBase/dio-5.3.6/',
               version: '5.3.x',
               cacheStatus: CacheStatus.refreshed,
@@ -423,7 +423,7 @@ void main() {
         _isGetResult(
           packages: {
             'dio': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/dio',
+              documentation: '$_cacheDir/dio/dio-5.3.x',
               source: '$_pubCacheBase/dio-5.3.6/',
               version: '5.3.x',
               cacheStatus: CacheStatus.hit,
@@ -451,7 +451,7 @@ void main() {
         _isGetResult(
           packages: {
             'dio': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/dio',
+              documentation: '$_cacheDir/dio/dio-5.4.x',
               source: '$_pubCacheBase/dio-5.4.0/',
               version: '5.4.x',
               cacheStatus: CacheStatus.miss,
@@ -503,7 +503,7 @@ void main() {
         _isGetResult(
           packages: {
             'dio': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/dio',
+              documentation: '$_cacheDir/dio/dio-5.x',
               source: '$_pubCacheBase/dio-5.3.2/',
               version: '5.x',
               cacheStatus: CacheStatus.miss,
@@ -543,7 +543,7 @@ void main() {
         _isGetResult(
           packages: {
             'dio': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/dio',
+              documentation: '$_cacheDir/dio/dio-5.x',
               source: '$_pubCacheBase/dio-5.4.0/',
               version: '5.x',
               cacheStatus: CacheStatus.refreshed,
@@ -588,7 +588,7 @@ void main() {
         _isGetResult(
           packages: {
             'dio': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/dio',
+              documentation: '$_cacheDir/dio/dio-5.x',
               source: '$_pubCacheBase/dio-5.4.0/',
               version: '5.x',
               cacheStatus: CacheStatus.hit,
@@ -616,7 +616,7 @@ void main() {
         _isGetResult(
           packages: {
             'dio': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/dio',
+              documentation: '$_cacheDir/dio/dio-6.x',
               source: '$_pubCacheBase/dio-6.0.0/',
               version: '6.x',
               cacheStatus: CacheStatus.miss,
@@ -664,7 +664,7 @@ void main() {
         _isGetResult(
           packages: {
             'dio': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/dio',
+              documentation: '$_cacheDir/dio/dio-1.0.0-dev.1',
               version: '1.0.0-dev.1',
               source: '$_pubCacheBase/dio-1.0.0-dev.1/',
               cacheStatus: CacheStatus.miss,
@@ -703,7 +703,7 @@ void main() {
         _isGetResult(
           packages: {
             'dio': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/dio',
+              documentation: '$_cacheDir/dio/dio-1.0.0-dev.1',
               version: '1.0.0-dev.1',
               source: '$_pubCacheBase/dio-1.0.0-dev.1/',
               cacheStatus: CacheStatus.miss,
@@ -741,7 +741,7 @@ void main() {
         _isGetResult(
           packages: {
             'dio': _isPackageGetResult(
-              documentation: '$_projectRoot/.pubdoc/dio',
+              documentation: '$_cacheDir/dio/dio-1.0.0-dev.1',
               version: '1.0.0-dev.1',
               source: '$_pubCacheBase/dio-1.0.0-dev.1/',
               cacheStatus: CacheStatus.miss,
