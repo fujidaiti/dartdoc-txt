@@ -5,7 +5,8 @@ import 'package:args/args.dart';
 import 'package:dartdoc_txt/dartdoc_txt.dart';
 import 'package:logging/logging.dart';
 
-const String _version = '0.1.1';
+const String _version = '0.1.2';
+const String _executableName = 'dartdox';
 
 Future<void> main(List<String> arguments) async {
   final log = Logger('dartdoc_txt');
@@ -47,7 +48,7 @@ Future<void> main(List<String> arguments) async {
     return;
   }
   if (results.flag('version')) {
-    stdout.writeln('dartdoc_txt version: $_version');
+    stdout.writeln('$_executableName version: $_version');
     return;
   }
 
@@ -69,7 +70,7 @@ Future<void> main(List<String> arguments) async {
 }
 
 void _printUsage(ArgParser argParser) {
-  stdout.writeln('Usage: dart run dartdoc_txt [options]');
+  stdout.writeln('Usage: dart run $_executableName [options]');
   stdout.writeln('');
   stdout.writeln(argParser.usage);
 }

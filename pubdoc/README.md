@@ -6,10 +6,24 @@ because it consists of structured plain text files, and version-aware because
 pubdoc serves documentation for the specific versions your project depends on,
 not just the latest.
 
-You can find examples of the generated documentation [here][1].
+You can find examples of the generated documentation
+[here](https://github.com/fujidaiti/pubdoc/tree/main/dartdoc_txt/test/integration/golden).
 
-[1]:
-  https://github.com/fujidaiti/pubdoc/tree/main/dartdoc_txt/test/integration/golden
+## Installation
+
+> [!NOTE]
+>
+> Requires Dart SDK 3.10 or higher.
+
+Use [dart install][] to globally activate the tool:
+
+```shell
+dart install pubdoc
+```
+
+Then, pubdoc will be available as the `pubdoc` command in your terminal.
+
+[dart install]: https://dart.dev/tools/dart-install
 
 ## How to use
 
