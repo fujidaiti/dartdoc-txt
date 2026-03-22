@@ -5,7 +5,7 @@ import 'package:args/args.dart';
 import 'package:dartdoc_txt/dartdoc_txt.dart';
 import 'package:logging/logging.dart';
 
-const String _version = '0.1.0';
+const String _version = '0.1.1';
 
 Future<void> main(List<String> arguments) async {
   final log = Logger('dartdoc_txt');

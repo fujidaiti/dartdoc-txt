@@ -11,7 +11,7 @@ resolution: workspace
 
 dependencies:
   args: ^2.7.0
-  dartdoc_txt: ^0.1.0
+  dartdoc_txt: ^0.1.1
   logging: ^1.3.0
   file: ^7.0.1
   meta: ^1.17.0
