@@ -140,11 +140,13 @@ Use this guide to find what you need without exploring every file.
   listing
 - "Debug this error about Z" — look for the class/method mentioned in the error,
   check for topics/ that might cover common pitfalls or migration guides
-
-<!-- ADD NO MORE CONTENT BELOW -->
 ````
 
 ## Cleanup
 
-Remove the original `<documentation>/README.md` file, as OVERVIEW.md is now the
-main entry point for documentation.
+After you write OVERVIEW.md and EXAMPLES.md, remove the original README, as
+OVERVIEW.md is now the main entry point:
+
+```shell
+rm <documentation>/README.md
+```

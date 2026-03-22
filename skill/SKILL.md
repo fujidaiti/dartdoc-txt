@@ -48,18 +48,15 @@ If multiple packages need enrichment, spawn them in parallel and wait for all to
 finish before continuing.
 
 - Model: fast, low-latency (e.g., Claude Haiku)
-- Permissions: allow to write `OVERVIEW.md` and `EXAMPLES.md` under
-  `documentation` directory
+- Permissions: allow to read/write files in `documentation` directory
 - Pass: the package's `documentation` path and the project root
 - Instructions: read and follow `${CLAUDE_SKILL_DIR}/agents/doc-enrichment.md`
 
-Example prompt:
+Always use this prompt template:
 
 ```
-Generate OVERVIEW.md and EXAMPLES.md for the package at:
-  Documentation: /Users/you/.pubdoc/cache/dio/dio-5.3.x
-
-Read and follow ${CLAUDE_SKILL_DIR}/agents/doc-enrichment.md.
+Generate OVERVIEW.md and EXAMPLES.md for the package at <documentation-path>.
+Read and follow this for additional instructions: ${CLAUDE_SKILL_DIR}/agents/doc-enrichment.md.
 ```
 
 If you cannot spawn a subagent, check each package for a missing `OVERVIEW.md`
@@ -82,15 +79,15 @@ If you can use a built-in read-only agent optimized for searching and analyzing
 codebases (e.g., Explore agent), use it here. If you cannot spawn a subagent,
 read and follow `agents/doc-explorer.md` yourself.
 
-Example prompts:
+Always use this prompt template:
 
 ```
-Read the documentation at /Users/you/.pubdoc/cache/app_links/app_links-5.3.x/
-and explain how to set up deep link handling on Android and iOS.
+Read the package documentation and answer the query:
 
-Read the documentation at /Users/you/.pubdoc/cache/dio/dio-5.3.x/
-and describe the interceptor API: what parameters it accepts, how to chain
-multiple interceptors, and common patterns.
+- Documentation: <documentation-path>
+- Query: <describe what you want to know about the package>
+
+Read and follow this for additional instructions: ${CLAUDE_SKILL_DIR}/agents/doc-explorer.md.
 ```
 
 Wait for the findings, then use them to proceed with your task.

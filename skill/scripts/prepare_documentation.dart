@@ -127,8 +127,17 @@ void main(List<String> args) async {
         docExamplesFile.deleteSync();
       }
 
-      // Copy source example/ if it exists
       if (source != null) {
+        // Copy source README.md as fallback if documentation dir lacks one
+        final docReadme = File('$documentation/README.md');
+        if (!docReadme.existsSync()) {
+          final srcReadme = File('$source/README.md');
+          if (srcReadme.existsSync()) {
+            srcReadme.copySync(docReadme.path);
+          }
+        }
+
+        // Copy source example/ if it exists
         final srcExampleDir = Directory('$source/example');
         if (srcExampleDir.existsSync()) {
           await _copyDirectory(srcExampleDir, docExampleDir);
