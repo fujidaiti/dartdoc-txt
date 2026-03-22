@@ -38,8 +38,7 @@ Read the JSON output:
 }
 ```
 
-If `error` is non-null, read `references/troubleshooting.md` and follow its
-guidance.
+If `error` is non-null, see the Troubleshooting section below.
 
 ## Step 2: Enrich documentation (if needed)
 
@@ -96,3 +95,20 @@ Wait for the findings, then use them to proceed with your task.
 
 Rely on the subagent's findings — do not read the documentation yourself unless
 the subagent's report is insufficient and further reading is clearly needed.
+
+---
+
+## Troubleshooting
+
+### pubdoc not found
+
+Install pubdoc as a global executable:
+
+```shell
+dart install pubdoc
+```
+
+### Non-empty `errors` array
+
+When using `--json`, errors appear in the `errors` array of the JSON output
+rather than on stderr. Show the error messages to the user and stop.
