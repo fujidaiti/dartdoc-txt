@@ -888,29 +888,6 @@ void main() {
       );
     });
 
-    test('doc generation failure throws an exception', () {
-      when(
-        generator.generate(
-          sourcePath: anyNamed('sourcePath'),
-          outputDir: anyNamed('outputDir'),
-        ),
-      ).thenThrow(Exception('dartdoc crashed'));
-
-      env.pubspec.addDependency('dio', '5.3.2');
-      env.pubGet();
-
-      expect(
-        () => command.run(packageNames: ['dio']),
-        throwsA(
-          isA<PubdocException>().having(
-            (e) => e.message,
-            'message',
-            contains('Failed to generate documentation for dio'),
-          ),
-        ),
-      );
-    });
-
     test('package not in package_config.json throws an exception', () {
       env.pubspec.addDependency('dio', '5.3.2');
       env.pubspec.addDependency('missing_pkg', '1.0.0');

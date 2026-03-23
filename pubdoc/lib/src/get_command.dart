@@ -187,6 +187,7 @@ class GetCommand {
     required this.env,
     this.strategy = ResolutionStrategy.loosePatch,
     this.useCache = true,
+    this.sdkDir,
     DocGenerator? generator,
   }) : _generator = generator;
   final ProjectContext project;
@@ -194,6 +195,7 @@ class GetCommand {
   final Environment env;
   final ResolutionStrategy strategy;
   final bool useCache;
+  final String? sdkDir;
   final DocGenerator? _generator;
 
   /// Runs the get command for the given [packageNames] and returns a
@@ -252,7 +254,7 @@ class GetCommand {
     // 5. Generate if needed.
     if (cacheResult.action != CacheAction.reuse) {
       log.info('Generating documentation for $packageName $docVersion...');
-
+      // TODO: Get dart/flutter executable and run pub-get in the temp dir instead of manually constructing package_config.json.
       // Copy the package source into a temp directory and synthesize
       // .dart_tool/package_config.json so the analyzer can resolve
       // dependency types (prevents them from appearing as `dynamic`).
@@ -286,11 +288,11 @@ class GetCommand {
         await generator.generate(
           sourcePath: tempDir.path,
           outputDir: cacheResult.cacheDir,
+          sdkDir: sdkDir,
         );
       } on Exception catch (e) {
-        throw PubdocException(
-          'Failed to generate documentation for $packageName: $e',
-        );
+        log.severe('An error occurred while processing $packageName:\n$e');
+        rethrow;
       } finally {
         if (tempDir.existsSync()) {
           tempDir.deleteSync(recursive: true);

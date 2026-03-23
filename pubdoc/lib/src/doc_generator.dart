@@ -1,6 +1,6 @@
 import 'package:dartdoc_txt/dartdoc_txt.dart';
-
 import 'package:pubdoc/src/environment.dart';
+import 'package:pubdoc/src/exceptions.dart';
 import 'package:pubdoc/src/logger.dart';
 
 class DocGenerator {
@@ -12,6 +12,7 @@ class DocGenerator {
   Future<void> generate({
     required String sourcePath,
     required String outputDir,
+    String? sdkDir,
   }) async {
     // Clear output dir if it already exists (regeneration case).
     final outDir = env.fs.directory(outputDir);
@@ -20,9 +21,24 @@ class DocGenerator {
     }
 
     log.fine('Analyzing package at $sourcePath...');
-    await generateDocs(
-      outputDir: outputDir,
-      options: RenderOptions(packageRoot: sourcePath),
-    );
+    try {
+      await generateDocs(
+        outputDir: outputDir,
+        options: RenderOptions(packageRoot: sourcePath, sdkDir: sdkDir),
+      );
+      // Intentionally catch errors to handle a null type cast error
+      // that may be thrown by DartdocOptionContext.sdkDir
+      // ignore: avoid_catching_errors
+    } on Error {
+      if (sdkDir == null) {
+        throw PubdocException(
+          'Failed to generate documentation for $sourcePath. '
+          'This may be due to lack of --sdk-dir argument, which is required '
+          'when running pubdoc as a standalone executable.',
+        );
+      } else {
+        rethrow;
+      }
+    }
   }
 }

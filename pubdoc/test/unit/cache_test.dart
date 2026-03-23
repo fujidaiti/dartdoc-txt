@@ -1,31 +1,24 @@
-import 'package:file/memory.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubdoc/src/cache.dart';
 import 'package:pubdoc/src/config.dart';
-import 'package:pubdoc/src/environment.dart';
 import 'package:pubdoc/src/version_resolution.dart';
 import 'package:test/test.dart';
 
-class _TestEnvironment implements Environment {
-  _TestEnvironment() : fs = MemoryFileSystem.test();
-
-  @override
-  final MemoryFileSystem fs;
-
-  @override
-  final String toolVersion = '1.0.0';
-
-  @override
-  String? getVariable(String name) => null;
-}
+import '../integration/src/test_environment.dart';
 
 void main() {
-  late _TestEnvironment env;
+  late TestEnvironment env;
   late PubdocConfig config;
 
   setUp(() {
-    env = _TestEnvironment();
-    config = PubdocConfig(homeDir: '/home/test', cacheDir: '/home/test/cache');
+    env = TestEnvironment(
+      projectRoot: '/home/user/project',
+      pubCacheBase: '/home/user/.pub-cache/hosted/pub.dev',
+    );
+    config = PubdocConfig(
+      homeDir: '/home/user',
+      cacheDir: '/home/user/.pubdoc',
+    );
   });
 
   group('CacheManager.checkCache', () {
