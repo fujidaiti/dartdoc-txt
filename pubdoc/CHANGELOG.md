@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.1.3
+
+- Add `--sdk-dir` option to `get` command.
+
 ## 0.1.2
 
 - Support `dart install` for global activation.
