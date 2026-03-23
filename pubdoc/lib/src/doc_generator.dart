@@ -1,5 +1,4 @@
 import 'package:dartdoc_txt/dartdoc_txt.dart';
-
 import 'package:pubdoc/src/environment.dart';
 import 'package:pubdoc/src/logger.dart';
 
@@ -23,10 +22,7 @@ class DocGenerator {
     log.fine('Analyzing package at $sourcePath...');
     await generateDocs(
       outputDir: outputDir,
-      options: RenderOptions(
-        packageRoot: sourcePath,
-        sdkDir: sdkDir ?? env.sdkDir,
-      ),
+      options: RenderOptions(packageRoot: sourcePath, sdkDir: sdkDir),
     );
   }
 }

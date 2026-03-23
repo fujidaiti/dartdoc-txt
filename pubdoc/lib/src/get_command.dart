@@ -254,7 +254,7 @@ class GetCommand {
     // 5. Generate if needed.
     if (cacheResult.action != CacheAction.reuse) {
       log.info('Generating documentation for $packageName $docVersion...');
-
+      // TODO: Get dart/flutter executable and run pub-get in the temp dir instead of manually constructing package_config.json.
       // Copy the package source into a temp directory and synthesize
       // .dart_tool/package_config.json so the analyzer can resolve
       // dependency types (prevents them from appearing as `dynamic`).
