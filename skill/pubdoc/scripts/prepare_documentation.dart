@@ -60,9 +60,20 @@ void main(List<String> args) async {
     _exitWithError('No package names provided');
   }
 
+  final dartExecutable = File(Platform.resolvedExecutable);
+  final dartSdkDir = dartExecutable.parent.parent;
+  if (!dartSdkDir.existsSync()) {
+    _exitWithError('Dart SDK directory not found at ${dartSdkDir.path}');
+  }
+
   try {
-    final dartExecutable = Platform.resolvedExecutable;
-    await Process.run(dartExecutable, [
+    Process.runSync('pubdoc', ['--version']);
+  } on ProcessException {
+    _exitWithError('pubdoc is not installed or not on PATH.');
+  }
+
+  try {
+    await Process.run(dartExecutable.path, [
       'pub',
       'get',
     ], workingDirectory: projectPath);
@@ -76,6 +87,7 @@ void main(List<String> args) async {
       'get',
       '--json=0',
       '--quiet',
+      '--sdk-dir=${dartSdkDir.path}',
       if (projectPath != null) ...['--project', projectPath],
       ...packages,
     ]);
