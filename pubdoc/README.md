@@ -11,26 +11,18 @@ You can find examples of the generated documentation
 
 ## Installation
 
-> [!NOTE]
->
-> Requires Dart SDK 3.10 or higher.
-
-Use [dart install][] to globally activate the tool:
+Add pubdoc as a dev dependency to your project:
 
 ```shell
-dart install pubdoc
+dart pub add pubdoc --dev
 ```
-
-Then, pubdoc will be available as the `pubdoc` command in your terminal.
-
-[dart install]: https://dart.dev/tools/dart-install
 
 ## How to use
 
 The main job of pubdoc is to provide API documentation for the given package.
 
-```console
-pubdoc get <package-name>
+```shell
+dart run pubdoc get <package-name>
 ```
 
 This command automatically detects the versions of the specified packages that

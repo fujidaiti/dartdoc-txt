@@ -112,6 +112,13 @@ class _GetCommand extends Command<int> {
             'Use --no-cache to always regenerate documentation.',
       )
       ..addOption(
+        'sdk-dir',
+        valueHelp: 'path',
+        help:
+            'Path to the Dart SDK directory. '
+            'Auto-detected from the running Dart executable if not specified.',
+      )
+      ..addOption(
         'resolution',
         abbr: 'r',
         valueHelp: 'strategy',
@@ -146,6 +153,7 @@ class _GetCommand extends Command<int> {
     final projectPath = argResults!.option('project') ?? Directory.current.path;
     final project = ProjectContext.from(projectPath, env: env);
     final useCache = argResults!.flag('cache');
+    final sdkDir = argResults!.option('sdk-dir');
     final strategy = switch (argResults!.option('resolution')) {
       'exact' => ResolutionStrategy.exact,
       'loose-minor' => ResolutionStrategy.looseMinor,
@@ -159,6 +167,7 @@ class _GetCommand extends Command<int> {
         env: env,
         strategy: strategy,
         useCache: useCache,
+        sdkDir: sdkDir,
       ).run(packageNames: argResults!.rest);
 
       if (useJson) {

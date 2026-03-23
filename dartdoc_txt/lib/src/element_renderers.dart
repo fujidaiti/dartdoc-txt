@@ -11,11 +11,16 @@ import 'package:path/path.dart' as p;
 class RenderOptions {
   const RenderOptions({
     required this.packageRoot,
+    this.sdkDir,
     this.sourceLineThreshold = 10,
     this.includeSource = true,
     this.fileExtension = 'md',
   });
   final String packageRoot;
+
+  /// Path to the Dart SDK directory. If null, dartdoc will attempt to
+  /// auto-detect it, which may fail when using fvm or non-standard SDK paths.
+  final String? sdkDir;
   final int sourceLineThreshold;
   final bool includeSource;
   final String fileExtension;

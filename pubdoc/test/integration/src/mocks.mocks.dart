@@ -49,11 +49,13 @@ class MockDocGenerator extends _i1.Mock implements _i3.DocGenerator {
   _i4.Future<void> generate({
     required String? sourcePath,
     required String? outputDir,
+    String? sdkDir,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#generate, [], {
               #sourcePath: sourcePath,
               #outputDir: outputDir,
+              #sdkDir: sdkDir,
             }),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),

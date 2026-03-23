@@ -22,6 +22,7 @@ Future<DocDir> buildDocs(RenderOptions options) async {
     options.packageRoot,
     '--no-show-progress',
     '--quiet',
+    if (options.sdkDir != null) ...['--sdk-dir', options.sdkDir!],
   ]);
   if (config == null) {
     throw StateError('Failed to parse dartdoc options.');
