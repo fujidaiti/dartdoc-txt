@@ -31,6 +31,13 @@ Future<void> main(List<String> arguments) async {
       negatable: false,
       help: 'Show usage information.',
     )
+    ..addOption(
+      'sdk-dir',
+      valueHelp: 'path',
+      help:
+          'Path to the Dart SDK directory. '
+          'Auto-detected from the running Dart executable if not specified.',
+    )
     ..addFlag('version', negatable: false, help: 'Print the tool version.');
 
   ArgResults results;
@@ -56,12 +63,14 @@ Future<void> main(List<String> arguments) async {
   final outputDir = results.option('output')!;
   final sourceThreshold = int.parse(results.option('source-threshold')!);
   final includeSource = results.flag('include-source');
+  final sdkDir = results.option('sdk-dir');
 
   log.info('Analyzing package...');
   await generateDocs(
     outputDir: outputDir,
     options: RenderOptions(
       packageRoot: inputDir,
+      sdkDir: sdkDir,
       sourceLineThreshold: sourceThreshold,
       includeSource: includeSource,
     ),

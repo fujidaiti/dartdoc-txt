@@ -187,6 +187,7 @@ class GetCommand {
     required this.env,
     this.strategy = ResolutionStrategy.loosePatch,
     this.useCache = true,
+    this.sdkDir,
     DocGenerator? generator,
   }) : _generator = generator;
   final ProjectContext project;
@@ -194,6 +195,7 @@ class GetCommand {
   final Environment env;
   final ResolutionStrategy strategy;
   final bool useCache;
+  final String? sdkDir;
   final DocGenerator? _generator;
 
   /// Runs the get command for the given [packageNames] and returns a
@@ -286,6 +288,7 @@ class GetCommand {
         await generator.generate(
           sourcePath: tempDir.path,
           outputDir: cacheResult.cacheDir,
+          sdkDir: sdkDir,
         );
       } on Exception catch (e) {
         throw PubdocException(

@@ -12,6 +12,7 @@ class DocGenerator {
   Future<void> generate({
     required String sourcePath,
     required String outputDir,
+    String? sdkDir,
   }) async {
     // Clear output dir if it already exists (regeneration case).
     final outDir = env.fs.directory(outputDir);
@@ -22,7 +23,10 @@ class DocGenerator {
     log.fine('Analyzing package at $sourcePath...');
     await generateDocs(
       outputDir: outputDir,
-      options: RenderOptions(packageRoot: sourcePath, sdkDir: env.sdkDir),
+      options: RenderOptions(
+        packageRoot: sourcePath,
+        sdkDir: sdkDir ?? env.sdkDir,
+      ),
     );
   }
 }

@@ -40,6 +40,8 @@ Usage: dartdox [options]
                              (defaults to "10")
     --[no-]include-source    Include source code snippets.
                              (defaults to on)
+    --sdk-dir=<path>         Path to the Dart SDK directory.
+                             Auto-detected if not specified.
 -h, --help                   Show usage information.
     --version                Print the tool version.
 ```
