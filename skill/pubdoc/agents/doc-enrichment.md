@@ -69,7 +69,7 @@ Use this template for OVERVIEW.md, replacing `{{variable}}`s with actual content
 
 ## Table of Contents
 
-<!-- Add a table of content of this document including sections in the original README. Add brief descriptions for each section. No internal link is needed. -->
+<!-- Add a TOC of this document including sections both in the template and the original README. Add brief descriptions for each section. No internal link is needed. -->
 
 ## Overview
 

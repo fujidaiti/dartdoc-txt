@@ -2,29 +2,30 @@
 
 ## Table of Contents
 
-- Overview: Introduction to the args package and its purpose
-- Defining options: How to create and configure options and flags
-- Parsing arguments: How to parse command-line arguments
-- Specifying options: Command-line syntax for options and flags
-- Defining commands: How to create and organize commands
-- Dispatching Commands: Using CommandRunner and Command classes for command-based applications
+- Overview: High-level description of the package and its purpose
+- Defining options: How to create ArgParser instances and define options, flags, and multi-options
+- Parsing arguments: How to use ArgParser.parse() to process command-line arguments
+- Specifying options: How to pass options and flags on the command line using GNU/POSIX style
+- Defining commands: How to create command-based CLI applications with subcommands
+- Dispatching Commands: How to use CommandRunner and Command classes for structured command-based applications
 - Displaying usage: How to generate and display help text
+- Reading Guide: Navigation guide for the documentation structure
 
 ## Overview
 
 Parses raw command-line arguments into a set of options and values.
 
-This library supports GNU and POSIX style options, and it works in both server-side and client-side apps.
+This library supports [GNU][] and [POSIX][] style options, and it works in both server-side and client-side apps.
 
 ## Defining options
 
-First create an ArgParser:
+First create an [ArgParser][]:
 
 ```dart
 var parser = ArgParser();
 ```
 
-Then define a set of options on that parser using addOption() and addFlag(). Here's the minimal way to create an option named "name":
+Then define a set of options on that parser using [addOption()][addOption] and [addFlag()][addFlag]. Here's the minimal way to create an option named "name":
 
 ```dart
 parser.addOption('name');
@@ -42,7 +43,7 @@ Flag options, by default, accept a 'no-' prefix to negate the option. You can di
 parser.addFlag('name', negatable: false);
 ```
 
-Note: From here on out, "option" refers to both regular options and flags. In cases where the distinction matters, we'll use "non-flag option."
+*Note:* From here on out, "option" refers to both regular options and flags. In cases where the distinction matters, we'll use "non-flag option."
 
 Options can have an optional single-character abbreviation, specified with the `abbr` parameter:
 
@@ -60,7 +61,7 @@ parser.addFlag('verbose', defaultsTo: false);
 
 The default value for non-flag options can be any string. For flags, it must be a `bool`.
 
-To validate a non-flag option, you can use the `allowed` parameter to provide an allowed set of values. When you do, the parser throws an ArgParserException if the value for an option is not in the allowed set. Here's an example of specifying allowed values:
+To validate a non-flag option, you can use the `allowed` parameter to provide an allowed set of values. When you do, the parser throws an [ArgParserException][] if the value for an option is not in the allowed set. Here's an example of specifying allowed values:
 
 ```dart
 parser.addOption('mode', allowed: ['debug', 'release']);
@@ -77,7 +78,7 @@ parser.addFlag('verbose', callback: (verbose) {
 
 The callbacks for all options are called whenever a set of arguments is parsed. If an option isn't provided in the args, its callback is passed the default value, or `null` if no default value is set.
 
-If an option is `mandatory` but not provided, the results object throws an `ArgumentError` on retrieval.
+If an option is `mandatory` but not provided, the results object throws an [ArgumentError][] on retrieval.
 
 ```dart
 parser.addOption('mode', mandatory: true);
@@ -85,7 +86,7 @@ parser.addOption('mode', mandatory: true);
 
 ## Parsing arguments
 
-Once you have an ArgParser set up with some options and flags, you use it by calling ArgParser.parse() with a set of arguments:
+Once you have an [ArgParser][] set up with some options and flags, you use it by calling [ArgParser.parse()][parse] with a set of arguments:
 
 ```dart
 var results = parser.parse(['some', 'command', 'line', 'args']);
@@ -100,7 +101,7 @@ main(List<String> args) {
 }
 ```
 
-However, you can pass in any list of strings. The `parse()` method returns an instance of ArgResults, a map-like object that contains the values of the parsed options.
+However, you can pass in any list of strings. The `parse()` method returns an instance of [ArgResults][], a map-like object that contains the values of the parsed options.
 
 ```dart
 var parser = ArgParser();
@@ -112,13 +113,13 @@ print(results.option('mode')); // debug
 print(results.flag('verbose')); // true
 ```
 
-By default, the `parse()` method allows additional flags and options to be passed after positional parameters unless `--` is used to indicate that all further parameters will be positional. The positional arguments go into ArgResults.rest.
+By default, the `parse()` method allows additional flags and options to be passed after positional parameters unless `--` is used to indicate that all further parameters will be positional. The positional arguments go into [ArgResults.rest][rest].
 
 ```dart
 print(results.rest); // ['something', 'else']
 ```
 
-To stop parsing options as soon as a positional argument is found, `allowTrailingOptions: false` when creating the ArgParser.
+To stop parsing options as soon as a positional argument is found, use `allowTrailingOptions: false` when creating the [ArgParser][].
 
 ## Specifying options
 
@@ -208,14 +209,14 @@ In addition to *options*, you can also define *commands*. A command is a named a
 $ git commit -a
 ```
 
-The executable is `git`, the command is `commit`, and the `-a` option is an option passed to the command. You can add a command using the addCommand method:
+The executable is `git`, the command is `commit`, and the `-a` option is an option passed to the command. You can add a command using the [addCommand][] method:
 
 ```dart
 var parser = ArgParser();
 var command = parser.addCommand('commit');
 ```
 
-It returns another ArgParser, which you can then use to define options specific to that command. If you already have an ArgParser for the command's options, you can pass it in:
+It returns another [ArgParser][], which you can then use to define options specific to that command. If you already have an [ArgParser][] for the command's options, you can pass it in:
 
 ```dart
 var parser = ArgParser();
@@ -223,7 +224,7 @@ var command = ArgParser();
 parser.addCommand('commit', command);
 ```
 
-The ArgParser for a command can then define options or flags:
+The [ArgParser][] for a command can then define options or flags:
 
 ```dart
 command.addFlag('all', abbr: 'a');
@@ -253,17 +254,17 @@ Here, both the top-level parser and the `"commit"` command can accept a `"-a"` (
 
 ## Dispatching Commands
 
-If you're writing a command-based application, you can use the CommandRunner and Command classes to help structure it. CommandRunner has built-in support for dispatching to Commands based on command-line arguments, as well as handling `--help` flags and invalid arguments.
+If you're writing a command-based application, you can use the [CommandRunner][] and [Command][] classes to help structure it. [CommandRunner][] has built-in support for dispatching to [Command][]s based on command-line arguments, as well as handling `--help` flags and invalid arguments.
 
-When using the CommandRunner it replaces the ArgParser.
+When using the [CommandRunner][] it replaces the [ArgParser][].
 
 In the following example we build a dart application called `dgit` that takes commands `commit` and `stash`.
 
-The CommandRunner takes an `executableName` which is used to generate the help message.
+The [CommandRunner][] takes an `executableName` which is used to generate the help message.
 
 e.g. `dgit commit -a`
 
-File `dgit.dart`:
+File `dgit.dart`
 
 ```dart
 void main(List<String> args) {
@@ -276,9 +277,9 @@ void main(List<String> args) {
 
 When the above `run(args)` line executes it parses the command line args looking for one of the commands (`commit` or `stash`).
 
-If the CommandRunner finds a matching command then the CommandRunner calls the overridden `run()` method on the matching command (e.g. CommitCommand().run).
+If the [CommandRunner][] finds a matching command then the [CommandRunner][] calls the overridden `run()` method on the matching command (e.g. CommitCommand().run).
 
-Commands are defined by extending the Command class. For example:
+Commands are defined by extending the [Command][] class. For example:
 
 ```dart
 class CommitCommand extends Command {
@@ -304,11 +305,11 @@ class CommitCommand extends Command {
 
 ### CommandRunner Arguments
 
-The CommandRunner allows you to specify both global args as well as command specific arguments (and even sub-command specific arguments).
+The [CommandRunner][] allows you to specify both global args as well as command specific arguments (and even sub-command specific arguments).
 
 #### Global Arguments
 
-Add arguments directly to the CommandRunner to specify global arguments:
+Add arguments directly to the [CommandRunner][] to specify global arguments:
 
 ```dart
 var runner = CommandRunner('dgit',  "A dart implementation of distributed version control.");
@@ -318,7 +319,7 @@ runner.argParser.addFlag('verbose', abbr: 'v', help: 'increase logging');
 
 #### Command specific Arguments
 
-Add arguments to each Command to specify Command specific arguments.
+Add arguments to each [Command][] to specify [Command][] specific arguments.
 
 ```dart
 CommitCommand() {
@@ -330,7 +331,7 @@ CommitCommand() {
 
 ### SubCommands
 
-Commands can also have subcommands, which are added with addSubcommand(). A command with subcommands can't run its own code, so run() doesn't need to be implemented. For example:
+Commands can also have subcommands, which are added with [addSubcommand][]. A command with subcommands can't run its own code, so [run][] doesn't need to be implemented. For example:
 
 ```dart
 class StashCommand extends Command {
@@ -346,7 +347,7 @@ class StashCommand extends Command {
 
 ### Default Help Command
 
-CommandRunner automatically adds a `help` command that displays usage information for commands, as well as support for the `--help` flag for all commands. If it encounters an error parsing the arguments or processing a command, it throws a UsageException; your `main()` method should catch these and print them appropriately. For example:
+[CommandRunner][] automatically adds a `help` command that displays usage information for commands, as well as support for the `--help` flag for all commands. If it encounters an error parsing the arguments or processing a command, it throws a [UsageException][]; your `main()` method should catch these and print them appropriately. For example:
 
 ```dart
 runner.run(arguments).catchError((error) {
@@ -385,7 +386,7 @@ parser.addOption('arch', help: 'The architecture to compile for',
     });
 ```
 
-To display the help, use the usage getter:
+To display the help, use the [usage][usage] getter:
 
 ```dart
 print(parser.usage);
@@ -410,7 +411,7 @@ Use this guide to find what you need without exploring every file.
 
 ### Documentation structure
 
-Here's an overview of the the documentation structure at /Users/fujidaiti/.pubdoc/cache/args/args-2.7.x:
+Here's an overview of the documentation structure at /Users/fujidaiti/.pubdoc/cache/args/args-2.7.x/:
 
 - `OVERVIEW.md`: this file.
 - `INDEX.md`: full API listing — all libraries, classes, and functions.
@@ -419,8 +420,11 @@ Here's an overview of the the documentation structure at /Users/fujidaiti/.pubdo
 - `args/<ClassName>/<ClassName>.md`: class overview — constructors, fields, and methods of args library.
 - `args/<ClassName>/<ClassName>-<methodName>.md`: detail page for a large method.
 - `args/top-level-functions/top-level-functions.md`: top-level functions overview of args library.
+- `args/top-level-functions/<topLevelFunctionName>.md`: detail page for a large top-level function.
 - `args/top-level-properties/top-level-properties.md`: top-level properties overview of args library.
+- `args/top-level-properties/<topLevelProperty>.md`: detail page for a large top-level property.
 - `args/typedefs/typedefs.md`: overview of typedefs in args library.
+- `args/typedefs/<TypedefName>.md`: detail page for a large typedef.
 - `command_runner/<ClassName>/<ClassName>.md`: class overview — constructors, fields, and methods of command_runner library.
 - `command_runner/<ClassName>/<ClassName>-<methodName>.md`: detail page for a large method.
 
@@ -431,3 +435,22 @@ Note that the detail pages are not always present - only for items that require 
 - "How do I do X?" — check EXAMPLES.md for usage patterns, then drill into the relevant class/method pages
 - "What does class/method Y do?" — go directly to the class or method page under `args/<ClassName>/<ClassName>.md` or `command_runner/<ClassName>/<ClassName>.md`
 - "What API does the package expose?" — read INDEX.md for the full library listing
+- "Debug this error about Z" — look for the class/method mentioned in the error, check the API documentation for that class or method
+
+
+[posix]: https://pubs.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap12.html#tag_12_02
+[gnu]: https://www.gnu.org/prep/standards/standards.html#Command_002dLine-Interfaces
+[ArgParser]: https://pub.dev/documentation/args/latest/args/ArgParser/ArgParser.html
+[ArgParserException]: https://pub.dev/documentation/args/latest/args/ArgParserException-class.html
+[ArgResults]: https://pub.dev/documentation/args/latest/args/ArgResults-class.html
+[CommandRunner]: https://pub.dev/documentation/args/latest/command_runner/CommandRunner-class.html
+[Command]: https://pub.dev/documentation/args/latest/command_runner/Command-class.html
+[UsageException]: https://pub.dev/documentation/args/latest/command_runner/UsageException-class.html
+[addOption]: https://pub.dev/documentation/args/latest/args/ArgParser/addOption.html
+[addFlag]: https://pub.dev/documentation/args/latest/args/ArgParser/addFlag.html
+[parse]: https://pub.dev/documentation/args/latest/args/ArgParser/parse.html
+[rest]: https://pub.dev/documentation/args/latest/args/ArgResults/rest.html
+[addCommand]: https://pub.dev/documentation/args/latest/args/ArgParser/addCommand.html
+[usage]: https://pub.dev/documentation/args/latest/args/ArgParser/usage.html
+[addSubcommand]: https://pub.dev/documentation/args/latest/command_runner/Command/addSubcommand.html
+[run]: https://pub.dev/documentation/args/latest/command_runner/CommandRunner/run.html
