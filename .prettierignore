@@ -5,3 +5,4 @@ dartdoc_txt/test/integration/golden/
 # Word wrap should not be applied to skill files.
 skill/plugin-experimental/doc-explorer/
 skill/plugin/doc-explorer/
+skill/example/
