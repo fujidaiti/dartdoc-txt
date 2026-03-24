@@ -3,8 +3,9 @@ import 'dart:io';
 
 /// Prepares documentation for the given package names by:
 ///
-/// 1. Running `dart pub get` to ensure dependencies are up-to-date.
-/// 2. Running `pubdoc get` to generate documentation (if needed).
+/// 1. Running `dart pub add` to ensure the packages are included in
+///    project's dependencies and they are up-to-date.
+/// 2. Running `pubdoc get` to retrive the documentation.
 ///
 /// Usage:
 /// ```shell
@@ -34,7 +35,7 @@ import 'dart:io';
 /// ```
 ///
 /// Always exits with code 0; errors are reported in the JSON.
-void main(List<String> args) async {
+void main(List<String> args) {
   String? projectPath;
   final packages = <String>[];
 
@@ -53,65 +54,10 @@ void main(List<String> args) async {
     _exitWithError('No package names provided');
   }
 
+  _ensurePubdocAvailable();
   final dartExecutable = File(Platform.resolvedExecutable);
-  final dartSdkDir = dartExecutable.parent.parent;
-  if (!dartSdkDir.existsSync()) {
-    _exitWithError('Dart SDK directory not found at ${dartSdkDir.path}');
-  }
-
-  try {
-    Process.runSync('pubdoc', ['--version']);
-  } on ProcessException {
-    _exitWithError('pubdoc is not installed or not on PATH.');
-  }
-
-  final ProcessResult pubAddResult;
-  try {
-    pubAddResult = await Process.run(dartExecutable.path, [
-      'pub',
-      'add',
-      ...packages,
-    ], workingDirectory: projectPath);
-  } on ProcessException catch (exception) {
-    _exitWithError('Failed to run "dart pub add": $exception');
-  }
-
-  if (pubAddResult.exitCode != 0) {
-    if (packages.length == 1) {
-      _exitWithError(
-        'The specified package ${packages.single} was not found in pub.dev, '
-        'or the package name is incorrect.',
-      );
-    } else {
-      _exitWithError(
-        'Some of the specified packages were not found in pub.dev, '
-        'or the package names are incorrect.',
-      );
-    }
-  }
-
-  final ProcessResult pubdocGetResult;
-  try {
-    pubdocGetResult = await Process.run('pubdoc', [
-      'get',
-      '--json=0',
-      '--quiet',
-      '--sdk-dir=${dartSdkDir.path}',
-      if (projectPath != null) ...['--project', projectPath],
-      ...packages,
-    ]);
-  } on ProcessException catch (e) {
-    _exitWithError('Failed to run "pubdoc get": $e');
-  }
-
-  // Parse JSON output
-  Map<String, dynamic> pubdocJson;
-  try {
-    pubdocJson =
-        jsonDecode(pubdocGetResult.stdout as String) as Map<String, dynamic>;
-  } on FormatException catch (e) {
-    _exitWithError('Failed to parse pubdoc JSON output: $e');
-  }
+  _pubAdd(dartExecutable, packages, projectPath);
+  final pubdocJson = _pubdocGet(dartExecutable, packages, projectPath);
 
   // Check for errors in pubdoc output
   final errors = pubdocJson['errors'];
@@ -136,6 +82,66 @@ void main(List<String> args) async {
   }
 
   stdout.writeln(jsonEncode({'packages': resultPackages, 'error': null}));
+}
+
+void _ensurePubdocAvailable() {
+  bool available;
+  try {
+    available = Process.runSync('pubdoc', ['--version']).exitCode == 0;
+  } on ProcessException {
+    available = false;
+  }
+  if (!available) {
+    _exitWithError('pubdoc does not exist or is not found in PATH.');
+  }
+}
+
+void _pubAdd(File dartExecutable, List<String> packages, String? projectPath) {
+  final result = Process.runSync(dartExecutable.path, [
+    'pub',
+    'add',
+    ...packages,
+  ], workingDirectory: projectPath);
+
+  if (result.exitCode != 0) {
+    if (packages.length == 1) {
+      _exitWithError(
+        'The specified package ${packages.single} was not found in pub.dev, '
+        'or the package name is incorrect.',
+      );
+    } else {
+      _exitWithError(
+        'Some of the specified packages were not found in pub.dev, '
+        'or the package names are incorrect.',
+      );
+    }
+  }
+}
+
+Map<String, dynamic> _pubdocGet(
+  File dartExecutable,
+  List<String> packages,
+  String? projectPath,
+) {
+  final dartSdkDir = dartExecutable.parent.parent;
+  if (!dartSdkDir.existsSync()) {
+    _exitWithError('Dart SDK directory not found at ${dartSdkDir.path}');
+  }
+
+  final result = Process.runSync('pubdoc', [
+    'get',
+    '--json=0',
+    '--quiet',
+    '--sdk-dir=${dartSdkDir.path}',
+    if (projectPath != null) ...['--project', projectPath],
+    ...packages,
+  ]);
+
+  try {
+    return jsonDecode(result.stdout as String) as Map<String, dynamic>;
+  } on FormatException {
+    _exitWithError('Failed to parse pubdoc JSON output: ${result.stdout}');
+  }
 }
 
 Never _exitWithError(String message) {
