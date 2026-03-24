@@ -4,8 +4,8 @@ A [Claude Code skill](https://docs.anthropic.com/en/docs/claude-code/skills)
 that answers questions about Dart/Flutter packages using version-accurate
 documentation generated from the project's actual dependencies.
 
-See [CHAT.log](CHAT.log) for an example conversation with Claude Code
-demonstrating the skill in action.
+See [CHAT.log](example/CHAT.example) for an example conversation with Claude
+Code demonstrating the skill in action.
 
 ## Why
 

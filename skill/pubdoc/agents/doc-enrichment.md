@@ -62,12 +62,14 @@ Then, write `<documentation>/OVERVIEW.md` using the template below. Follow these
   - Links to ecosystem/related repos that aren't about how to use this package
   - Background commentary ("The story behind this package…")
 
-Here's the template for OVERVIEW.md (replace `{{variable}}`s with actual content):
+Use this template for OVERVIEW.md, replacing `{{variable}}`s with actual content:
 
 ````markdown
 # {{package-name}}
 
-<!-- Insert a table of content of this document including sections in the original README. No internal link is needed. -->
+## Table of Contents
+
+<!-- Add a table of content of this document including sections in the original README. Add brief descriptions for each section. No internal link is needed. -->
 
 ## Overview
 
@@ -79,23 +81,23 @@ Use this guide to find what you need without exploring every file.
 
 ### Documentation structure
 
-Here's the structure of the documentation at {{documentation-root}}:
+Here's an overview of the the documentation structure at {{documentation-root}}:
 
-<!-- Eliminate items if they don't exist -->
+<!-- Update paths or descriptions to match the actual documentation if needed. Keep the guide abstract; do not list all files or directories. -->
 
 - `OVERVIEW.md`: this file.
 - `INDEX.md`: full API listing — all libraries, classes, and functions.
 - `EXAMPLES.md`: curated code examples with explanations.
 - `example/`: raw example source files.
 - `topics/<TopicName>.md`: additional notes and guides on specific topics.
-- `<library>/<ClassName>/<ClassName>.md`: class overview — constructors, fields, and methods.
-- `<library>/<ClassName>/<ClassName>-<methodName>.md`: detail page for a large method.
-- `<library>/top-level-functions/top-level-functions.md`: top-level functions overview.
-- `<library>/top-level-functions/<topLevelFunctionName>.md`: detail page for a large top-level function.
-- `<library>/top-level-properties/top-level-properties.md`: top-level properties overview.
-- `<library>/top-level-properties/<topLevelProperty>.md`: detail page for a large top-level property.
-- `<library>/typedefs/typedefs.md`: overview of typedefs in this library.
-- `<library>/typedefs/<TypedefName>.md`: detail page for a large typedef.
+- `{{library}}/<ClassName>/<ClassName>.md`: class overview — constructors, fields, and methods of {{library}} library.
+- `{{library}}/<ClassName>/<ClassName>-<methodName>.md`: detail page for a large method.
+- `{{library}}/top-level-functions/top-level-functions.md`: top-level functions overview of {{library}} library.
+- `{{library}}/top-level-functions/<topLevelFunctionName>.md`: detail page for a large top-level function.
+- `{{library}}/top-level-properties/top-level-properties.md`: top-level properties overview of {{library}} library.
+- `{{library}}/top-level-properties/<topLevelProperty>.md`: detail page for a large top-level property.
+- `{{library}}/typedefs/typedefs.md`: overview of typedefs in {{library}} library.
+- `{{library}}/typedefs/<TypedefName>.md`: detail page for a large typedef.
 
 Note that the detail pages are not always present - only for items that require more than a few sentences to explain. It is recommended to read the overview pages first such as `<ClassName>.md` or `top-level-functions.md` to get a sense of the API, then drill into detail pages as needed.
 
