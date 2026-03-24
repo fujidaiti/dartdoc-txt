@@ -1,6 +1,6 @@
 {
-  "name": "pubdoc-skill-experimental",
-  "description": "Experimental version of the pubdoc-skill plugin.",
+  "name": "pubdoc-skills-experimental",
+  "description": "Experimental version of the pubdoc-skills plugin.",
   "version": "0.1.0",
   "author": {
     "name": "Daichi Fujita"

@@ -1,6 +1,6 @@
 {
-  "name": "pubdoc-skill",
-  "description": "A skill to manage and explore Dart and Flutter documentation via pubdoc.",
+  "name": "pubdoc-skills",
+  "description": "Skills to manage and explore Dart and Flutter documentation using pubdoc.",
   "version": "0.1.0",
   "author": {
     "name": "Daichi Fujita"
