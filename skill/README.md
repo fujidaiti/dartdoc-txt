@@ -167,8 +167,7 @@ future queries:
   non-technical content and cosmetic elements such as HTML tags; also includes a
   reading guide to the documentation.
 
-- `EXAMPLES.md`: a summary of the example code in the package's `example/`
-  directory, if it exists.
+- `EXAMPLES.md`: a summary of the package's `example/` directory, if it exists.
 
 You can find examples of these summary files in [here](example).
 
