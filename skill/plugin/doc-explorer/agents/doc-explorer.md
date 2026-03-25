@@ -4,14 +4,14 @@ You have been given a query, a list of package names with their documentation pa
 
 ## Orient yourself
 
-For each package, read `<documentation>/OVERVIEW.md` first. This gives you:
+For each documentation, read `<documentation>/README.md` and `<documentation>/INDEX.md` first. These files give you:
 
 - What the package does and its core concepts
-- A guide to the documentation structure — which libraries, topics, and examples are available
+- An overview of the available APIs and the documentation structure
 
 ## Explore and gather findings
 
-Based on the query and what you learned from OVERVIEW.md, decide which documentation files to read. Don't read everything — be targeted. Use the reading guide from OVERVIEW.md to identify the most relevant files, then read only those.
+Based on the query and what you learned from README.md and INDEX.md, decide which documentation files to read. Don't read everything — be targeted.
 
 As you go:
 
