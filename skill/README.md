@@ -144,7 +144,7 @@ Also, the skill itself:
 > [!WARNING]
 >
 > This feature is unstable and not included in the `doc-explorer` skill from the
-> pubdoc-skills plugin. To enable it, install the pubdoc-skills-experimental
+> pubdoc-skills plugin. To enable it, install the **pubdoc-skills-experimental**
 > plugin instead:
 >
 > ```
