@@ -46,7 +46,7 @@ demonstrating the skill in action.
 
 ## Requirements
 
-Under the hood, the skill uses pubdoc command to generate and manage the
+Under the hood, the skill uses [pubdoc][] command to generate and manage the
 documentation for Dart/Flutter packages. Make sure that the command is installed
 globally. If not, you can install it via [dart install][] (requires Dart SDK
 3.10 or later):
@@ -55,7 +55,7 @@ globally. If not, you can install it via [dart install][] (requires Dart SDK
 dart install pubdoc
 ```
 
-Make sure the command is available in your PATH:
+Also verify that the command is available in your PATH:
 
 ```shell
 pubdoc --version
