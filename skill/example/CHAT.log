@@ -1,0 +1,312 @@
+ ▐▛███▜▌   Claude Code v2.1.76
+▝▜█████▛▘  Opus 4.6 · Claude Pro
+  ▘▘ ▝▝    ~/Dev/pubdoc-tools
+
+❯ how can i parse cli arguments using args pacakge?
+
+⏺ Skill(pubdoc-skills:doc-explorer)
+  ⎿  Successfully loaded skill
+
+                                                                                                                                01:27 PM claude-opus-4-6
+⏺ Let me look up the args package documentation for you.
+
+⏺ Search(pattern: "**/pubspec.yaml")
+  ⎿  Found 15 files (ctrl+o to expand)
+
+⏺ Search(pattern: "^\s+args:")
+  ⎿  Found 4 lines (ctrl+o to expand)
+
+⏺ Bash(fvm dart run /Users/fujidaiti/Dev/pubdoc-tools/skill/plugin/doc-explorer/scripts/prepare_documentation.dart --project
+      /Users/fujidaiti/Dev/pubdoc-tools/pubdoc args)
+  ⎿  {
+       "packages": {
+         "args": {
+           "documentation": "/Users/fujidaiti/.pubdoc/cache/args/args-2.7.x"
+         }
+       },
+       "error": null
+     }
+
+⏺ Explore(Explore args package docs) Haiku 4.5
+  ⎿  Prompt:
+       Read the package documentation and answer the query:
+
+       - Documentation: /Users/fujidaiti/.pubdoc/cache/args/args-2.7.x
+       - Query: How to parse CLI arguments using the args package? Show the main classes, how to define options/flags, and how to parse arguments. Include
+       practical code examples.
+
+       Read and follow this for additional instructions: /Users/fujidaiti/Dev/pubdoc-tools/skill/plugin/doc-explorer/agents/doc-explorer.md.
+  ⎿  Read(/Users/fujidaiti/Dev/pubdoc-tools/skill/plugin/doc-explorer/agents/doc-explorer.md)
+  ⎿  Bash(ls -la "/Users/fujidaiti/.pubdoc/cache/args/args-2.7.x" | head -20)
+  ⎿  Read(/Users/fujidaiti/.pubdoc/cache/args/args-2.7.x/README.md)
+  ⎿  Read(/Users/fujidaiti/.pubdoc/cache/args/args-2.7.x/INDEX.md)
+  ⎿  Read(/Users/fujidaiti/.pubdoc/cache/args/args-2.7.x/args/ArgParser/ArgParser.md)
+  ⎿  Read(/Users/fujidaiti/.pubdoc/cache/args/args-2.7.x/args/ArgResults/ArgResults.md)
+  ⎿  Response:
+       Perfect! I now have all the information needed to provide a comprehensive answer. Let me compile the documentation findings:
+
+       How to Parse CLI Arguments Using the Args Package
+
+       Based on the args 2.7.x documentation, here's a comprehensive guide to parsing command-line arguments:
+
+       Main Classes
+
+       1. ArgParser - The core class for defining and parsing command-line arguments
+       2. ArgResults - The result object containing parsed values returned from ArgParser.parse()
+       3. CommandRunner - High-level class for building command-based applications (optional)
+       4. Command - Base class for defining individual commands (used with CommandRunner)
+
+       Defining Options and Flags
+
+       Creating an ArgParser
+
+       var parser = ArgParser();
+       // Optional: control trailing options and line wrapping
+       var parser = ArgParser(
+         allowTrailingOptions: false,  // stop parsing after first positional arg
+         usageLineLength: 80  // wrap help text at 80 characters
+       );
+
+       Adding Flags (Boolean Options)
+
+       Flags represent boolean values that can be true or false:
+
+       parser.addFlag('verbose', abbr: 'v');  // --verbose or -v
+       parser.addFlag('verbose', negatable: false);  // disable --no-verbose
+       parser.addFlag('verbose', defaultsTo: true);  // default is true
+       parser.addFlag('verbose', help: 'Show verbose output');  // help text
+
+       Adding String Options
+
+       Options that accept string values:
+
+       parser.addOption('mode', abbr: 'm');  // --mode=value or --mode value
+       parser.addOption('mode', defaultsTo: 'debug');  // default value
+       parser.addOption('mode', allowed: ['debug', 'release']);  // validate values
+       parser.addOption('mode', valueHelp: 'MODE');  // help text label
+       parser.addOption('mode', mandatory: true);  // required option
+       parser.addOption('mode', help: 'Compiler mode');  // description
+
+       Adding Multi-Options
+
+       Options that can be specified multiple times:
+
+       parser.addMultiOption('include');  // --include a --include b
+       parser.addMultiOption('include', splitCommas: true);  // --include a,b allowed
+       parser.addMultiOption('include', defaultsTo: []);  // default empty list
+
+       Adding Commands
+
+       For hierarchical command structures (like git commit):
+
+       var commitCmd = parser.addCommand('commit');
+       commitCmd.addFlag('all', abbr: 'a');
+
+       Parsing Arguments
+
+       var results = parser.parse(['--mode', 'debug', '--verbose', 'rest', 'args']);
+
+       For use in main():
+       void main(List<String> args) {
+         var parser = ArgParser();
+         // ... define options ...
+         var results = parser.parse(args);
+       }
+
+       Accessing Parsed Values
+
+       Use the ArgResults object returned by parse():
+
+       // Get flag value (boolean)
+       bool verbose = results.flag('verbose');
+
+       // Get option value (string or null)
+       String? mode = results.option('mode');
+
+       // Get multi-option values (list of strings)
+       List<String> includes = results.multiOption('include');
+
+       // Get remaining unparsed arguments
+       List<String> remaining = results.rest;
+
+       // Check if option was explicitly provided
+       bool wasParsed = results.wasParsed('mode');
+
+       // Get command that was selected
+       ArgResults? command = results.command;
+       if (command != null) {
+         print('Command: ${command.name}');
+         print('All: ${command.flag('all')}');
+       }
+
+       // Access via index operator (less type-safe)
+       var value = results['mode'];
+
+       Practical Examples
+
+       Basic Compiler Script
+
+       void main(List<String> args) {
+         var parser = ArgParser();
+         parser.addOption('mode',
+             abbr: 'm',
+             defaultsTo: 'debug',
+             allowed: ['debug', 'release'],
+             help: 'Compilation mode');
+         parser.addFlag('verbose',
+             abbr: 'v',
+             defaultsTo: false,
+             help: 'Enable verbose output');
+
+         var results = parser.parse(args);
+
+         print('Mode: ${results.option('mode')}');
+         if (results.flag('verbose')) {
+           print('Verbose mode enabled');
+         }
+
+         if (results.rest.isNotEmpty) {
+           print('Files to compile: ${results.rest.join(', ')}');
+         }
+       }
+
+       Command-Based Application
+
+       void main(List<String> args) {
+         var parser = ArgParser();
+
+         // Global flag
+         parser.addFlag('verbose', abbr: 'v');
+
+         // Define commands
+         var commit = parser.addCommand('commit');
+         commit.addFlag('all', abbr: 'a');
+
+         var push = parser.addCommand('push');
+         push.addOption('remote', defaultsTo: 'origin');
+
+         var results = parser.parse(args);
+
+         if (results.command != null) {
+           final cmd = results.command!;
+           switch (cmd.name) {
+             case 'commit':
+               handleCommit(cmd.flag('all'));
+               break;
+             case 'push':
+               handlePush(cmd.option('remote')!);
+               break;
+           }
+         }
+       }
+
+       Command-Line Syntax
+
+       Users can invoke your application using various formats:
+
+       # Long options
+       program --mode=debug --verbose
+
+       # Long options with space
+       program --mode debug --verbose
+
+       # Short abbreviations
+       program -m debug -v
+
+       # Combined short flags
+       program -mv
+
+       # Negating flags
+       program --no-verbose
+
+       # Multiple values for multi-options
+       program --include foo --include bar
+       program --include foo,bar
+
+       # Arguments after options
+       program --mode debug file1.dart file2.dart
+
+       # Stop parsing with --
+       program --mode debug -- --not-an-option
+
+       Help Text
+
+       Generate usage information automatically:
+
+       print(parser.usage);
+
+       // With detailed help
+       parser.addOption('arch',
+           help: 'Architecture to compile for',
+           allowedHelp: {
+             'ia32': 'Intel x86',
+             'arm': 'ARM 32-bit chip'
+           });
+
+       This generates formatted help messages suitable for display with --help flags.
+  ⎿  Done (6 tool uses · 35.6k tokens · 24s)
+
+                                                                                                                                01:28 PM claude-opus-4-6
+⏺ Here's how to parse CLI arguments using the args package (v2.7.x):
+
+  Core Classes
+
+  - ArgParser — define options, flags, and commands
+  - ArgResults — access parsed values
+  - CommandRunner / Command — for command-based CLIs (optional)
+
+  Defining Options
+
+  var parser = ArgParser();
+
+  // Boolean flag
+  parser.addFlag('verbose', abbr: 'v', help: 'Enable verbose output');
+
+  // String option
+  parser.addOption('mode',
+      abbr: 'm',
+      defaultsTo: 'debug',
+      allowed: ['debug', 'release'],
+      help: 'Compilation mode');
+
+  // Multi-value option
+  parser.addMultiOption('include', splitCommas: true);
+
+  Parsing & Accessing Values
+
+  void main(List<String> args) {
+    var parser = ArgParser();
+    parser.addFlag('verbose', abbr: 'v');
+    parser.addOption('mode', defaultsTo: 'debug');
+
+    var results = parser.parse(args);
+
+    bool verbose = results.flag('verbose');
+    String? mode = results.option('mode');
+    List<String> remaining = results.rest;
+    bool explicit = results.wasParsed('mode');
+  }
+
+  Commands (subcommand pattern)
+
+  var commit = parser.addCommand('commit');
+  commit.addFlag('all', abbr: 'a');
+
+  var results = parser.parse(args);
+  if (results.command?.name == 'commit') {
+    print(results.command!.flag('all'));
+  }
+
+  Help Text
+
+  print(parser.usage);  // auto-generated from help/allowedHelp metadata
+
+  CLI Syntax Examples
+
+  program --mode=debug --verbose
+  program -m debug -v
+  program --no-verbose          # negate a flag
+  program --include a,b         # multi-option with commas
+  program -- --not-an-option    # stop parsing
+
+✻ Cogitated for 58s

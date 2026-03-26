@@ -131,3 +131,5 @@ $RECYCLE.BIN/
 # Local test output
 tmp/
 
+# Output directory for pubdoc get
+.pubdoc/

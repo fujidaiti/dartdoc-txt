@@ -1,0 +1,11 @@
+{
+  "name": "pubdoc-skills",
+  "description": "Skills to manage and explore API documentation for Dart/Flutter packages",
+  "version": "0.1.0",
+  "author": {
+    "name": "Daichi Fujita"
+  },
+  "repository": "https://github.com/fujidaiti/pubdoc-tools",
+  "keywords": ["dart", "flutter", "documentation"],
+  "skills": ["./doc-explorer"]
+}

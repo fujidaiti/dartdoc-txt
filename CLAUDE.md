@@ -1,0 +1,1 @@
+- **Proactively** use the `pubdoc-skills:doc-explorer` skill.

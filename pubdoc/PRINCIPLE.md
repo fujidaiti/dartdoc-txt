@@ -4,7 +4,7 @@ This document explains how `pubdoc get` provides appropriate version of
 documentation for the given package, and how it manages different versions of
 documentation for different packages.
 
-## Pre-requirements
+## Requirements
 
 pubdoc utilizes the package management mechanism of `dart pub` command to build
 the appropriate version of documentation for the packages. So ensure that the
