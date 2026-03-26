@@ -2,10 +2,20 @@
 
 The [doc-explorer](plugin/doc-explorer) is a [Claude Code skill][] that answers
 questions about Dart/Flutter packages using version-accurate documentation
-provided by the [pubdoc][] command.
+provided by the [pubdoc][] command. Think of it as a local version of
+[Context7][], with some additional benefits:
+
+- **documentation is version-accurate**: up-to-date documentation is not always
+  what you want. The skill ensures that the coding agent reads the documentation
+  for exact package versions your project depends on.
+
+- **context transparency**: Documentation is just a set of plain-text files and
+  stored on your local machine, so you can always see what content will be
+  injected into the agent's context.
 
 [Claude Code skill]: https://docs.anthropic.com/en/docs/claude-code/skills
 [pubdoc]: https://github.com/fujidaiti/pubdoc-tools/tree/main/pubdoc
+[Context7]: https://context7.com
 
 ## Usage
 
