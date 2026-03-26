@@ -1,10 +1,12 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
 /// Prepares documentation for the given package names by:
 ///
-/// 1. Running `dart pub get` to ensure dependencies are up-to-date.
-/// 2. Running `pubdoc get` to generate documentation (if needed).
+/// 1. Running `dart pub add` to ensure the packages are included in
+///    project's dependencies and they are up-to-date.
+/// 2. Running `pubdoc get` to retrive the documentation.
 /// 3. Checking each package for a missing `OVERVIEW.md` to determine whether
 ///    enrichment is needed.
 /// 4. If enrichment is needed, cleaning stale `example/` and `EXAMPLES.md`
@@ -41,7 +43,7 @@ import 'dart:io';
 /// ```
 ///
 /// Always exits with code 0; errors are reported in the JSON.
-void main(List<String> args) async {
+void main(List<String> args) {
   String? projectPath;
   final packages = <String>[];
 
@@ -60,65 +62,12 @@ void main(List<String> args) async {
     _exitWithError('No package names provided');
   }
 
+  _ensurePubdocAvailable();
   final dartExecutable = File(Platform.resolvedExecutable);
-  final dartSdkDir = dartExecutable.parent.parent;
-  if (!dartSdkDir.existsSync()) {
-    _exitWithError('Dart SDK directory not found at ${dartSdkDir.path}');
-  }
-
-  try {
-    Process.runSync('pubdoc', ['--version']);
-  } on ProcessException {
-    _exitWithError('pubdoc is not installed or not on PATH.');
-  }
-
-  final ProcessResult pubAddResult;
-  try {
-    // TODO: Do this only if the packages aren't already included in package_config.json.
-    pubAddResult = await Process.run(dartExecutable.path, [
-      'pub',
-      'add',
-      ...packages,
-    ], workingDirectory: projectPath);
-  } on ProcessException catch (exception) {
-    _exitWithError('Failed to run "dart pub add": $exception');
-  }
-
-  if (pubAddResult.exitCode != 0) {
-    if (packages.length == 1) {
-      _exitWithError(
-        'The specified package ${packages.single} was not found in pub.dev, '
-        'or the package name is incorrect.',
-      );
-    } else {
-      _exitWithError(
-        'Some of the specified packages were not found in pub.dev, '
-        'or the package names are incorrect.',
-      );
-    }
-  }
-
-  final ProcessResult result;
-  try {
-    result = await Process.run('pubdoc', [
-      'get',
-      '--json=0',
-      '--quiet',
-      '--sdk-dir=${dartSdkDir.path}',
-      if (projectPath != null) ...['--project', projectPath],
-      ...packages,
-    ]);
-  } on ProcessException catch (e) {
-    _exitWithError('Failed to run "pubdoc get": $e');
-  }
-
-  // Parse JSON output
-  Map<String, dynamic> pubdocJson;
-  try {
-    pubdocJson = jsonDecode(result.stdout as String) as Map<String, dynamic>;
-  } on FormatException catch (e) {
-    _exitWithError('Failed to parse pubdoc JSON output: $e');
-  }
+  // TODO: Do this only if the packages aren't already included
+  // in package_config.json.
+  _pubAdd(dartExecutable, packages, projectPath);
+  final pubdocJson = _pubdocGet(dartExecutable, packages, projectPath);
 
   // Check for errors in pubdoc output
   final errors = pubdocJson['errors'];
@@ -171,7 +120,7 @@ void main(List<String> args) async {
         // Copy source example/ if it exists
         final srcExampleDir = Directory('$source/example');
         if (srcExampleDir.existsSync()) {
-          await _copyDirectory(srcExampleDir, docExampleDir);
+          _copyDirectory(srcExampleDir, docExampleDir);
         }
       }
     }
@@ -185,6 +134,66 @@ void main(List<String> args) async {
   stdout.writeln(jsonEncode({'packages': resultPackages, 'error': null}));
 }
 
+void _ensurePubdocAvailable() {
+  bool available;
+  try {
+    available = Process.runSync('pubdoc', ['--version']).exitCode == 0;
+  } on ProcessException {
+    available = false;
+  }
+  if (!available) {
+    _exitWithError('pubdoc does not exist or is not found in PATH.');
+  }
+}
+
+void _pubAdd(File dartExecutable, List<String> packages, String? projectPath) {
+  final result = Process.runSync(dartExecutable.path, [
+    'pub',
+    'add',
+    ...packages,
+  ], workingDirectory: projectPath);
+
+  if (result.exitCode != 0) {
+    if (packages.length == 1) {
+      _exitWithError(
+        'The specified package ${packages.single} was not found in pub.dev, '
+        'or the package name is incorrect.',
+      );
+    } else {
+      _exitWithError(
+        'Some of the specified packages were not found in pub.dev, '
+        'or the package names are incorrect.',
+      );
+    }
+  }
+}
+
+Map<String, dynamic> _pubdocGet(
+  File dartExecutable,
+  List<String> packages,
+  String? projectPath,
+) {
+  final dartSdkDir = dartExecutable.parent.parent;
+  if (!dartSdkDir.existsSync()) {
+    _exitWithError('Dart SDK directory not found at ${dartSdkDir.path}');
+  }
+
+  final result = Process.runSync('pubdoc', [
+    'get',
+    '--json=0',
+    '--quiet',
+    '--sdk-dir=${dartSdkDir.path}',
+    if (projectPath != null) ...['--project', projectPath],
+    ...packages,
+  ]);
+
+  try {
+    return jsonDecode(result.stdout as String) as Map<String, dynamic>;
+  } on FormatException {
+    _exitWithError('Failed to parse pubdoc JSON output: ${result.stdout}');
+  }
+}
+
 Never _exitWithError(String message) {
   stdout.writeln(
     jsonEncode({'packages': <String, dynamic>{}, 'error': message}),
@@ -192,14 +201,18 @@ Never _exitWithError(String message) {
   exit(0);
 }
 
-Future<void> _copyDirectory(Directory src, Directory dst) async {
-  dst.createSync(recursive: true);
-  await for (final entity in src.list(recursive: false)) {
-    final name = entity.path.split(Platform.pathSeparator).last;
-    if (entity is Directory) {
-      await _copyDirectory(entity, Directory('${dst.path}/$name'));
-    } else if (entity is File) {
-      entity.copySync('${dst.path}/$name');
+void _copyDirectory(Directory src, Directory dst) {
+  final queue = Queue<(Directory, Directory)>()..add((src, dst));
+  while (queue.isNotEmpty) {
+    final (s, d) = queue.removeFirst();
+    d.createSync();
+    for (final entity in s.listSync(recursive: false)) {
+      final name = entity.path.split(Platform.pathSeparator).last;
+      if (entity is Directory) {
+        queue.add((entity, Directory('${d.path}/$name')));
+      } else if (entity is File) {
+        entity.copySync('${d.path}/$name');
+      }
     }
   }
 }
