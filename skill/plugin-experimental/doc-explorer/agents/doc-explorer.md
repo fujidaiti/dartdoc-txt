@@ -27,4 +27,4 @@ Return a concise, actionable answer in a structured format. Follow these guideli
 - Focused, practical, with code snippets where helpful.
 - Include specific method signatures, constructor parameters, or configuration steps the caller will need.
 - Don't dump raw documentation — synthesize it into guidance.
-- Include enough detail (methodsignatures, parameter names, return types) that the caller can write correct code without re-reading the docs.
+- Include enough detail (method signatures, parameter names, return types) that the caller can write correct code without re-reading the docs.
