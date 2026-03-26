@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
@@ -5,11 +6,13 @@ import 'dart:io';
 ///
 /// 1. Running `dart pub add` to ensure the packages are included in
 ///    project's dependencies and they are up-to-date.
-/// 2. Running `pubdoc get` to retrive the documentation.
+/// 2. Running `pubdoc get` to retrieve the documentation.
+/// 3. On a cache miss, copying `example/` from the package source
+///    into the documentation directory.
 ///
 /// Usage:
 /// ```shell
-/// dart prepare_documentation.dart [--project <path>] <pkg1> <pkg2> ...
+/// dart prepare_documentation.dart --project <path> <pkg1> <pkg2> ...
 /// ```
 ///
 /// Output JSON (success):
@@ -52,6 +55,8 @@ void main(List<String> args) {
 
   if (packages.isEmpty) {
     _exitWithError('No package names provided');
+  } else if (projectPath == null) {
+    _exitWithError('Project path not provided. Use --project <path>');
   }
 
   _ensurePubdocAvailable();
@@ -77,9 +82,27 @@ void main(List<String> args) {
     final pkgName = entry.key;
     final pkgData = entry.value as Map<String, dynamic>;
     final documentation = pkgData['documentation'] as String?;
+    final source = pkgData['source'] as String?;
+
     if (documentation == null) {
       _exitWithError('Missing "documentation" for package $pkgName');
     }
+
+    final cache = pkgData['cache'] as String?;
+    if (source != null && cache != 'hit') {
+      // Clean stale example artifacts
+      final docExampleDir = Directory('$documentation/example');
+      if (docExampleDir.existsSync()) {
+        docExampleDir.deleteSync(recursive: true);
+      }
+
+      // Copy source example/ if it exists
+      final srcExampleDir = Directory('$source/example');
+      if (srcExampleDir.existsSync()) {
+        _copyDirectory(srcExampleDir, docExampleDir);
+      }
+    }
+
     resultPackages[pkgName] = {'documentation': documentation};
   }
 
@@ -98,7 +121,7 @@ void _ensurePubdocAvailable() {
   }
 }
 
-void _pubAdd(File dartExecutable, List<String> packages, String? projectPath) {
+void _pubAdd(File dartExecutable, List<String> packages, String projectPath) {
   final result = Process.runSync(dartExecutable.path, [
     'pub',
     'add',
@@ -123,7 +146,7 @@ void _pubAdd(File dartExecutable, List<String> packages, String? projectPath) {
 Map<String, dynamic> _pubdocGet(
   File dartExecutable,
   List<String> packages,
-  String? projectPath,
+  String projectPath,
 ) {
   final dartSdkDir = dartExecutable.parent.parent;
   if (!dartSdkDir.existsSync()) {
@@ -135,7 +158,7 @@ Map<String, dynamic> _pubdocGet(
     '--json=0',
     '--quiet',
     '--sdk-dir=${dartSdkDir.path}',
-    if (projectPath != null) ...['--project', projectPath],
+    '--project=$projectPath',
     ...packages,
   ]);
 
@@ -151,4 +174,20 @@ Never _exitWithError(String message) {
     jsonEncode({'packages': <String, dynamic>{}, 'error': message}),
   );
   exit(0);
+}
+
+void _copyDirectory(Directory src, Directory dst) {
+  final queue = Queue<(Directory, Directory)>()..add((src, dst));
+  while (queue.isNotEmpty) {
+    final (s, d) = queue.removeFirst();
+    d.createSync();
+    for (final entity in s.listSync(recursive: false)) {
+      final name = entity.path.split(Platform.pathSeparator).last;
+      if (entity is Directory) {
+        queue.add((entity, Directory('${d.path}/$name')));
+      } else if (entity is File) {
+        entity.copySync('${d.path}/$name');
+      }
+    }
+  }
 }
