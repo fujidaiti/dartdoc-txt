@@ -6,7 +6,7 @@ import 'dart:io';
 ///
 /// 1. Running `dart pub add` to ensure the packages are included in
 ///    project's dependencies and they are up-to-date.
-/// 2. Running `pubdoc get` to retrive the documentation.
+/// 2. Running `pubdoc get` to retrieve the documentation.
 /// 3. Checking each package for a missing `OVERVIEW.md` to determine whether
 ///    enrichment is needed.
 /// 4. If enrichment is needed, cleaning stale `example/` and `EXAMPLES.md`
