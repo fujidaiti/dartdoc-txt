@@ -92,7 +92,7 @@ Then, install the plugin:
 /plugin install pubdoc-skills@norelease-dev-plugins
 ```
 
-Now you should see the `doc-explorer` skill in your skill list:
+Now you should see the `doc-explorer` in your skill list:
 
 ```
 /skills
@@ -126,7 +126,7 @@ cp -r pubdoc-tools/skill/plugin/doc-explorer /path/to/your/.claude/skills/
 - create summary files in the doc directory (write, experimental)
   - install the experimental plugin instead of the stable one -->
 
-This skill runs [pubdoc-get][] command to prepare the documentation for the
+This skill runs pubdoc [get][] command to prepare the documentation for the
 queried packages, and the command:
 
 - **reads** `pubspec.lock` and `.dart_tool/` directory to find out the exact
@@ -144,8 +144,7 @@ Also, the skill itself:
 - **may write** summary files in the documentation directory (**experimental**,
   see the next section for details)
 
-[pubdoc-get]:
-  https://github.com/fujidaiti/pubdoc-tools/blob/main/pubdoc/USAGE.md#get
+[get]: https://github.com/fujidaiti/pubdoc-tools/blob/main/pubdoc/USAGE.md#get
 [cache]:
   https://github.com/fujidaiti/pubdoc-tools/blob/main/pubdoc/PRINCIPLE.md#shared-cache
 [requirements]:
