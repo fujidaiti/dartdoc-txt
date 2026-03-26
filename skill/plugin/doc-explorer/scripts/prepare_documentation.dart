@@ -56,6 +56,7 @@ void main(List<String> args) {
 
   _ensurePubdocAvailable();
   final dartExecutable = File(Platform.resolvedExecutable);
+  // TODO: Do this only if the packages aren't already included in package_config.json.
   _pubAdd(dartExecutable, packages, projectPath);
   final pubdocJson = _pubdocGet(dartExecutable, packages, projectPath);
 

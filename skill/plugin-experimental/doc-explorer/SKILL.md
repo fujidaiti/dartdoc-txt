@@ -33,11 +33,6 @@ Then, read the JSON output:
 
 **IMPORTANT**: if you encounter an error during this step, check theese common issues first before trying to debug by yourself.
 
-#### pubdoc not installed
-
-Install pubdoc as a global executable via `dart install pubdoc`.
-**IMPORTANT**: Do not use `dart pub global activate`. `dart install` is a newer alternative.
-
 #### Package not found or name is incorrect
 
 Stop processing and ask the user for the canonical package name.

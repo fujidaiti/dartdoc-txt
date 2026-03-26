@@ -1,7 +1,6 @@
 ---
 name: doc-explorer
-description:
-  Answers questions about Dart/Flutter packages by exploring version-accurate documentation generated from the project's actual dependencies. Use this skill whenever you need to understand a package API — don't rely on training knowledge, as APIs may have changed. This includes implementing features with a third-party package, debugging errors or stack traces involving one, looking up method signatures or class behavior, figuring out how to configure or integrate a package, or migrating/upgrading to a new version. If you're about to call into a package you're not 100% sure about, use this skill first.
+description: Answers questions about Dart/Flutter packages by exploring version-accurate documentation generated from the project's actual dependencies. Use this skill whenever you need to understand a package API — don't rely on training knowledge, as APIs may have changed. This includes implementing features with a third-party package, debugging errors or stack traces involving one, looking up method signatures or class behavior, figuring out how to configure or integrate a package, or migrating/upgrading to a new version. If you're about to call into a package you're not 100% sure about, use this skill first.
 ---
 
 # doc-explorer

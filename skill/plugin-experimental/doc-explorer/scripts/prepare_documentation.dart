@@ -74,6 +74,7 @@ void main(List<String> args) async {
 
   final ProcessResult pubAddResult;
   try {
+    // TODO: Do this only if the packages aren't already included in package_config.json.
     pubAddResult = await Process.run(dartExecutable.path, [
       'pub',
       'add',
