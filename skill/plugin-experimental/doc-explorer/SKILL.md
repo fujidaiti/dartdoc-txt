@@ -31,7 +31,7 @@ Then, read the JSON output:
 
 ### Troubleshooting
 
-**IMPORTANT**: if you encounter an error during this step, check theese common issues first before trying to debug by yourself.
+**IMPORTANT**: if you encounter an error during this step, check these common issues first before trying to debug by yourself.
 
 #### Package not found or name is incorrect
 
