@@ -82,7 +82,7 @@ Use this guide to find what you need without exploring every file.
 
 ### Documentation structure
 
-Here's an overview of the the documentation structure at {{documentation-root}}:
+Here's an overview of the documentation structure at {{documentation-root}}:
 
 <!-- Update paths or descriptions to match the actual documentation if needed. Keep the guide abstract; do not list all files or directories. -->
 
