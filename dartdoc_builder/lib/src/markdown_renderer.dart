@@ -2,10 +2,10 @@
 // ignore: implementation_imports
 import 'package:dartdoc/src/model/model.dart';
 
-import 'package:dartdoc_txt/src/doc_tree.dart';
-import 'package:dartdoc_txt/src/element_renderers.dart';
-import 'package:dartdoc_txt/src/template_loader.dart';
-import 'package:dartdoc_txt/src/utilities.dart';
+import 'package:dartdoc_builder/src/doc_tree.dart';
+import 'package:dartdoc_builder/src/element_renderers.dart';
+import 'package:dartdoc_builder/src/template_loader.dart';
+import 'package:dartdoc_builder/src/utilities.dart';
 
 /// Walks a [PackageGraph] and builds a lazy [DocDir] tree.
 class MarkdownRenderer {

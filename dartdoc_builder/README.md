@@ -1,9 +1,9 @@
-# dartdoc_txt
+# dartdoc_builder
 
 A Dart package that provides APIs to generate Markdown documentation from
 Dart/Flutter packages, optimized for LLM consumption.
 
-Unlike [dartdoc][] (which generates interactive HTML), dartdoc_txt reuses
+Unlike [dartdoc][] (which generates interactive HTML), dartdoc_builder reuses
 dartdoc's analysis engine but produces structured, grep-friendly Markdown files
 designed for language models to traverse and understand.
 

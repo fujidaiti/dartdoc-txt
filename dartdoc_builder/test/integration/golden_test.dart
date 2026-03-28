@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:dartdoc_txt/src/doc_tree.dart';
-import 'package:dartdoc_txt/src/element_renderers.dart';
-import 'package:dartdoc_txt/src/generate.dart';
+import 'package:dartdoc_builder/src/doc_tree.dart';
+import 'package:dartdoc_builder/src/element_renderers.dart';
+import 'package:dartdoc_builder/src/generate.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';

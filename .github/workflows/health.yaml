@@ -35,9 +35,9 @@ jobs:
         uses: dart-lang/setup-dart@v1
         with:
           sdk: stable
-      - name: Test dartdoc_txt
+      - name: Test dartdoc_builder
         run: dart test
-        working-directory: dartdoc_txt
+        working-directory: dartdoc_builder
       - name: Test pubdoc
         run: dart test
         working-directory: pubdoc

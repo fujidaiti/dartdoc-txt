@@ -9,7 +9,7 @@ Version: 1.0.0
 
 ## basic library
 
-A comprehensive test library for dartdoc_txt.
+A comprehensive test library for dartdoc_builder.
 
 This library contains various Dart elements for testing
 the Markdown documentation generator.

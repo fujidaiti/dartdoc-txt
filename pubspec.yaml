@@ -5,5 +5,5 @@ environment:
   sdk: ^3.10.0
 
 workspace:
-  - dartdoc_txt
+  - dartdoc_builder
   - pubdoc

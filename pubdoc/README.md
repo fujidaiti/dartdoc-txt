@@ -7,7 +7,7 @@ pubdoc serves documentation for the specific versions your project depends on,
 not just the latest.
 
 You can find examples of the generated documentation
-[here](https://github.com/fujidaiti/pubdoc/tree/main/dartdoc_txt/test/integration/golden).
+[here](https://github.com/fujidaiti/pubdoc/tree/main/dartdoc_builder/test/integration/golden).
 
 ## Installation
 

@@ -1,4 +1,4 @@
-import 'package:dartdoc_txt/src/utilities.dart';
+import 'package:dartdoc_builder/src/utilities.dart';
 import 'package:test/test.dart';
 
 void main() {

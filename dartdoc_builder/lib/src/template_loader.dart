@@ -1,17 +1,17 @@
-import 'package:dartdoc_txt/src/template/_category_section.mustache.dart';
-import 'package:dartdoc_txt/src/template/_constructor.mustache.dart';
-import 'package:dartdoc_txt/src/template/_element_list.mustache.dart';
-import 'package:dartdoc_txt/src/template/_field.mustache.dart';
-import 'package:dartdoc_txt/src/template/_library_section.mustache.dart';
-import 'package:dartdoc_txt/src/template/_method.mustache.dart';
-import 'package:dartdoc_txt/src/template/_operator.mustache.dart';
-import 'package:dartdoc_txt/src/template/category.mustache.dart';
-import 'package:dartdoc_txt/src/template/container.mustache.dart';
-import 'package:dartdoc_txt/src/template/detail_page.mustache.dart';
-import 'package:dartdoc_txt/src/template/index.mustache.dart';
-import 'package:dartdoc_txt/src/template/top_level_functions.mustache.dart';
-import 'package:dartdoc_txt/src/template/top_level_properties.mustache.dart';
-import 'package:dartdoc_txt/src/template/typedefs.mustache.dart';
+import 'package:dartdoc_builder/src/template/_category_section.mustache.dart';
+import 'package:dartdoc_builder/src/template/_constructor.mustache.dart';
+import 'package:dartdoc_builder/src/template/_element_list.mustache.dart';
+import 'package:dartdoc_builder/src/template/_field.mustache.dart';
+import 'package:dartdoc_builder/src/template/_library_section.mustache.dart';
+import 'package:dartdoc_builder/src/template/_method.mustache.dart';
+import 'package:dartdoc_builder/src/template/_operator.mustache.dart';
+import 'package:dartdoc_builder/src/template/category.mustache.dart';
+import 'package:dartdoc_builder/src/template/container.mustache.dart';
+import 'package:dartdoc_builder/src/template/detail_page.mustache.dart';
+import 'package:dartdoc_builder/src/template/index.mustache.dart';
+import 'package:dartdoc_builder/src/template/top_level_functions.mustache.dart';
+import 'package:dartdoc_builder/src/template/top_level_properties.mustache.dart';
+import 'package:dartdoc_builder/src/template/typedefs.mustache.dart';
 import 'package:mustache_template/mustache_template.dart';
 
 /// Holds parsed Mustache [Template] objects, keyed by name.

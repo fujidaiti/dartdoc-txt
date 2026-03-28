@@ -10,7 +10,7 @@
 
 ## 0.1.1
 
-- Bump dartdoc_txt dependency to 0.1.1.
+- Bump dartdoc_builder dependency to 0.1.1.
 
 ## 0.1.0
 

@@ -1,4 +1,4 @@
-/// A comprehensive test library for dartdoc_txt.
+/// A comprehensive test library for dartdoc_builder.
 ///
 /// This library contains various Dart elements for testing
 /// the Markdown documentation generator.

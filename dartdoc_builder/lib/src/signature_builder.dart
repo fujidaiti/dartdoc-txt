@@ -5,7 +5,7 @@ import 'package:dartdoc/src/element_type.dart';
 // ignore: implementation_imports
 import 'package:dartdoc/src/model/model.dart';
 
-import 'package:dartdoc_txt/src/utilities.dart';
+import 'package:dartdoc_builder/src/utilities.dart';
 
 /// Strips HTML tags and unescapes entities to get a clean type name.
 ///

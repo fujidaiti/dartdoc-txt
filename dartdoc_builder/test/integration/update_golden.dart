@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dartdoc_txt/dartdoc_txt.dart';
+import 'package:dartdoc_builder/dartdoc_builder.dart';
 import 'package:path/path.dart' as p;
 
 Future<void> main() async {

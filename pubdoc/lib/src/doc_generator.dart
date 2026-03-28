@@ -1,4 +1,4 @@
-import 'package:dartdoc_txt/dartdoc_txt.dart';
+import 'package:dartdoc_builder/dartdoc_builder.dart';
 import 'package:pubdoc/src/environment.dart';
 import 'package:pubdoc/src/exceptions.dart';
 import 'package:pubdoc/src/logger.dart';

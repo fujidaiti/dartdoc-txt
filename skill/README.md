@@ -52,7 +52,7 @@ The agent will then decide to use the skill as part of its implementation plan:
 
 See [CHAT.log](example/CHAT.log) for an example conversation with Claude Code.
 You can also find examples of the generated documentation
-[here](https://github.com/fujidaiti/pubdoc-tools/tree/skill/dartdoc_txt/test/integration/golden/path).
+[here](https://github.com/fujidaiti/pubdoc-tools/tree/skill/dartdoc_builder/test/integration/golden/path).
 
 ## Requirements
 

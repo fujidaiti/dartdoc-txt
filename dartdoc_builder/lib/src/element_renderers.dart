@@ -1,10 +1,10 @@
 // dartdoc does not re-export model classes from its public API.
 // ignore: implementation_imports
 import 'package:dartdoc/src/model/model.dart';
-import 'package:dartdoc_txt/src/doc_tree.dart';
-import 'package:dartdoc_txt/src/signature_builder.dart';
-import 'package:dartdoc_txt/src/template_loader.dart';
-import 'package:dartdoc_txt/src/utilities.dart';
+import 'package:dartdoc_builder/src/doc_tree.dart';
+import 'package:dartdoc_builder/src/signature_builder.dart';
+import 'package:dartdoc_builder/src/template_loader.dart';
+import 'package:dartdoc_builder/src/utilities.dart';
 import 'package:path/path.dart' as p;
 
 /// Options controlling rendering behavior.

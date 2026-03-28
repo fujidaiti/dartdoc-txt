@@ -200,13 +200,13 @@ they don't exist in `.pubdoc/` yet.
 
 ## Generate documentation
 
-pubdoc uses [dartdoc_txt][1] to generate API documentation for Dart/Flutter
+pubdoc uses [dartdoc_builder][1] to generate API documentation for Dart/Flutter
 packages. Given the path to a Dart package, it analyzes the package's source
 code and produces a set of structured text-based documentation files for the
 public API. That is to say, pubdoc generates documentation locally on your
 machine. But then where does the source code come from?
 
-[1]: https://github.com/fujidaiti/pubdoc/tree/main/dartdoc_txt
+[1]: https://github.com/fujidaiti/pubdoc/tree/main/dartdoc_builder
 
 Thankfully, `dart pub get` command downloads all the dependencies of your
 project and caches them on the disk. It also creates an index of those cached
@@ -231,8 +231,8 @@ this:
 You can see that the `rootUri` field indicates the location of the cached
 package; in this case, the source code of firebase_core v4.5.0 is located in
 `~/.pub-cache/hosted/pub.dev/firebase_core-4.5.0`. And this source has the
-canonical Dart package structure, so we can run dartdoc_txt on this directory to
-generate the documentation.
+canonical Dart package structure, so we can run dartdoc_builder on this
+directory to generate the documentation.
 
 ---
 

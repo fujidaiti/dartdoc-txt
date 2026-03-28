@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:dartdoc_txt/dartdoc_txt.dart';
+import 'package:dartdoc_builder/dartdoc_builder.dart';
 
 Future<void> main(List<String> arguments) async {
   final argParser = ArgParser()
@@ -32,7 +32,7 @@ Future<void> main(List<String> arguments) async {
     // The above try block may throw both Error and Exception, so we catch all.
     // ignore: avoid_catches_without_on_clauses
   } catch (_) {
-    stdout.writeln('Usage: dart run dartdoc_txt [options]');
+    stdout.writeln('Usage: dart run dartdoc_builder [options]');
     stdout.writeln('');
     stdout.writeln(argParser.usage);
     exit(1);

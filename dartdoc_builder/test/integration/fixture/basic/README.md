@@ -1,4 +1,4 @@
-A comprehensive test fixture for dartdoc_txt.
+A comprehensive test fixture for dartdoc_builder.
 
 This package covers all rendering features including classes, enums, functions,
 generics, inheritance, modifiers, extensions, and source threshold behavior.
@@ -18,5 +18,5 @@ generics, inheritance, modifiers, extensions, and source threshold behavior.
 ## Usage
 
 This package is not intended for direct use. It serves as a test fixture for the
-dartdoc_txt golden tests, validating that the Markdown renderer produces correct
+dartdoc_builder golden tests, validating that the Markdown renderer produces correct
 output for a wide range of Dart language constructs.

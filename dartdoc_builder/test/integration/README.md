@@ -1,7 +1,7 @@
 # Golden Tests
 
-Golden tests for the dartdoc_txt renderer. Each fixture package is rendered and
-compared against expected `.expect` files.
+Golden tests for the dartdoc_builder renderer. Each fixture package is rendered
+and compared against expected `.expect` files.
 
 ## Fixtures
 
@@ -16,7 +16,7 @@ compared against expected `.expect` files.
 ## Running the tests
 
 ```sh
-cd dartdoc_txt
+cd dartdoc_builder
 dart test test/integration/golden_test.dart
 ```
 
@@ -32,6 +32,6 @@ git submodule update --init
 To regenerate golden files after changing the renderer or fixtures:
 
 ```sh
-cd dartdoc_txt
+cd dartdoc_builder
 dart run test/integration/update_golden.dart
 ```
